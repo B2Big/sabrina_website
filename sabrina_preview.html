@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sabrina — Coaching & Massages</title>
+  <meta name="color-scheme" content="light" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    html,body { scroll-behavior: smooth; }
+    .shadow-soft { box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+  </style>
+
+  <!-- Calendly (popup + inline) -->
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+  <script>
+    function openCalendly(url) {
+      const u = url || "https://calendly.com/sabfit83";
+      if (window.Calendly?.initPopupWidget) {
+        window.Calendly.initPopupWidget({ url: u });
+      } else {
+        window.open(u, "_blank", "noopener");
+      }
+      return false;
+    }
+  </script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-rose-50 via-emerald-50 to-amber-50 text-gray-900">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 backdrop-blur bg-white/60 ring-1 ring-black/10">
+    <div class="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
+      <a href="#" class="font-bold tracking-tight text-lg">Sabrina Coaching & Massages</a>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a href="#services" class="hover:text-black">Prestations</a>
+        <a href="#tarifs" class="hover:text-black">Tarifs</a>
+        <a href="#contact" class="hover:text-black">Contact</a>
+        <a href="https://www.instagram.com/sab.fit_coaching83" target="_blank" rel="noreferrer"
+           class="inline-flex items-center gap-2 rounded-xl px-3 py-2 ring-1 ring-black/10 hover:ring-black/20">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0 2a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm6.25-.75a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          </svg>
+          <span>Instagram</span>
+        </a>
+        <button onclick="openCalendly()" class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold bg-black text-white hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-black/20">Réserver</button>
+      </nav>
+      <button onclick="openCalendly()" class="md:hidden inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold bg-black text-white">
+        Réserver
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="mx-auto max-w-6xl px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-gray-600">Coaching sportif • Massages • Cures</p>
+        <h1 class="mt-3 text-4xl md:text-6xl font-bold leading-[1.1]">Le bien-être, avec exigence et douceur.</h1>
+        <p class="mt-4 text-base md:text-lg text-gray-700 max-w-prose">
+          Sabrina accompagne votre corps vers l’équilibre : massages ciblés, coaching sur-mesure et programmes de cures pour des résultats visibles et durables.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button onclick="openCalendly()" class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold bg-black text-white hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-black/20">
+            Réserver
+          </button>
+          <a href="#services" class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold ring-1 ring-black/10 hover:ring-black/20">Voir les prestations</a>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="aspect-[4/5] w-full rounded-3xl bg-white/60 backdrop-blur ring-1 ring-black/10 shadow-soft grid place-items-center">
+          <div class="text-center p-8">
+            <div class="text-8xl">💆‍♀️</div>
+            <p class="mt-4 text-sm text-gray-600"></p>
+          </div>
+        </div>
+        <a href="https://www.instagram.com/sab.fit_coaching83" target="_blank" rel="noreferrer"
+           class="hidden md:inline-flex items-center gap-2 absolute -right-6 -bottom-6 rotate-3 rounded-2xl bg-white/80 ring-1 ring-black/10 px-4 py-3 shadow hover:bg-white">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0 2a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm6.25-.75a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+          </svg>
+          <span class="text-sm font-medium">Suivre sur Instagram</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filters & Cards -->
+  <section id="services" class="scroll-mt-24 py-12 md:py-20">
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-xs uppercase tracking-wider text-gray-500 mb-2">Catalogue</p>
+      <h2 class="text-2xl md:text-3xl font-bold">Prestations</h2>
+
+      <div class="mt-6 flex flex-wrap gap-2">
+        <button data-cat="Toutes" class="filterBtn rounded-full px-4 py-2 text-sm ring-1 ring-black/10 bg-black text-white">Toutes</button>
+        <button data-cat="Massages" class="filterBtn rounded-full px-4 py-2 text-sm ring-1 ring-black/10 bg-white/70 hover:bg-white">Massages</button>
+        <button data-cat="Coaching" class="filterBtn rounded-full px-4 py-2 text-sm ring-1 ring-black/10 bg-white/70 hover:bg-white">Coaching</button>
+        <button data-cat="Cures" class="filterBtn rounded-full px-4 py-2 text-sm ring-1 ring-black/10 bg-white/70 hover:bg-white">Cures</button>
+      </div>
+
+      <div id="cards" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </div>
+  </section>
+
+  <!-- Tarifs -->
+  <section id="tarifs" class="scroll-mt-24 py-12 md:py-20">
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-xs uppercase tracking-wider text-gray-500 mb-2">Transparence</p>
+      <h2 class="text-2xl md:text-3xl font-bold">Tarifs clairs</h2>
+      <div id="pricing" class="mt-6 grid md:grid-cols-2 gap-5"></div>
+    </div>
+  </section>
+
+  <!-- Contact + Calendly inline -->
+  <section id="contact" class="scroll-mt-24 py-12 md:py-20">
+    <div class="mx-auto max-w-6xl px-4">
+      <p class="text-xs uppercase tracking-wider text-gray-500 mb-2">Contact</p>
+      <h2 class="text-2xl md:text-3xl font-bold">Prendre rendez-vous</h2>
+      <div class="mt-8 grid lg:grid-cols-2 gap-6">
+        <div class="group relative rounded-2xl bg-white/70 backdrop-blur shadow-sm ring-1 ring-black/10">
+          <div class="p-5 md:p-6">
+            <h3 class="text-lg font-semibold mb-3">Réservation en ligne (intégrée)</h3>
+            <div class="rounded-xl overflow-hidden ring-1 ring-black/10">
+              <!-- Calendly inline widget -->
+              <div class="calendly-inline-widget"
+                   data-url="https://calendly.com/sabfit83"
+                   style="min-width:320px;height:700px;background:#fff"></div>
+            </div>
+            <p class="mt-3 text-xs text-gray-600">Les données de réservation sont traitées par Calendly.</p>
+          </div>
+        </div>
+
+        <div class="group relative rounded-2xl bg-white/70 backdrop-blur shadow-sm ring-1 ring-black/10">
+          <div class="p-5 md:p-6">
+            <h3 class="text-lg font-semibold">Coordonnées</h3>
+            <div class="mt-3 text-sm text-gray-700 space-y-2">
+              <p>Email : <a class="underline" href="mailto:sabcompan8306@gmail.com">sabcompan8306@gmail.com</a></p>
+              <p>Téléphone : <a class="underline" href="tel:+33666262429">06 66 26 24 29</a></p>
+              <p>Adresse : à définir (cabinet / domicile / déplacement)</p>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <button onclick="openCalendly()" class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold bg-black text-white hover:bg-black/90">
+                Réserver (pop-up)
+              </button>
+              <a href="https://www.instagram.com/sab.fit_coaching83" target="_blank" rel="noreferrer"
+                 class="inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold ring-1 ring-black/10 hover:ring-black/20">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11zm0 2a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7zm6.25-.75a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                </svg>
+                Voir Instagram
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-black/10">
+    <div class="mx-auto max-w-6xl px-4 py-8 text-sm text-gray-600 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p>© <span id="year"></span> Sabrina Wellness — Tous droits réservés.</p>
+      <div class="flex items-center gap-4">
+        <a href="#services" class="hover:text-black">Prestations</a>
+        <a href="#tarifs" class="hover:text-black">Tarifs</a>
+        <a href="#contact" class="hover:text-black">Contact</a>
+        <a href="https://www.instagram.com/sab.fit_coaching83" target="_blank" rel="noreferrer" class="hover:text-black">Instagram</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // -------------------------
+    // Données (MAJ selon tes specs)
+    // -------------------------
+    const BASE_CALENDLY = "https://calendly.com/sabfit83";
+
+    const SERVICES = [
+      // MASSAGES
+      {
+        id: "madero",
+        cat: "Massages",
+        title: "Madérothérapie",
+        duration: "1h",
+        price: "à partir de 70 €",
+        forWho: "Remodelage silhouette, réduction cellulite, tonification.",
+        obj: "Stimuler la circulation, lisser la peau, déstocker localement.",
+        link: `${BASE_CALENDLY}/maderotherapie` // adapte si tu as un slug précis
+      },
+      {
+        id: "jambes-legeres",
+        cat: "Massages",
+        title: "Jambes légères",
+        duration: "45 min",
+        price: "45 €",
+        forWho: "Sensation de lourdeur, station debout/assise prolongée.",
+        obj: "Activer la circulation veineuse/lymphatique, soulager rapidement.",
+        link: `${BASE_CALENDLY}/jambes-legeres`
+      },
+      {
+        id: "californien-balinais-1h",
+        cat: "Massages",
+        title: "Massage californien / balinais",
+        duration: "1h",
+        price: "70 €",
+        forWho: "Détente globale, lâcher-prise, apaisement nerveux.",
+        obj: "Relaxation profonde, harmonisation du corps.",
+        link: `${BASE_CALENDLY}/californien-balinais-1h`
+      },
+      {
+        id: "californien-balinais-1h30",
+        cat: "Massages",
+        title: "Massage californien / balinais",
+        duration: "1h30",
+        price: "80 €",
+        forWho: "Détente longue, relâchement complet.",
+        obj: "Séance enveloppante et rythmée pour une relaxation maximale.",
+        link: `${BASE_CALENDLY}/californien-balinais-1h30`
+      },
+      {
+        id: "sportif-1h",
+        cat: "Massages",
+        title: "Massage sportif",
+        duration: "1h",
+        price: "70 €",
+        forWho: "Avant/après l’effort, sportifs réguliers ou ponctuels.",
+        obj: "Récupération, relâchement musculaire, prévention des blessures.",
+        link: `${BASE_CALENDLY}/massage-sportif-1h`
+      },
+      {
+        id: "sportif-1h30",
+        cat: "Massages",
+        title: "Massage sportif",
+        duration: "1h30",
+        price: "80 €",
+        forWho: "Besoin de travail plus profond ou zones multiples.",
+        obj: "Récupération approfondie et préparation à la performance.",
+        link: `${BASE_CALENDLY}/massage-sportif-1h30`
+      },
+
+      // COACHING
+      {
+        id: "coaching-boxe",
+        cat: "Coaching",
+        title: "Coaching boxe",
+        duration: "1h",
+        price: "50 €",
+        forWho: "Remise en forme, cardio, anti-stress.",
+        obj: "Endurance, coordination, explosivité, confiance.",
+        link: `${BASE_CALENDLY}/coaching-boxe`
+      },
+      {
+        id: "one-to-one",
+        cat: "Coaching",
+        title: "Coaching 1-to-1",
+        duration: "1h",
+        price: "50 €",
+        forWho: "Objectifs spécifiques (perte de poids, tonus, posture).",
+        obj: "Programme sur-mesure, suivi personnalisé.",
+        link: `${BASE_CALENDLY}/coaching-1to1`
+      },
+      {
+        id: "small-group",
+        cat: "Coaching",
+        title: "Small groupe",
+        duration: "1h",
+        price: "10 € / pers. (min. 5 personnes)",
+        forWho: "Amis / équipe motivée.",
+        obj: "Motivation collective, coût accessible.",
+        link: `${BASE_CALENDLY}/coaching-groupe`
+      },
+      {
+        id: "forfait-5",
+        cat: "Coaching",
+        title: "Forfait coaching – 5 séances",
+        duration: "",
+        price: "225 €",
+        forWho: "Engagement court terme.",
+        obj: "Suivi continu, économie.",
+        link: `${BASE_CALENDLY}/forfait-5`
+      },
+      {
+        id: "forfait-10",
+        cat: "Coaching",
+        title: "Forfait coaching – 10 séances",
+        duration: "",
+        price: "400 €",
+        forWho: "Transformation sur 2–3 mois.",
+        obj: "Suivi long terme, économie.",
+        link: `${BASE_CALENDLY}/forfait-10`
+      },
+
+      // CURES (si tu veux les garder)
+      {
+        id: "cure-lymphatique",
+        cat: "Cures",
+        title: "Cure lymphatique",
+        format: "5 ou 10 séances",
+        price: "à définir",
+        forWho: "Rétention d’eau chronique, jambes lourdes.",
+        obj: "Drainage régulier, légèreté durable.",
+        link: `${BASE_CALENDLY}/cure-lymphatique`
+      },
+      {
+        id: "cure-madero",
+        cat: "Cures",
+        title: "Cure madérothérapie",
+        format: "5 ou 10 séances",
+        price: "à définir",
+        forWho: "Programme minceur / remodelage.",
+        obj: "Tonification, peau lissée.",
+        link: `${BASE_CALENDLY}/cure-madero`
+      }
+    ];
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Render cards
+    const cards = document.getElementById('cards');
+    function serviceCard(s) {
+      const dur  = s.duration ? `<span class='inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ring-black/10 bg-white/60 backdrop-blur'>Durée : ${s.duration}</span>` : "";
+      const fmt  = s.format   ? `<span class='inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ring-black/10 bg-white/60 backdrop-blur'>Format : ${s.format}</span>`   : "";
+      const price= s.price    ? `<span class='inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ring-black/10 bg-white/60 backdrop-blur'>Prix : ${s.price}</span>`     : "";
+
+      return `
+      <div class="group relative rounded-2xl bg-white/70 backdrop-blur shadow-sm ring-1 ring-black/10 hover:shadow-md transition-shadow">
+        <div class="p-5 md:p-6">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="text-lg md:text-xl font-semibold tracking-tight">${s.title}</h3>
+              <div class="mt-2 flex flex-wrap gap-2 text-xs text-gray-700">${dur}${price}${fmt}</div>
+            </div>
+            <button
+              class="inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold bg-black text-white"
+              onclick="openCalendly('${s.link || BASE_CALENDLY}')"
+            >
+              Réserver
+            </button>
+          </div>
+          <div class="mt-4 space-y-3 text-sm leading-relaxed text-gray-700">
+            ${s.forWho ? `<p><span class="font-medium text-gray-900">Pour qui ? </span>${s.forWho}</p>` : ""}
+            ${s.obj    ? `<p><span class="font-medium text-gray-900">Objectifs : </span>${s.obj}</p>`   : ""}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function render(cat="Toutes") {
+      cards.innerHTML = SERVICES
+        .filter(s => cat === "Toutes" ? true : s.cat === cat)
+        .map(serviceCard)
+        .join("");
+    }
+    render();
+
+    // Filters
+    const btns = document.querySelectorAll('.filterBtn');
+    btns.forEach(b => b.addEventListener('click', () => {
+      btns.forEach(x => x.classList.remove('bg-black','text-white'));
+      btns.forEach(x => x.classList.add('bg-white/70'));
+      b.classList.remove('bg-white/70');
+      b.classList.add('bg-black','text-white');
+      render(b.dataset.cat);
+    }));
+
+    // Pricing by category
+    const pricing = document.getElementById('pricing');
+    const cats = ["Massages","Coaching","Cures"];
+    pricing.innerHTML = cats.map(cat => `
+      <div class="group relative rounded-2xl bg-white/70 backdrop-blur shadow-sm ring-1 ring-black/10">
+        <div class="p-5 md:p-6">
+          <h3 class="text-lg font-semibold">${cat}</h3>
+          <ul class="mt-3 space-y-2 text-sm">
+            ${SERVICES.filter(s => s.cat===cat).map(s => `
+              <li class="flex items-start gap-2">
+                <span class="mt-1">•</span>
+                <div>
+                  <p class="font-medium">${s.title}</p>
+                  <p class="text-gray-700">
+                    ${(s.duration ? s.duration + " • " : (s.format ? s.format + " • " : ""))}${s.price || "Tarif sur demande"}
+                  </p>
+                </div>
+              </li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>
