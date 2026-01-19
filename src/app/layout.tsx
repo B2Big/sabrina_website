@@ -19,6 +19,14 @@ export const metadata: Metadata = {
     title: "Sabrina Coaching & Massage | Bien-être dans le Var",
     description: "Coaching sportif et massages bien-être pour harmoniser corps et esprit.",
     siteName: "Sabrina Coaching & Massage",
+    images: [
+      {
+        url: "/img/sabrina/sabrina-1.jpg",
+        width: 1200,
+        height: 1500,
+        alt: "Sabrina Coaching & Wellness",
+      },
+    ],
   },
   robots: {
     index: true,
@@ -63,7 +71,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
+      <body suppressHydrationWarning={true} className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
         {children}
       </body>
     </html>

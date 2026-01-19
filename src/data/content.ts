@@ -16,18 +16,21 @@ export type Service = {
   price: string;
   description: string;
   objective?: string;
+  popular?: boolean;
+  bestValue?: boolean;
 };
 
 export const SERVICES: Service[] = [
-  // MASSAGES
+  // MASSAGES & SOINS
   {
     id: "madero",
     category: "Massages",
     title: "Madérothérapie",
     duration: "1h",
     price: "À partir de 70 €",
-    description: "Remodelage silhouette, réduction cellulite, tonification.",
-    objective: "Stimuler la circulation, lisser la peau, déstocker localement."
+    description: "Le secret pour lisser la peau et casser la cellulite. Résultats visibles et silhouette sculptée dès la première séance.",
+    objective: "Sculpter, Drainer, Lisser.",
+    popular: true
   },
   {
     id: "jambes-legeres",
@@ -35,110 +38,66 @@ export const SERVICES: Service[] = [
     title: "Jambes légères",
     duration: "45 min",
     price: "45 €",
-    description: "Sensation de lourdeur, station debout/assise prolongée.",
-    objective: "Activer la circulation veineuse/lymphatique, soulager rapidement."
+    description: "Adieu la rétention d'eau. Un drainage express pour retrouver des jambes fines, légères et dégonflées instantanément.",
+    objective: "Drainage express, Soulagement immédiat."
   },
   {
     id: "californien-balinais-1h",
     category: "Massages",
-    title: "Californien / Balinais (1h)",
+    title: "Californien / Balinais",
     duration: "1h",
     price: "70 €",
-    description: "Détente globale, lâcher-prise, apaisement nerveux.",
-    objective: "Relaxation profonde, harmonisation du corps."
-  },
-  {
-    id: "californien-balinais-1h30",
-    category: "Massages",
-    title: "Californien / Balinais (1h30)",
-    duration: "1h30",
-    price: "80 €",
-    description: "Détente longue, relâchement complet.",
-    objective: "Séance enveloppante et rythmée pour une relaxation maximale."
+    description: "Débranchez le cerveau. Un cocon de douceur absolue pour évacuer tout le stress accumulé et mieux dormir.",
+    objective: "Lâcher-prise total, Anti-stress."
   },
   {
     id: "sportif-1h",
     category: "Massages",
-    title: "Massage Sportif (1h)",
+    title: "Massage Sportif",
     duration: "1h",
     price: "70 €",
-    description: "Avant/après l’effort, sportifs réguliers ou ponctuels.",
-    objective: "Récupération, relâchement musculaire, prévention des blessures."
-  },
-  {
-    id: "sportif-1h30",
-    category: "Massages",
-    title: "Massage Sportif (1h30)",
-    duration: "1h30",
-    price: "80 €",
-    description: "Besoin de travail plus profond ou zones multiples.",
-    objective: "Récupération approfondie et préparation à la performance."
+    description: "Réparez la machine. Élimine les toxines, dénoue les tensions profondes et prépare votre corps au prochain effort.",
+    objective: "Récupération, Performance, Souplesse.",
+    popular: true
   },
 
   // COACHING
   {
-    id: "coaching-boxe",
-    category: "Coaching",
-    title: "Coaching Boxe",
-    duration: "1h",
-    price: "50 €",
-    description: "Remise en forme, cardio, anti-stress.",
-    objective: "Endurance, coordination, explosivité, confiance."
-  },
-  {
     id: "one-to-one",
     category: "Coaching",
-    title: "Coaching 1-to-1",
+    title: "Coaching Premium 1-to-1",
     duration: "1h",
     price: "50 €",
-    description: "Objectifs spécifiques (perte de poids, tonus, posture).",
-    objective: "Programme sur-mesure, suivi personnalisé."
+    description: "L'accélérateur de résultats. Un plan d'attaque sur-mesure et une motivation constante pour dépasser vos objectifs.",
+    objective: "Sur-mesure, Motivation, Résultats rapides.",
+    popular: true
+  },
+  {
+    id: "coaching-boxe",
+    category: "Coaching",
+    title: "Cardio Boxe",
+    duration: "1h",
+    price: "50 €",
+    description: "L'anti-stress ultime. Videz-vous la tête et brûlez un max de calories dans une séance explosive et ludique.",
+    objective: "Cardio, Mental d'acier, Défouloir."
   },
   {
     id: "small-group",
     category: "Coaching",
     title: "Small Group",
     duration: "1h",
-    price: "10 € / pers. (min. 5)",
-    description: "Amis / équipe motivée.",
-    objective: "Motivation collective, coût accessible."
-  },
-  {
-    id: "forfait-5",
-    category: "Coaching",
-    title: "Forfait 5 séances",
-    duration: "Pack",
-    price: "225 €",
-    description: "Engagement court terme.",
-    objective: "Suivi continu, économie."
+    price: "10 € / pers.",
+    description: "Seul on va vite, ensemble on va loin. Challengez-vous en équipe dans une ambiance fun et motivante (min. 5 pers).",
+    objective: "Esprit d'équipe, Fun, Accessible."
   },
   {
     id: "forfait-10",
     category: "Coaching",
-    title: "Forfait 10 séances",
-    duration: "Pack",
+    title: "Pack Transformation",
+    duration: "10 Séances",
     price: "400 €",
-    description: "Transformation sur 2–3 mois.",
-    objective: "Suivi long terme, économie."
-  },
-
-  // CURES
-  {
-    id: "cure-lymphatique",
-    category: "Cures",
-    title: "Cure Lymphatique",
-    duration: "5 ou 10 séances",
-    price: "Sur devis",
-    description: "Rétention d’eau chronique, jambes lourdes.",
-    objective: "Drainage régulier, légèreté durable."
-  },
-  {
-    id: "cure-madero",
-    category: "Cures",
-    title: "Cure Madérothérapie",
-    duration: "5 ou 10 séances",
-    price: "Sur devis",
-    description: "Programme minceur / remodelage.",
-    objective: "Tonification, peau lissée."
+    description: "3 mois pour tout changer. Un engagement envers vous-même pour une métamorphose physique et mentale durable.",
+    objective: "Transformation, Suivi long terme.",
+    bestValue: true
   }
 ];

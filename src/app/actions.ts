@@ -9,10 +9,7 @@ const ContactSchema = z.object({
   message: z.string().min(10, "Le message doit contenir au moins 10 caractères"),
 });
 
-export async function sendContactEmail(formData: FormData) {
-  // Simulate delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
+export async function sendContactEmail(prevState: any, formData: FormData) {
   const rawData = {
     name: formData.get("name"),
     email: formData.get("email"),
@@ -26,14 +23,45 @@ export async function sendContactEmail(formData: FormData) {
     return { success: false, errors: result.error.flatten().fieldErrors };
   }
 
-  // TODO: Integrate actual Email Provider (Resend, SendGrid, etc.)
-  // TODO: Integrate SMS Provider (Twilio, Vonage, etc.)
-  
-  console.log("📨 Email simulation:", result.data);
-  console.log("📱 SMS simulation: New message from " + result.data.name);
+  const { name, email, phone, message } = result.data;
 
-  return { 
-    success: true, 
-    message: "Message envoyé avec succès ! Sabrina vous recontactera très vite." 
-  };
+  try {
+    // SOLUTION SIMPLE : FormSubmit.co
+    // Envoi des données via une simple requête HTTP
+    // L'email arrivera sur : sabcompan8306@gmail.com
+    const response = await fetch("https://formsubmit.co/ajax/sabcompan8306@gmail.com", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        _subject: `🔔 Nouveau contact : ${name}`, // Sujet du mail
+        nom: name,
+        email: email,
+        telephone: phone || "Non renseigné",
+        message: message,
+        _template: "table", // Format propre
+        _captcha: "false" // Désactive le captcha de leur côté (on gère le nôtre si besoin)
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur service FormSubmit");
+    }
+
+    console.log("📨 Données transmises à FormSubmit pour:", name);
+
+    return { 
+      success: true, 
+      message: "Message envoyé avec succès ! Sabrina vous recontactera très vite." 
+    };
+
+  } catch (error) {
+    console.error("❌ Erreur lors de l'envoi:", error);
+    return { 
+        success: false, 
+        message: "Une erreur est survenue. Veuillez réessayer." 
+    };
+  }
 }

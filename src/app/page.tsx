@@ -3,9 +3,16 @@ import { Hero } from "@/components/hero";
 import { Footer } from "@/components/footer";
 import { ServiceCard } from "@/components/service-card";
 import { ContactForm } from "@/components/contact-form";
+import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
 import { ParallaxBackground } from "@/components/parallax-background";
 import { AbstractShape } from "@/components/ui/abstract-shape";
+import { SmoothScroller } from "@/components/ui/smooth-scroller";
+import { CustomCursor } from "@/components/ui/cursor";
+import { Testimonials } from "@/components/testimonials";
+import { Faq } from "@/components/faq";
+import { ValuesSection } from "@/components/values-section";
+import { PhotoMarquee } from "@/components/photo-marquee";
 import { SERVICES } from "@/data/content";
 
 export default function Home() {
@@ -13,8 +20,12 @@ export default function Home() {
   const massageServices = SERVICES.filter((s) => s.category === "Massages" || s.category === "Cures");
 
   return (
-    <div className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30">
+    <div className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 cursor-none">
       
+      {/* UX ENHANCEMENTS */}
+      <SmoothScroller />
+      <CustomCursor />
+
       {/* 1. GLOBAL PARALLAX BACKGROUND */}
       <ParallaxBackground />
 
@@ -30,8 +41,11 @@ export default function Home() {
           className="border-y-4 border-white shadow-2xl"
         />
 
+        {/* NEW: WHY ME SECTION (Authority) */}
+        <ValuesSection />
+
         {/* Services Section - Coaching */}
-        <section id="coaching" className="py-32 relative">
+        <section id="coaching" className="py-20 relative">
           <div className="container relative mx-auto px-4 md:px-8">
             
             {/* Header avec Forme Abstraite 3D */}
@@ -47,8 +61,10 @@ export default function Home() {
                   </span>
                 </h2>
                 <p className="text-slate-600 text-lg font-medium leading-relaxed max-w-md backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
-                  Des programmes construits pour vous, qui s'adaptent à votre rythme et vos objectifs.
-                  Repoussez vos limites dans un cadre sécurisé.
+                  Ne perdez plus de temps avec des programmes génériques.
+                  <span className="block mt-2 font-bold text-slate-900">
+                    Choisissez l'excellence.
+                  </span>
                 </p>
               </div>
 
@@ -66,27 +82,30 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Spacer */}
-        <div className="h-32 w-full" />
+        {/* Photo Gallery Marquee */}
+        <PhotoMarquee />
 
         {/* Services Section - Massage */}
-        <section id="massage" className="py-32 relative">
+        <section id="massage" className="py-20 relative">
           <div className="container relative mx-auto px-4 md:px-8">
             
             {/* Header avec Forme Abstraite Care */}
             <div className="flex flex-col lg:flex-row-reverse items-center justify-between mb-20 gap-12">
                <div className="space-y-6 lg:w-1/2 text-right relative">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-care text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-care/30">
-                  Wellness
+                  Self Care
                 </span>
                 <h2 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]">
-                  Massages <br/>
+                  Soins & <br/>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-care to-accent-peach">
-                    & Cures
+                    Récupération
                   </span>
                 </h2>
                 <p className="text-slate-600 text-lg font-medium leading-relaxed max-w-md ml-auto backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
-                  Déconnectez. Relâchez. Réparez. Des soins essentiels pour durer et retrouver votre harmonie.
+                  Votre corps est votre moteur, entretenez-le.
+                  <span className="block mt-2 font-bold text-slate-900">
+                    Drainage, relâchement musculaire ou pure détente : faites un "Reset" complet.
+                  </span>
                 </p>
               </div>
 
@@ -104,7 +123,13 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Contact Section */}
+        {/* SOCIAL PROOF (Testimonials) */}
+        <Testimonials />
+
+        {/* FAQ SECTION */}
+        <Faq />
+
+        {/* Contact Section - WITH SCARCITY */}
         <section id="contact" className="py-24 relative overflow-hidden">
           <div className="container relative mx-auto px-4 md:px-8">
             <div className="bg-slate-900/90 backdrop-blur-2xl rounded-[3rem] p-8 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-white">
@@ -116,12 +141,23 @@ export default function Home() {
                       Let's <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">Start</span>.
                     </h2>
                     <p className="text-slate-400 text-xl leading-relaxed max-w-md">
-                      Chaque grand changement commence par un petit message. Écrivez-moi.
+                      Prêt(e) à changer ? N'attendez plus, les créneaux partent vite.
                     </p>
                   </div>
 
+                  {/* SCARCITY INDICATOR */}
+                  <div className="inline-flex items-center gap-3 bg-green-500/10 border border-green-500/20 px-4 py-3 rounded-xl animate-pulse">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <span className="font-bold text-green-400 tracking-wide text-sm">
+                      Disponibilité : Quelques places cette semaine
+                    </span>
+                  </div>
+
                   <div className="flex flex-col gap-6">
-                     <div className="flex items-center gap-6 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5">
+                     <div className="flex items-center gap-6 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors border border-white/5 cursor-hover">
                         <div className="h-12 w-12 rounded-full bg-training flex items-center justify-center font-bold text-xl">
                           83
                         </div>

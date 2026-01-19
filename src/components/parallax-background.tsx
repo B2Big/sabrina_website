@@ -1,54 +1,99 @@
 'use client';
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 export function ParallaxBackground() {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"]
-  });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Différentes vitesses pour l'effet de profondeur
-  const yFast = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const ySlow = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const yReverse = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, 45]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    // Configuration des Blobs COMPLEXE (5 couleurs)
+    const blobs = [
+      { x: Math.random() * width, y: Math.random() * height, vx: 0.3, vy: 0.2, r: 350, color: 'rgba(79, 70, 229, 0.2)' }, // Indigo
+      { x: Math.random() * width, y: Math.random() * height, vx: -0.3, vy: 0.3, r: 300, color: 'rgba(6, 182, 212, 0.2)' }, // Cyan
+      { x: Math.random() * width, y: Math.random() * height, vx: 0.2, vy: -0.2, r: 250, color: 'rgba(192, 38, 211, 0.2)' }, // Fuchsia
+      { x: Math.random() * width, y: Math.random() * height, vx: -0.2, vy: -0.3, r: 320, color: 'rgba(225, 29, 72, 0.15)' }, // Rose
+      { x: Math.random() * width, y: Math.random() * height, vx: 0.4, vy: 0.1, r: 280, color: 'rgba(245, 158, 11, 0.2)' }, // Amber
+    ];
+
+    const resize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    };
+    
+    window.addEventListener('resize', resize);
+    resize();
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+      
+      // Fond blanc cassé
+      ctx.fillStyle = '#FAFAFA';
+      ctx.fillRect(0, 0, width, height);
+
+      // Grille de fond subtile
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(0,0,0,0.03)';
+      ctx.lineWidth = 1;
+      const gridSize = 50;
+      for (let x = 0; x <= width; x += gridSize) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+      }
+      for (let y = 0; y <= height; y += gridSize) {
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+      }
+      ctx.stroke();
+
+      // Dessin des Blobs avec effet de flou (Blur)
+      // Note: Le filter blur peut être coûteux en perfs, on l'applique au canvas context
+      ctx.filter = 'blur(80px)';
+
+      blobs.forEach(blob => {
+        // Mouvement
+        blob.x += blob.vx;
+        blob.y += blob.vy;
+
+        // Rebond sur les bords
+        if (blob.x < -blob.r || blob.x > width + blob.r) blob.vx *= -1;
+        if (blob.y < -blob.r || blob.y > height + blob.r) blob.vy *= -1;
+
+        // Dessin
+        ctx.beginPath();
+        ctx.arc(blob.x, blob.y, blob.r, 0, Math.PI * 2);
+        ctx.fillStyle = blob.color;
+        ctx.fill();
+      });
+
+      ctx.filter = 'none'; // Reset filter
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   return (
-    <div ref={ref} className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-      {/* Couche 1 : Fond Base */}
-      <div className="absolute inset-0 bg-slate-50" />
-
-      {/* Couche 2 : Grille Perspective qui bouge lentement */}
-      <motion.div 
-        style={{ y: ySlow, opacity: 0.4 }}
-        className="absolute inset-[-50%] w-[200%] h-[200%] bg-[linear-gradient(rgba(59,130,246,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.05)_1px,transparent_1px)] bg-[size:100px_100px] [transform:perspective(1000px)_rotateX(60deg)]"
-      />
-
-      {/* Couche 3 : Orbes Flous (Pop Colors) */}
-      
-      {/* Orbe Bleu (Training) - Bouge vite */}
-      <motion.div 
-        style={{ y: yFast, x: ySlow }}
-        className="absolute top-[10%] left-[10%] w-[40vw] h-[40vw] bg-training/10 rounded-full blur-[100px]"
-      />
-      
-      {/* Orbe Rose (Care) - Bouge en inverse */}
-      <motion.div 
-        style={{ y: yReverse, right: 0 }}
-        className="absolute top-[40%] right-[10%] w-[50vw] h-[50vw] bg-care/10 rounded-full blur-[120px]"
-      />
-
-      {/* Orbe Menthe (Accent) - Rotation */}
-      <motion.div 
-        style={{ rotate, y: ySlow }}
-        className="absolute bottom-[-10%] left-[20%] w-[30vw] h-[30vw] bg-accent-mint/10 rounded-full blur-[80px]"
-      />
-
-      {/* Couche 4 : Noise Texture (Grain) pour lier le tout */}
-      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-    </div>
+    <canvas 
+      ref={canvasRef} 
+      className="fixed inset-0 z-0 w-full h-full pointer-events-none opacity-60"
+    />
   );
 }

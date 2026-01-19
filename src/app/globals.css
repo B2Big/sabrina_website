@@ -1,21 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  /* Base - Light & Clean */
-  --background: #FAFAFA;
-  --foreground: #1E293B;
+  --background: #FFFFFF;
+  --foreground: #0F172A;
 
-  /* Pôle TRAINING (Pop & Fresh) */
-  --color-training: #3B82F6;
-  --color-training-light: #EFF6FF;
-  --color-training-dark: #1D4ED8;
+  /* MULTI-COLOR PALETTE "PRISM" */
+  
+  /* Cool Spectrum (Training) */
+  --color-indigo: #4F46E5;
+  --color-cyan: #06B6D4;
+  --color-mint: #10B981;
+
+  /* Warm Spectrum (Care) */
+  --color-rose: #E11D48;
+  --color-fuchsia: #C026D3;
+  --color-amber: #F59E0B;
+
+  /* Aliases fonctionnels (On garde les noms pour le code existant, mais on les mappe sur des couleurs vives) */
+  --color-training: #2563EB; /* Royal Blue */
+  --color-care: #DB2777; /* Pink 600 */
+  
   --color-accent-mint: #34D399;
-
-  /* Pôle CARE (Soft & Warm) */
-  --color-care: #F472B6;
-  --color-care-light: #FFF1F2;
-  --color-care-dark: #BE185D;
-  --color-accent-peach: #FDBA74;
+  --color-accent-peach: #FBBF24;
 }
 
 @theme inline {
@@ -23,14 +29,15 @@
   --color-foreground: var(--foreground);
   
   --color-training: var(--color-training);
-  --color-training-light: var(--color-training-light);
-  --color-training-dark: var(--color-training-dark);
-  --color-accent-mint: var(--color-accent-mint);
-
+  
   --color-care: var(--color-care);
-  --color-care-light: var(--color-care-light);
-  --color-care-dark: var(--color-care-dark);
-  --color-accent-peach: var(--color-accent-peach);
+
+  --color-indigo: var(--color-indigo);
+  --color-cyan: var(--color-cyan);
+  --color-mint: var(--color-mint);
+  --color-rose: var(--color-rose);
+  --color-fuchsia: var(--color-fuchsia);
+  --color-amber: var(--color-amber);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
@@ -55,18 +62,25 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    opacity: 0.03;
+    opacity: 0.04;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+  
+  .text-gradient-training {
+    background: linear-gradient(to right, var(--color-indigo), var(--color-cyan), var(--color-mint));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-care {
+    background: linear-gradient(to right, var(--color-fuchsia), var(--color-rose), var(--color-amber));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .text-outline {
     -webkit-text-stroke: 1px rgba(0,0,0,0.1);
-    color: transparent;
-  }
-  
-  .text-outline-white {
-    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
     color: transparent;
   }
 }
