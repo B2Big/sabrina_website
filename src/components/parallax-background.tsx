@@ -164,19 +164,19 @@ export function ParallaxBackground() {
 
     
 
-          <canvas 
+                    <canvas 
 
     
 
-            ref={canvasRef} 
+                      ref={canvasRef} 
 
     
 
-            className="fixed inset-0 z-0 w-full h-full pointer-events-none opacity-80 blur-[80px] md:blur-[120px] translate-z-0 will-change-contents"
+                      className="hidden md:block fixed inset-0 z-0 w-full h-full pointer-events-none opacity-80 blur-[80px] md:blur-[120px] translate-z-0 will-change-contents"
 
     
 
-          />
+                    />
 
     
 

@@ -13,8 +13,8 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-noise">
-      {/* Animated Floating Orbs */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Animated Floating Orbs - HIDDEN ON MOBILE */}
+      <div className="hidden md:block absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.div 
           style={{ y: y1 }}
           animate={{ 
@@ -45,8 +45,8 @@ export function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8 lg:w-3/5 text-center lg:text-left"
           >
-            {/* Giant Outline Text Background */}
-            <div className="absolute top-1/2 left-1/2 lg:left-1/4 -translate-x-1/2 -translate-y-1/2 w-full select-none pointer-events-none z-[-1]">
+            {/* Giant Outline Text Background - HIDDEN ON MOBILE */}
+            <div className="hidden md:block absolute top-1/2 left-1/2 lg:left-1/4 -translate-x-1/2 -translate-y-1/2 w-full select-none pointer-events-none z-[-1]">
               <span className="text-[10rem] md:text-[18rem] font-black leading-none text-outline opacity-30 blur-sm block">
                 ENERGY
               </span>
