@@ -41,26 +41,26 @@ export function ParallaxImage({
       className={cn("relative perspective-1000", className)}
     >
       {/* 
-        COOL EFFECT: "Levitation"
-        - Entry: Slides up with a slight 3D rotation (premium feel)
-        - Loop: Gently floats up and down using CSS (zero JS cost)
+        COOL EFFECT: Optimized for Mobile
+        - Mobile: Simple clean parallax (No floating loop, no 3D) -> Zero Lag
+        - Desktop: Adds the "Levitation" loop
       */}
       <motion.div
-        initial={{ opacity: 0, y: 100, rotateX: 10 }}
-        whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-        transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1.0] }} // Bezier for "luxurious" feel
+        initial={{ opacity: 0, y: 50 }} // Removed rotateX (heavy 3D)
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.0, ease: "easeOut" }}
         viewport={{ once: true }}
-        style={{ y }} // Attach the smooth parallax here
+        style={{ y }} // Keep smooth parallax
         className="w-full h-full relative"
       >
-        <div className="w-full h-full relative overflow-hidden rounded-[2.5rem] shadow-2xl animate-float">
+        <div className="w-full h-full relative overflow-hidden rounded-[2.5rem] shadow-2xl md:animate-float"> 
           <Image 
             src={src} 
             alt={alt} 
             fill
             sizes={sizes}
-            className="object-cover scale-105" // Slight zoom to avoid edge gaps during float
-            priority={priority} // Load fast only if requested
+            className="object-cover scale-105" 
+            priority={priority} 
           />
           
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-50 pointer-events-none" />
