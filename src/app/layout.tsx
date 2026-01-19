@@ -24,6 +24,10 @@ export const metadata: Metadata = {
   authors: [{ name: "Sabrina" }],
   creator: "Sabrina",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/logo.svg",
+    apple: "/logo.svg",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -67,7 +71,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Sabrina Coaching & Massage",
-    "image": "https://sabrina-coaching-massage.fr/logo.png", // À définir
+    "image": "https://sabrina-coaching-massage.fr/logo.svg",
     "telephone": CONTACT_INFO.phone,
     "email": CONTACT_INFO.email,
     "address": {
