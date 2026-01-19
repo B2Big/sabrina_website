@@ -63,7 +63,7 @@ export default function InstallPrompt() {
           <p className="mt-1 text-sm text-gray-600">
             {isIOS 
               ? "Ajoutez l'app à l'écran d'accueil pour y accéder tout le temps." 
-              : "Installez Club Run pour un accès rapide."}
+              : "Installez Sabrina pour un accès rapide."}
           </p>
         </div>
         <button 

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Sabrina Run",
+    title: "Sabrina",
   },
   openGraph: {
     type: "website",

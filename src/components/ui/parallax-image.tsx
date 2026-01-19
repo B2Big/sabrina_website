@@ -54,22 +54,9 @@ export function ParallaxImage({ src, alt, className, offset = 40 }: ParallaxImag
             priority // Load fast
           />
           
-          {/* Glossy Overlay for "Glass/Premium" look */}
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-50 pointer-events-none" />
         </div>
       </motion.div>
-
-      {/* CSS Animation Definition */}
-      <style jsx global>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-          will-change: transform; /* Hint to browser to use GPU */
-        }
-      `}</style>
     </div>
   );
 }

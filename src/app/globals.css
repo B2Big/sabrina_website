@@ -84,4 +84,14 @@
     -webkit-text-stroke: 1px rgba(0,0,0,0.1);
     color: transparent;
   }
+
+  /* Custom Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+  }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+    will-change: transform;
+  }
 }

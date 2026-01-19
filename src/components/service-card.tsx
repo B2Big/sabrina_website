@@ -450,21 +450,79 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
 
           
 
-          {service.paymentLink ? (
+                    {service.paymentLink ? (
 
-             <Button className="w-full rounded-xl font-bold tracking-wide shadow-lg hover:scale-[1.02] transition-transform" style={{ backgroundColor: accentColor }} asChild>
 
-                <a href={service.paymentLink} target="_blank" rel="noopener noreferrer">
 
-                   <CreditCard className="w-4 h-4 mr-2" />
+        
 
-                   {service.features ? 'Démarrer l\'essai' : 'Commander'}
+          
 
-                </a>
+                       <Button className="w-full rounded-xl font-bold tracking-wide shadow-lg hover:scale-[1.02] transition-transform" style={{ backgroundColor: accentColor }} asChild>
 
-             </Button>
 
-          ) : (
+
+        
+
+          
+
+                          <a href={service.paymentLink} target="_blank" rel="noopener noreferrer">
+
+
+
+        
+
+          
+
+                             <CreditCard className="w-4 h-4 mr-2" />
+
+
+
+        
+
+          
+
+                             {service.id === 'club-run-saas' ? 'Démarrer l\'essai' : 
+
+
+
+        
+
+          
+
+                              service.id === 'forfait-10' ? 'Acheter le Pack' : 
+
+
+
+        
+
+          
+
+                              'Réserver'}
+
+
+
+        
+
+          
+
+                          </a>
+
+
+
+        
+
+          
+
+                       </Button>
+
+
+
+        
+
+          
+
+                    ) : (
 
              <Button variant="outline" className="w-full rounded-xl font-bold tracking-wide border-slate-200 text-slate-600 hover:bg-slate-50" asChild>
 
