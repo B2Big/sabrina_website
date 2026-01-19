@@ -102,8 +102,8 @@ export function ContactForm() {
             <input type="hidden" name="subject" value={selectedSubject} />
           </div>
 
-          <div className="space-y-5">
-            <div className="space-y-1.5">
+          <div className="space-y-6">
+            <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
                 Votre Nom
               </label>
@@ -112,7 +112,7 @@ export function ContactForm() {
                 name="name"
                 type="text"
                 required
-                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
+                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
                 placeholder="Ex: Sophie Martin"
               />
               {state.errors?.name && (
@@ -120,8 +120,8 @@ export function ContactForm() {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
                   Email
                 </label>
@@ -130,37 +130,38 @@ export function ContactForm() {
                   name="email"
                   type="email"
                   required
-                  className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
+                  className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
                   placeholder="hello@gmail.com"
                 />
                 {state.errors?.email && (
                   <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.email[0]}</p>
                 )}
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
-                  Téléphone <span className="text-slate-300 text-[10px] normal-case">(Optionnel)</span>
+                  Téléphone
                 </label>
                 <input
                   id="phone"
                   name="phone"
                   type="tel"
-                  className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all"
+                  required
+                  className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
                   placeholder="06 12 34 56 78"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label htmlFor="message" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
                 Votre Message
               </label>
               <textarea
                 id="message"
                 name="message"
-                rows={4}
+                rows={5}
                 required
-                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-slate-900 font-medium placeholder:text-slate-300 focus:outline-none focus:border-slate-300 focus:bg-white transition-all resize-none"
+                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-medium placeholder:text-slate-300 focus:outline-none focus:border-slate-300 focus:bg-white transition-all resize-none shadow-sm"
                 placeholder="Bonjour, je souhaiterais avoir des informations sur..."
               />
               {state.errors?.message && (

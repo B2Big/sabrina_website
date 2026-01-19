@@ -22,25 +22,27 @@ export function ParallaxImage({ src, alt, className, offset = 50 }: ParallaxImag
   });
 
   // On transforme la progression du scroll (0 à 1) en valeur de pixel (y)
-  const y = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.15, 1, 1.15]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [-offset * 1.5, offset * 1.5]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.2, 1, 1.2]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [-5, 5]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
     <div 
       ref={ref} 
       className={cn("relative overflow-hidden rounded-[2.5rem] shadow-2xl aspect-[4/5] w-full", className)}
+      style={{ perspective: "1000px" }}
     >
       <motion.div 
-        style={{ y, scale, opacity }} 
-        className="absolute inset-[-10%] w-[120%] h-[120%]"
+        style={{ y, scale, rotate, opacity }} 
+        className="absolute inset-[-20%] w-[140%] h-[140%] will-change-transform"
       >
-        {/* On utilise un simple img tag ici pour la démo rapide sans config Next/Image domain, 
-            mais en prod on utiliserait <Image /> avec fill */}
-        <img 
+        <Image 
           src={src} 
           alt={alt} 
-          className="w-full h-full object-cover"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover"
         />
       </motion.div>
       

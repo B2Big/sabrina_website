@@ -43,11 +43,11 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="text-slate-900 font-bold uppercase tracking-wider text-xs">Contact</h4>
             <div className="space-y-3">
-              <a href="mailto:contact@sabrina-coach.fr" className="flex items-center gap-3 text-slate-500 hover:text-training transition-colors group">
+              <a href="mailto:sabcompan8306@gmail.com" className="flex items-center gap-3 text-slate-500 hover:text-training transition-colors group">
                 <div className="p-2 bg-white border border-slate-200 rounded-full group-hover:border-training group-hover:text-training transition-colors">
                   <Mail className="w-4 h-4" />
                 </div>
-                <span className="text-sm">contact@sabrina-coach.fr</span>
+                <span className="text-sm">sabcompan8306@gmail.com</span>
               </a>
             </div>
           </div>
@@ -58,7 +58,7 @@ export function Footer() {
             © {new Date().getFullYear()} Sabrina Coaching. Tous droits réservés.
           </p>
           <div className="flex items-center gap-4">
-            <a href="#" className="text-slate-400 hover:text-care transition-colors">
+            <a href="https://www.instagram.com/sab.fit_coaching83" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-care transition-colors">
               <Instagram className="w-5 h-5" />
               <span className="sr-only">Instagram</span>
             </a>

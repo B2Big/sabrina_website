@@ -49,10 +49,11 @@
     color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    position: relative;
   }
 }
 
-/* NOISE TEXTURE UTILITY */
+/* NOISE TEXTURE UTILITY (Legacy support if needed locally) */
 @layer utilities {
   .bg-noise {
     position: relative;

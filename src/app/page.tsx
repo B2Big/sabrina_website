@@ -132,9 +132,9 @@ export default function Home() {
         {/* Contact Section - WITH SCARCITY */}
         <section id="contact" className="py-24 relative overflow-hidden">
           <div className="container relative mx-auto px-4 md:px-8">
-            <div className="bg-slate-900/90 backdrop-blur-2xl rounded-[3rem] p-8 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-white">
+            <div className="bg-slate-900/90 backdrop-blur-2xl rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-white">
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 relative z-10">
                 <div className="space-y-10 flex flex-col justify-center">
                   <div>
                     <h2 className="text-5xl md:text-7xl font-black tracking-tight mb-6">
@@ -169,7 +169,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-3xl p-8 text-slate-900 shadow-xl">
+                <div className="bg-white rounded-3xl p-5 md:p-8 text-slate-900 shadow-xl">
                   <h3 className="text-2xl font-black mb-6">Envoyer un message</h3>
                   <ContactForm />
                 </div>

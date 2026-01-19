@@ -35,7 +35,7 @@ export function PhotoMarquee() {
           <motion.div 
             animate={{ x: [0, -1920] }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="flex flex-nowrap gap-8 pr-8"
+            className="flex flex-nowrap gap-8 pr-8 will-change-transform"
           >
             {[...IMAGES, ...IMAGES].map((src, i) => (
               <div key={i} className="w-[300px] md:w-[450px] flex-shrink-0">
@@ -54,7 +54,7 @@ export function PhotoMarquee() {
           <motion.div 
             animate={{ x: [-1920, 0] }}
             transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="flex flex-nowrap gap-8 pr-8"
+            className="flex flex-nowrap gap-8 pr-8 will-change-transform"
           >
             {[...IMAGES].reverse().concat([...IMAGES].reverse()).map((src, i) => (
               <div key={i} className="w-[250px] md:w-[350px] flex-shrink-0">

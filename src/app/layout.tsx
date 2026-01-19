@@ -1,17 +1,34 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { CONTACT_INFO } from "@/data/content";
+import { MobileNav } from "@/components/mobile-nav";
+import InstallPrompt from "@/components/pwa/InstallPrompt";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
+export const viewport: Viewport = {
+  themeColor: "#3B82F6",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // App-like feel
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL('https://sabrina-coaching-massage.fr'),
   title: "Sabrina Coaching & Massage | Bien-être dans le Var (83)",
   description: "Coaching sportif personnalisé et massages bien-être (Madérothérapie, Californien, Sportif) dans le Var. Retrouvez votre équilibre corps et esprit.",
   keywords: ["coaching sportif", "massage var", "madérothérapie", "bien-être 83", "coach sportif domicile", "massage drainage lymphatique"],
   authors: [{ name: "Sabrina" }],
   creator: "Sabrina",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Sabrina Run",
+  },
   openGraph: {
     type: "website",
     locale: "fr_FR",
@@ -73,6 +90,8 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning={true} className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
         {children}
+        <InstallPrompt />
+        <MobileNav />
       </body>
     </html>
   );
