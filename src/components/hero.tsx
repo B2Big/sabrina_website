@@ -108,6 +108,7 @@ export function Hero() {
               src="/img/sabrina/sabrina-1.jpg" 
               alt="Sabrina Coaching & Wellness" 
               className="aspect-[4/5] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] border-[12px] border-white"
+              priority={true}
             />
             {/* Floating decoration */}
             <div className="absolute -bottom-6 -right-6 bg-training text-white p-6 rounded-3xl shadow-2xl z-20 hidden md:block animate-bounce">

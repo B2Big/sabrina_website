@@ -10,9 +10,18 @@ interface ParallaxImageProps {
   alt: string;
   className?: string;
   offset?: number;
+  priority?: boolean;
+  sizes?: string;
 }
 
-export function ParallaxImage({ src, alt, className, offset = 40 }: ParallaxImageProps) {
+export function ParallaxImage({ 
+  src, 
+  alt, 
+  className, 
+  offset = 40, 
+  priority = false,
+  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+}: ParallaxImageProps) {
   const ref = useRef(null);
   
   // 1. Scroll Tracker
@@ -49,9 +58,9 @@ export function ParallaxImage({ src, alt, className, offset = 40 }: ParallaxImag
             src={src} 
             alt={alt} 
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes={sizes}
             className="object-cover scale-105" // Slight zoom to avoid edge gaps during float
-            priority // Load fast
+            priority={priority} // Load fast only if requested
           />
           
           <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-50 pointer-events-none" />

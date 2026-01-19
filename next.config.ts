@@ -9,6 +9,9 @@ const withPWA = withPWAInit({
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
 };
 
 export default withPWA(nextConfig);
