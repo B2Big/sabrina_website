@@ -1,24 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  /* Warrior Palette */
-  --warrior-red: #D92323;
-  --warrior-crimson: #8C0E0E;
-  --warrior-dark: #1A0505;
-  --warrior-black: #0A0A0A;
-  
-  --background: var(--warrior-black);
-  --foreground: #ededed;
+  /* Base - Light & Clean */
+  --background: #FAFAFA;
+  --foreground: #1E293B;
+
+  /* Pôle TRAINING (Pop & Fresh) */
+  --color-training: #3B82F6;
+  --color-training-light: #EFF6FF;
+  --color-training-dark: #1D4ED8;
+  --color-accent-mint: #34D399;
+
+  /* Pôle CARE (Soft & Warm) */
+  --color-care: #F472B6;
+  --color-care-light: #FFF1F2;
+  --color-care-dark: #BE185D;
+  --color-accent-peach: #FDBA74;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-warrior-red: var(--warrior-red);
-  --color-warrior-crimson: var(--warrior-crimson);
-  --color-warrior-dark: var(--warrior-dark);
-  --color-warrior-black: var(--warrior-black);
   
+  --color-training: var(--color-training);
+  --color-training-light: var(--color-training-light);
+  --color-training-dark: var(--color-training-dark);
+  --color-accent-mint: var(--color-accent-mint);
+
+  --color-care: var(--color-care);
+  --color-care-light: var(--color-care-light);
+  --color-care-dark: var(--color-care-dark);
+  --color-accent-peach: var(--color-accent-peach);
+
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
 }
@@ -32,17 +45,28 @@
   }
 }
 
-/* Custom Scrollbar for the "premium" feel */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--warrior-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--warrior-crimson);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--warrior-red);
+/* NOISE TEXTURE UTILITY */
+@layer utilities {
+  .bg-noise {
+    position: relative;
+  }
+  .bg-noise::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+  
+  .text-outline {
+    -webkit-text-stroke: 1px rgba(0,0,0,0.1);
+    color: transparent;
+  }
+  
+  .text-outline-white {
+    -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+    color: transparent;
+  }
 }

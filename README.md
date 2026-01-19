@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sabrina - Coaching & Massage (Warrior Edition)
 
-## Getting Started
+Site vitrine moderne pour une coach sportive et masseuse, basé sur une esthétique "Guerrière / Amazone".
 
-First, run the development server:
+## 🚀 Démarrage Rapide
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1.  **Installation des dépendances :**
+    ```bash
+    npm install
+    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2.  **Lancer le serveur de développement :**
+    ```bash
+    npm run dev
+    ```
+    Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🎨 Concept & Design
+Le site utilise un **"Dark Mode"** par défaut avec des accents **Rouge Guerrier** (`#D92323`).
+Il est conçu pour inspirer la force (Coaching) tout en proposant la récupération nécessaire (Massage).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Technologies :**
+- Next.js 15
+- Tailwind CSS v4
+- Framer Motion
+- TypeScript
 
-## Learn More
+## 📁 Structure du Projet
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app` : Pages et Layouts (App Router).
+- `src/components` : Composants UI réutilisables (Navbar, Hero, Cards...).
+- `src/data` : Contenu statique du site (Prix, Textes, Services).
+- `src/lib` : Utilitaires.
+- `docs` : Documentation du contexte et journal des modifications.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠 Commandes Utiles
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `npm run dev` : Mode développement.
+- `npm run build` : Construction pour la production.
+- `npm run lint` : Vérification du code (ESLint).
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 À Faire (Prochaines étapes)
+- Connecter un véritable service d'envoi d'email (ex: Resend).
+- Connecter un service SMS (ex: Twilio).

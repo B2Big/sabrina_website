@@ -1,14 +1,23 @@
 # Journal des Modifications (Changelog)
 
-## [Non publié] - En cours
-### Ajouté
-- Création de la documentation du projet (`docs/PROJECT_CONTEXT.md`).
-- Définition de la nouvelle direction artistique "Warrior/Amazone".
-- Mise en place du "Warrior Theme" dans `globals.css`.
-- Création des composants UI : `Button`, `Navbar`, `Footer`, `Hero`, `ServiceCard`, `ContactForm`.
-- Intégration de la page d'accueil avec tous les composants et données.
-- Implémentation du backend (Server Actions) pour le formulaire de contact.
+## [0.2.0] - 2026-01-19 - Redesign "Pop & Wellness"
+### Modifié (Direction Artistique)
+- **Refonte totale du Design System :**
+    - Abandon du thème "Warrior" (Noir/Rouge).
+    - Adoption du thème "Pop & Wellness" (Blanc/Bleu/Rose).
+- **Typographie & Ambiance :**
+    - Style plus neutre, mixte et inclusif.
+    - Formes arrondies (Border radius importants) pour plus de douceur.
+- **Couleurs :**
+    - **Coaching :** Bleu Électrique (`#3B82F6`) + Menthe.
+    - **Massage :** Corail Pastel (`#F472B6`) + Pêche.
+    - **Background :** Blanc lumineux.
 
-### Modifié
-- Décision de retirer Calendly au profit d'un formulaire de contact direct.
-- Planification de l'intégration des notifications SMS.
+### Modifié (Composants)
+- **`Hero` :** Nouveau visuel splitté (Bleu/Rose) avec slogan neutre "Boostez votre Énergie / Cultivez votre Bien-être".
+- **`ServiceCard` :** Adaptation dynamique des couleurs (bordures, icones, badges) selon la catégorie du service.
+- **`Navbar` / `Footer` :** Passage en thème clair.
+- **`ContactForm` :** Style épuré sur fond blanc.
+
+## [0.1.0] - 2026-01-19
+- Initialisation du projet et première version "Warrior" (Obsolète).

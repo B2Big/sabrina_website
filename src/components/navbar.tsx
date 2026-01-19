@@ -20,7 +20,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -29,16 +29,16 @@ export function Navbar() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent',
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         scrolled
-          ? 'bg-warrior-black/80 backdrop-blur-md border-warrior-red/10 py-4'
-          : 'bg-transparent py-6'
+          ? 'bg-white/90 backdrop-blur-md border-b border-slate-100 py-3 shadow-sm'
+          : 'bg-transparent py-5'
       )}
     >
       <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold tracking-tighter text-white group">
-          SABRINA<span className="text-warrior-red">.</span>
+        <Link href="/" className="text-2xl font-black tracking-tight text-slate-900">
+          SABRINA<span className="text-training">.</span>
         </Link>
 
         {/* Desktop Menu */}
@@ -47,19 +47,19 @@ export function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-medium text-gray-300 hover:text-warrior-red transition-colors uppercase tracking-widest"
+              className="text-sm font-semibold text-slate-600 hover:text-training transition-colors"
             >
               {link.name}
             </Link>
           ))}
-          <Button variant="warrior" size="sm" asChild>
-            <Link href="#contact">Réserver</Link>
+          <Button variant="default" size="sm" className="rounded-full px-6" asChild>
+            <Link href="#contact">Prendre RDV</Link>
           </Button>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-white p-2"
+          className="md:hidden text-slate-900 p-2"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -71,10 +71,10 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-warrior-dark border-b border-warrior-red/20 shadow-2xl md:hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="absolute top-full left-0 right-0 bg-white border-b border-slate-100 shadow-xl md:hidden overflow-hidden"
           >
             <div className="flex flex-col p-6 gap-4">
               {navLinks.map((link) => (
@@ -82,12 +82,12 @@ export function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium text-gray-200 hover:text-warrior-red transition-colors"
+                  className="text-lg font-semibold text-slate-800 hover:text-training transition-colors"
                 >
                   {link.name}
                 </Link>
               ))}
-              <Button variant="warrior" className="w-full mt-4" onClick={() => setIsOpen(false)} asChild>
+              <Button className="w-full mt-2" onClick={() => setIsOpen(false)} asChild>
                 <Link href="#contact">Prendre RDV</Link>
               </Button>
             </div>
