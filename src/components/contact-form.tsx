@@ -1,11 +1,13 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect, useState, Suspense } from 'react';
 import { sendContactEmail } from '@/app/actions';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, Dumbbell, Sparkles, HelpCircle } from 'lucide-react';
+import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
+import { useCart } from '@/context/cart-context';
 
 const initialState = {
   success: false,
@@ -19,9 +21,44 @@ const SUBJECTS = [
   { id: 'autre', label: 'Autre demande', icon: HelpCircle, color: 'text-slate-500', bg: 'bg-slate-100 border-slate-200' },
 ];
 
-export function ContactForm() {
+function ContactFormContent() {
   const [state, formAction, isPending] = useActionState(sendContactEmail, initialState);
   const [selectedSubject, setSelectedSubject] = useState<string>('coaching');
+  const [messageText, setMessageText] = useState('');
+  
+  const { items, total, removeFromCart } = useCart();
+  const searchParams = useSearchParams();
+
+  // Auto-fill from Cart OR URL
+  useEffect(() => {
+    // Priority 1: Cart Items
+    if (items.length > 0) {
+        // Classify subject based on dominance
+        const hasMassage = items.some(i => i.category === 'Massages' || i.category === 'Cures');
+        const hasCoaching = items.some(i => i.category === 'Coaching');
+        
+        if (hasMassage && !hasCoaching) setSelectedSubject('massage');
+        else if (!hasMassage && hasCoaching) setSelectedSubject('coaching');
+        else setSelectedSubject('autre'); // Mixed
+
+        // Generate Message
+        const summary = items.map(i => `- ${i.quantity}x ${i.title} (${i.price})`).join('\n');
+        setMessageText(`Bonjour Sabrina,\n\nJe souhaite réserver les séances suivantes :\n${summary}\n\nTotal estimé : ${total} €\n\nMes disponibilités sont...`);
+        return;
+    }
+
+    // Priority 2: URL Param (Legacy single item link support)
+    const serviceName = searchParams.get('service');
+    if (serviceName) {
+      const lowerName = serviceName.toLowerCase();
+      if (lowerName.includes('massage') || lowerName.includes('soin') || lowerName.includes('cure') || lowerName.includes('jambes')) {
+        setSelectedSubject('massage');
+      } else {
+        setSelectedSubject('coaching');
+      }
+      setMessageText(`Bonjour Sabrina,\n\nJe souhaiterais prendre RDV pour la prestation : "${serviceName}".\nMes disponibilités sont...`);
+    }
+  }, [items, total, searchParams]);
 
   // Trigger Confetti on Success
   useEffect(() => {
@@ -74,33 +111,68 @@ export function ContactForm() {
             </div>
           )}
 
-          {/* Subject Selection */}
-          <div className="space-y-3">
-            <label className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
-              Je suis intéressé(e) par...
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {SUBJECTS.map((subject) => (
-                <button
-                  key={subject.id}
-                  type="button"
-                  onClick={() => setSelectedSubject(subject.id)}
-                  className={cn(
-                    "relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer outline-none",
-                    selectedSubject === subject.id 
-                      ? `${subject.bg} ring-1 ring-offset-2 ring-slate-200` 
-                      : "bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-slate-400 grayscale hover:grayscale-0"
-                  )}
-                >
-                  <subject.icon className={cn("w-6 h-6 mb-1", selectedSubject === subject.id ? subject.color : "text-slate-400")} />
-                  <span className={cn("text-xs font-bold", selectedSubject === subject.id ? "text-slate-900" : "text-slate-400")}>
-                    {subject.label}
-                  </span>
-                </button>
-              ))}
+          {/* CART SUMMARY (If items exist) */}
+          {items.length > 0 && (
+            <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 mb-6">
+                <div className="flex items-center gap-2 mb-4 text-slate-900 font-black uppercase tracking-wider text-sm">
+                    <ShoppingBag className="w-5 h-5" />
+                    Ma Sélection ({items.length})
+                </div>
+                <div className="space-y-3">
+                    {items.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded-xl shadow-sm">
+                            <div className="flex items-center gap-3">
+                                <span className="bg-slate-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
+                                    {item.quantity}
+                                </span>
+                                <span className="font-bold text-slate-700 text-sm">{item.title}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="font-black text-slate-900">{item.price}</span>
+                                <button type="button" onClick={() => removeFromCart(item.id)} className="text-slate-400 hover:text-red-500">
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
+                    <span className="font-medium text-slate-500">Total estimé</span>
+                    <span className="text-xl font-black text-slate-900">{total} €</span>
+                </div>
             </div>
-            <input type="hidden" name="subject" value={selectedSubject} />
-          </div>
+          )}
+
+          {/* Subject Selection (Hidden if cart active? No, let user adjust if needed, or maybe just default to inferred one) */}
+          {items.length === 0 && (
+            <div className="space-y-3">
+                <label className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
+                Je suis intéressé(e) par...
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {SUBJECTS.map((subject) => (
+                    <button
+                    key={subject.id}
+                    type="button"
+                    onClick={() => setSelectedSubject(subject.id)}
+                    className={cn(
+                        "relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer outline-none",
+                        selectedSubject === subject.id 
+                        ? `${subject.bg} ring-1 ring-offset-2 ring-slate-200` 
+                        : "bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-slate-400 grayscale hover:grayscale-0"
+                    )}
+                    >
+                    <subject.icon className={cn("w-6 h-6 mb-1", selectedSubject === subject.id ? subject.color : "text-slate-400")} />
+                    <span className={cn("text-xs font-bold", selectedSubject === subject.id ? "text-slate-900" : "text-slate-400")}>
+                        {subject.label}
+                    </span>
+                    </button>
+                ))}
+                </div>
+            </div>
+          )}
+          
+          <input type="hidden" name="subject" value={selectedSubject} />
 
           <div className="space-y-6">
             <div className="space-y-2">
@@ -154,13 +226,15 @@ export function ContactForm() {
 
             <div className="space-y-2">
               <label htmlFor="message" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
-                Votre Message
+                Votre Message {items.length > 0 && <span className="text-training text-xs normal-case font-medium">(Pré-rempli avec votre sélection)</span>}
               </label>
               <textarea
                 id="message"
                 name="message"
-                rows={5}
+                rows={8}
                 required
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-medium placeholder:text-slate-300 focus:outline-none focus:border-slate-300 focus:bg-white transition-all resize-none shadow-sm"
                 placeholder="Bonjour, je souhaiterais avoir des informations sur..."
               />
@@ -187,5 +261,13 @@ export function ContactForm() {
         </>
       )}
     </form>
+  );
+}
+
+export function ContactForm() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-400">Chargement du formulaire...</div>}>
+      <ContactFormContent />
+    </Suspense>
   );
 }

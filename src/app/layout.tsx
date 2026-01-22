@@ -4,6 +4,7 @@ import "./globals.css";
 import { CONTACT_INFO } from "@/data/content";
 import { MobileNav } from "@/components/mobile-nav";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
+import { CartProvider } from "@/context/cart-context";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://sabrina-coaching-massage.fr", // À remplacer par l'URL finale
+    url: "https://sabrina-coaching-massage.fr",
     title: "Sabrina Coaching & Massage | Bien-être dans le Var",
     description: "Coaching sportif et massages bien-être pour harmoniser corps et esprit.",
     siteName: "Sabrina Coaching & Massage",
@@ -93,9 +94,11 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning={true} className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
-        {children}
-        <InstallPrompt />
-        <MobileNav />
+        <CartProvider>
+          {children}
+          <InstallPrompt />
+          <MobileNav />
+        </CartProvider>
       </body>
     </html>
   );

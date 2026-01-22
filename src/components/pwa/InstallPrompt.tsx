@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Share, PlusSquare } from 'lucide-react';
 
 // Define the event interface
 interface BeforeInstallPromptEvent extends Event {
@@ -17,8 +18,8 @@ export default function InstallPrompt() {
     // 1. Only check if it is ALREADY installed
     const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
     if (isStandaloneMode) {
-      setIsStandalone(true);
-      // We don't return here to allow other cleanup if needed, but in this case just stop further prompt logic
+      // Use timeout to avoid sync update warning
+      setTimeout(() => setIsStandalone(true), 0);
     } else {
         // Check if dismissed in the last 24h ONLY if not standalone
         const lastDismissed = localStorage.getItem('installPromptDismissed');
@@ -93,8 +94,12 @@ export default function InstallPrompt() {
       </div>
 
       {isIOS ? (
-        <div className="w-full mt-3 p-2 bg-gray-50 rounded text-sm text-gray-700 border border-gray-100">
-          Appuyez sur <span className="font-bold">Partager</span> <span className="text-lg">⍐</span> puis sur <span className="font-bold">Sur l&apos;écran d&apos;accueil</span> <span className="text-lg">➕</span>
+        <div className="w-full mt-3 p-2 bg-gray-50 rounded text-sm text-gray-700 border border-gray-100 flex items-center justify-center gap-2">
+          <span>Appuyez sur</span> 
+          <Share className="w-4 h-4 inline" /> 
+          <span>puis sur</span> 
+          <span className="font-bold whitespace-nowrap">Sur l&apos;écran d&apos;accueil</span> 
+          <PlusSquare className="w-4 h-4 inline" />
         </div>
       ) : (
         <button

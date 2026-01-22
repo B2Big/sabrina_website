@@ -14,7 +14,7 @@ import { Faq } from "@/components/faq";
 import { ValuesSection } from "@/components/values-section";
 import { PhotoMarquee } from "@/components/photo-marquee";
 import { SERVICES } from "@/data/content";
-import { PaceCalculator } from "@/components/pace-calculator";
+import { FloatingCart } from "@/components/ui/floating-cart";
 
 export default function Home() {
   const coachingServices = SERVICES.filter((s) => s.category === "Coaching");
@@ -34,6 +34,7 @@ export default function Home() {
       <div className="relative z-10">
         <Navbar />
         <Hero />
+        <FloatingCart />
 
         {/* Marquee Separator */}
         <Marquee 
@@ -69,15 +70,9 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Pace Calculator Integration */}
-              <div className="lg:w-1/2 w-full flex flex-col items-center gap-8">
-                <div className="w-full transform hover:scale-[1.02] transition-transform duration-500">
-                   <PaceCalculator />
-                </div>
-                {/* Visual Connector */}
-                <p className="text-xs font-bold text-training/60 uppercase tracking-widest text-center">
-                   ▲ Testez votre potentiel avec le simulateur Club Run
-                </p>
+              {/* Forme Abstraite Training */}
+              <div className="lg:w-1/2 w-full flex justify-center">
+                <AbstractShape type="training" />
               </div>
             </div>
 

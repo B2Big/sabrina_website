@@ -1,7 +1,7 @@
 # Contexte du Projet Sabrina - Coaching & Massage
 
 ## Vision Globale
-Site hybride (Physique + Digital) pour Sabrina, Coach Sportive et Praticienne Bien-être.
+Site vitrine et de réservation pour Sabrina, Coach Sportive et Praticienne Bien-être.
 **Direction Artistique "Pop & Wellness" (Janvier 2026 - v2) :**
 - **Cible :** Mixte (Hommes & Femmes).
 - **Style :** Lumineux, Inclusif, Pop, Pastel.
@@ -11,32 +11,31 @@ Site hybride (Physique + Digital) pour Sabrina, Coach Sportive et Praticienne Bi
 - **Fond :** Blanc / Gris très clair.
 
 ## Stratégie Business (Mise à jour Janvier 2026)
-1.  **Repositionnement Tarifaire (Rentabilité) :**
-    - Coaching 1-to-1 : **60€** (au lieu de 50€).
-    - Pack Transformation (10 séances) : **550€** (au lieu de 400€).
-    - Massages inchangés (70€ / 45€).
-2.  **Lancement Offre SaaS "Club Run" :**
-    - Abonnement mensuel : **29.90€ / mois**.
-    - Cible : Clients autonomes / Digital.
-    - Inclus : App, Programmes, Vidéothèque, Calculateur VMA.
+1.  **Focalisation Services (Site Web) :**
+    - Coaching 1-to-1 : **60€**.
+    - Pack Transformation (10 séances) : **550€**.
+    - Massages : 70€ / 45€.
+    - **Suppression du SaaS "Club Run"** (Déplacé vers une app native dédiée).
+2.  **Panier de Réservation (Upsell) :**
+    - Possibilité d'ajouter plusieurs services (ex: Massage + Coaching).
+    - Formulaire de contact intelligent pré-rempli avec le panier.
 
 ## Fonctionnalités Clés
-1.  **E-Commerce / Réservation :**
-    - Intégration Stripe pour les paiements (One-time & Recurring).
-    - Liens de paiement directs sur les cartes services.
+1.  **Système de Panier (Cart Context) :**
+    - Ajout/Retrait de services.
+    - Calcul du total estimé en temps réel.
+    - Indicateur flottant "Panier" sur mobile/desktop.
 2.  **Présentation des services :**
     - Cartes avec code couleur automatique (Bleu pour Coaching / Rose pour Massage).
-    - **Nouveau :** Carte spéciale "Abonnement SaaS" avec liste de features.
-3.  **Contact :** Formulaire direct.
+    - Bouton "Ajouter" remplaçant le lien direct de paiement.
+3.  **Contact Intelligent :**
+    - Le formulaire détecte le contenu du panier.
+    - Pré-remplissage du message avec la liste des prestations souhaitées.
+4.  **Application Native (Projet séparé) :**
+    - Le calculateur VMA et le tracker GPS sont désormais dans le projet `run-app-native`.
 
 ## Stack Technique
 - **Framework :** Next.js 15
 - **Styling :** Tailwind CSS v4.
-- **Paiement :** Stripe (Mode Subscription & Payment).
-- **Data :** JSON Schema pour les programmes d'entraînement (VMA).
-
-## Configuration Stripe (Product IDs)
-- `price_saas_29` : Club Run (Abo Mensuel)
-- `price_premium_149` : Coaching Elite (Abo Mensuel)
-- `price_massage_70` : Massage 1h (Ponctuel)
-- `price_pack_550` : Pack 10 Séances (Ponctuel)
+- **State Management :** React Context (CartProvider).
+- **Paiement :** (Désactivé temporairement pour privilégier le contact direct).
