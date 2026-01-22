@@ -13,6 +13,8 @@
 - **Composant `FloatingCart` :**
     - Bouton flottant en bas d'écran qui apparaît dès qu'un service est ajouté.
     - Lien direct vers la finalisation de la demande.
+- **Information de Paiement :**
+    - Ajout des mentions de règlement (Espèces, CB, PayPal) sur place ou en ligne dans le formulaire de contact.
 
 ### Modifié (UX/UI)
 - **`ServiceCard` :** Remplacement du bouton "Réserver" par "Ajouter" (avec gestion quantité).

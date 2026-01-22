@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState, Suspense } from 'react';
 import { sendContactEmail } from '@/app/actions';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X } from 'lucide-react';
+import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X, Wallet, CreditCard, Globe } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
@@ -136,9 +136,30 @@ function ContactFormContent() {
                         </div>
                     ))}
                 </div>
-                <div className="mt-4 pt-4 border-t border-slate-200 flex justify-between items-center">
-                    <span className="font-medium text-slate-500">Total estimé</span>
-                    <span className="text-xl font-black text-slate-900">{total} €</span>
+                <div className="mt-4 pt-4 border-t border-slate-200">
+                    <div className="flex justify-between items-center mb-4">
+                        <span className="font-medium text-slate-500">Total estimé</span>
+                        <span className="text-xl font-black text-slate-900">{total} €</span>
+                    </div>
+                    
+                    {/* Payment Info */}
+                    <div className="bg-white/50 border border-slate-100 rounded-xl p-3 flex flex-col gap-2">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Options de règlement</p>
+                        <div className="flex items-center justify-center gap-4 text-slate-600">
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-bold">Espèces</span>
+                            </div>
+                            <div className="w-1 h-1 rounded-full bg-slate-200" />
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-bold">CB</span>
+                            </div>
+                            <div className="w-1 h-1 rounded-full bg-slate-200" />
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-bold">PayPal</span>
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-slate-400 text-center italic">Sur place ou en ligne</p>
+                    </div>
                 </div>
             </div>
           )}
@@ -244,20 +265,67 @@ function ContactFormContent() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="w-full h-16 text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-wide transition-all transform hover:-translate-y-1 active:translate-y-0"
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Envoi en cours...
-              </>
-            ) : (
-              "Envoyer ma demande"
+          {/* Global Payment Info - Enhanced */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <span className="text-xs font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Paiements acceptés</span>
+            <div className="flex flex-wrap justify-center items-center gap-2">
+               <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-100 rounded-lg shadow-sm whitespace-nowrap">
+                  <Wallet className="w-4 h-4 text-emerald-500" />
+                  <span className="text-xs font-bold text-slate-700">Espèces</span>
+               </div>
+               <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-100 rounded-lg shadow-sm whitespace-nowrap">
+                  <CreditCard className="w-4 h-4 text-blue-600" />
+                  <span className="text-xs font-bold text-slate-700">CB</span>
+               </div>
+               <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-100 rounded-lg shadow-sm whitespace-nowrap">
+                  <Globe className="w-4 h-4 text-[#003087]" />
+                  <span className="text-xs font-bold text-slate-700">PayPal</span>
+               </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 pt-2">
+            <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full h-16 text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-wide transition-all transform hover:-translate-y-1 active:translate-y-0"
+            >
+                {isPending ? (
+                <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Envoi en cours...
+                </>
+                ) : (
+                "Envoyer ma demande (Paiement sur place)"
+                )}
+            </Button>
+
+            {items.length > 0 && (
+                <div className="relative flex items-center justify-center my-2">
+                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200"></span></div>
+                    <span className="relative bg-white px-2 text-xs text-slate-400 uppercase font-bold">OU</span>
+                </div>
             )}
-          </Button>
+
+            {items.length > 0 && (
+                <Button
+                    type="button"
+                    onClick={async () => {
+                        const res = await fetch('/api/checkout', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ items }),
+                        });
+                        const data = await res.json();
+                        if (data.url) window.location.href = data.url;
+                    }}
+                    className="w-full h-16 text-lg rounded-2xl bg-[#3B82F6] text-white hover:bg-blue-600 shadow-xl shadow-blue-500/20 font-black tracking-wide transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2"
+                >
+                    <CreditCard className="w-6 h-6" />
+                    Payer en ligne maintenant
+                </Button>
+            )}
+          </div>
         </>
       )}
     </form>

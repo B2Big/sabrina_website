@@ -31,7 +31,10 @@ Site vitrine et de réservation pour Sabrina, Coach Sportive et Praticienne Bien
 3.  **Contact Intelligent :**
     - Le formulaire détecte le contenu du panier.
     - Pré-remplissage du message avec la liste des prestations souhaitées.
-4.  **Application Native (Projet séparé) :**
+4.  **Options de Règlement :**
+    - Multi-plateformes : Règlement sur place ou en ligne.
+    - Modes acceptés : Espèces, CB et PayPal.
+5.  **Application Native (Projet séparé) :**
     - Le calculateur VMA et le tracker GPS sont désormais dans le projet `run-app-native`.
 
 ## Stack Technique
