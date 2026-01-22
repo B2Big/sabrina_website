@@ -54,9 +54,14 @@ export function Footer() {
         </div>
 
         <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-slate-400 text-xs">
-            © {new Date().getFullYear()} Sabrina Coaching. Tous droits réservés.
-          </p>
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            <p className="text-slate-400 text-xs">
+              © {new Date().getFullYear()} Sabrina Coaching. Tous droits réservés.
+            </p>
+            <Link href="/admin" className="text-slate-300 hover:text-slate-500 transition-colors text-[10px] font-medium uppercase tracking-widest">
+              Dashboard
+            </Link>
+          </div>
           <div className="flex items-center gap-4">
             <a href="https://www.instagram.com/sab.fit_coaching83" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-care transition-colors">
               <Instagram className="w-5 h-5" />

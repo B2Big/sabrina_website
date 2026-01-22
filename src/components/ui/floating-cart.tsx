@@ -15,7 +15,7 @@ export function FloatingCart() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          className="fixed bottom-6 left-4 right-4 z-50 md:left-auto md:right-8 md:bottom-8 md:w-auto"
+          className="fixed bottom-[90px] md:bottom-8 left-4 right-4 z-[60] md:left-auto md:right-8 md:w-auto"
         >
           <Link 
             href="#contact"

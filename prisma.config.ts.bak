@@ -1,0 +1,15 @@
+import "dotenv/config";
+import { defineConfig } from "prisma/config";
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+  },
+  datasource: {
+    // Supabase nécessite souvent deux URLs : 
+    // 1. Transactional (pour l'app)
+    // 2. Direct (pour les migrations)
+    url: process.env["DATABASE_URL"],
+  },
+});

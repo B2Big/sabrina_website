@@ -288,22 +288,22 @@ function ContactFormContent() {
             <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full h-16 text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-wide transition-all transform hover:-translate-y-1 active:translate-y-0"
+                className="w-full h-16 text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0"
             >
                 {isPending ? (
                 <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Envoi en cours...
+                    Envoi...
                 </>
                 ) : (
-                "Envoyer ma demande (Paiement sur place)"
+                "Réserver"
                 )}
             </Button>
 
             {items.length > 0 && (
                 <div className="relative flex items-center justify-center my-2">
                     <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200"></span></div>
-                    <span className="relative bg-white px-2 text-xs text-slate-400 uppercase font-bold">OU</span>
+                    <span className="relative bg-white px-2 text-[10px] text-slate-400 uppercase font-bold">OU</span>
                 </div>
             )}
 
@@ -319,10 +319,10 @@ function ContactFormContent() {
                         const data = await res.json();
                         if (data.url) window.location.href = data.url;
                     }}
-                    className="w-full h-16 text-lg rounded-2xl bg-[#3B82F6] text-white hover:bg-blue-600 shadow-xl shadow-blue-500/20 font-black tracking-wide transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2"
+                    className="w-full h-16 text-base md:text-lg rounded-2xl bg-[#3B82F6] text-white hover:bg-blue-600 shadow-xl shadow-blue-500/20 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 px-4"
                 >
-                    <CreditCard className="w-6 h-6" />
-                    Payer en ligne maintenant
+                    <CreditCard className="w-5 h-5 shrink-0" />
+                    <span className="truncate">Réserver & Payer en ligne</span>
                 </Button>
             )}
           </div>

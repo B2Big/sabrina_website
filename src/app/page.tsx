@@ -13,16 +13,73 @@ import { Testimonials } from "@/components/testimonials";
 import { Faq } from "@/components/faq";
 import { ValuesSection } from "@/components/values-section";
 import { PhotoMarquee } from "@/components/photo-marquee";
-import { SERVICES } from "@/data/content";
+import { SERVICES as STATIC_SERVICES, Service } from "@/data/content";
 import { FloatingCart } from "@/components/ui/floating-cart";
+import { getAllServices, getActivePromotions } from "@/lib/db-services";
+import { PromoBanner } from "@/components/promo-banner";
 
-export default function Home() {
-  const coachingServices = SERVICES.filter((s) => s.category === "Coaching");
-  const massageServices = SERVICES.filter((s) => s.category === "Massages" || s.category === "Cures");
+export default async function Home() {
+  const [dbServices, promotions] = await Promise.all([
+    getAllServices(),
+    getActivePromotions()
+  ]);
+
+  let services: Service[] = [];
+
+  if (dbServices && dbServices.length > 0) {
+      services = dbServices.map(s => {
+          // 1. Check for active promotion for this service
+          // A promo matches if it includes this service ID in its services list
+          const activePromo = promotions.find(p => 
+              p.isActive && 
+              p.services && 
+              p.services.some((linkedService: any) => linkedService.id === s.id)
+          );
+
+          let finalPrice = s.price;
+          let finalOriginalPrice = s.originalPrice;
+          let bestValue = s.bestValue;
+
+          // 2. Apply Discount Logic
+          if (activePromo && activePromo.discountPercent) {
+             // Extract number from price string (e.g. "50 €" -> 50)
+             const priceMatch = s.price.match(/(\d+)/);
+             if (priceMatch) {
+                const basePrice = parseInt(priceMatch[0]);
+                const discountedPrice = Math.round(basePrice * (1 - activePromo.discountPercent / 100));
+                
+                finalOriginalPrice = s.price; // Move old price to original
+                finalPrice = `${discountedPrice} €`; // Set new price
+                bestValue = true; // Highlight as best value automatically
+             }
+          }
+
+          return {
+            ...s,
+            price: finalPrice,
+            originalPrice: finalOriginalPrice,
+            bestValue: bestValue,
+            category: s.category as any,
+            features: s.features || [],
+            paymentLink: s.paymentLink || undefined,
+            note: s.note || undefined,
+            duration: s.duration || undefined,
+            objective: s.objective || undefined,
+          };
+      }) as Service[];
+  } else {
+      services = STATIC_SERVICES;
+  }
+
+  const coachingServices = services.filter((s) => s.category === "Coaching");
+  const massageServices = services.filter((s) => s.category === "Massages" || s.category === "Cures");
 
   return (
     <div className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 cursor-none">
       
+      {/* 0. PANIC SELL BANNER */}
+      <PromoBanner promotions={promotions} />
+
       {/* UX ENHANCEMENTS */}
       <SmoothScroller />
       <CustomCursor />

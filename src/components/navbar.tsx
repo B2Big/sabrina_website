@@ -74,7 +74,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <Button variant="training" size="sm" className="rounded-full px-6 h-10 shadow-lg shadow-training/20" asChild>
               <Link href="#contact" className="flex items-center gap-2">
-                Prendre RDV <ArrowUpRight className="w-4 h-4" />
+                Réserver <ArrowUpRight className="w-4 h-4" />
               </Link>
             </Button>
 

@@ -190,14 +190,13 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
                     </Button>
                 </div>
              ) : (
-                <Button 
-                    className="w-full rounded-xl font-bold tracking-wide shadow-lg hover:scale-[1.02] transition-transform text-white h-12" 
-                    style={{ backgroundColor: accentColor }} 
-                    onClick={() => addToCart(service)}
-                >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Ajouter
-                </Button>
+          <Button 
+            className="w-full rounded-xl font-bold tracking-wide shadow-lg hover:scale-[1.02] transition-transform text-white h-12" 
+            style={{ backgroundColor: accentColor }} 
+            onClick={() => addToCart(service)}
+          >
+             Réserver
+          </Button>
              )}
           </div>
         </div>
