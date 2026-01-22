@@ -2,16 +2,18 @@
 
 import { cn } from '@/lib/utils';
 import { useId, useEffect, useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface MarqueeProps {
-  items: string[];
+  items?: string[];
+  children?: React.ReactNode;
   direction?: 'left' | 'right';
   speed?: number;
   className?: string;
 }
 
-export function Marquee({ items, direction = 'left', speed = 30, className }: MarqueeProps) {
+export function Marquee({ items, children, direction = 'left', speed = 30, className }: MarqueeProps) {
   const id = useId().replace(/:/g, '');
   const animLeft = `marquee-l-${id}`;
   const animRight = `marquee-r-${id}`;
@@ -28,15 +30,15 @@ export function Marquee({ items, direction = 'left', speed = 30, className }: Ma
   }, []);
 
   useEffect(() => {
-    if (!isMobile) return;
+    if (!isMobile || !items) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % items.length);
     }, 2000); // Change word every 2 seconds
     return () => clearInterval(timer);
-  }, [isMobile, items.length]);
+  }, [isMobile, items?.length]);
 
-  // --- MOBILE VIEW: 3D Flip & Kinetic Spacing (PREMIUM WOW) ---
-  if (isMobile) {
+  // --- MOBILE VIEW: 3D Flip (ONLY IF ITEMS PROVIDED) ---
+  if (isMobile && items) {
     return (
       <div 
         className={cn("relative flex items-center justify-center overflow-hidden bg-slate-900 py-6 border-y-4 border-white shadow-2xl h-[80px]", className)}
@@ -70,34 +72,43 @@ export function Marquee({ items, direction = 'left', speed = 30, className }: Ma
     );
   }
 
-  // --- DESKTOP VIEW: Infinite Scrolling Marquee (CSS) ---
-  // 4 sets ensures full width coverage.
-  const repeatedItems = [...items, ...items, ...items, ...items];
+  // --- DESKTOP/CHILDREN VIEW: Infinite Scrolling Marquee (CSS) ---
+  // If children provided, we repeat them 2 times to ensure seamless loop
+  const content = children || (items ? [...items, ...items, ...items, ...items].map((item, i) => (
+    <span
+      key={i}
+      className="mx-8 text-base font-bold uppercase tracking-[0.2em] text-white/90 flex items-center gap-8 shrink-0"
+    >
+      {item}
+      <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+    </span>
+  )) : null);
 
   return (
-    <div className={cn("relative flex overflow-hidden user-select-none bg-slate-900 py-4 border-y-4 border-white shadow-2xl", className)}>
+    <div className={cn("relative flex overflow-hidden user-select-none", !children && "bg-slate-900 py-4 border-y-4 border-white shadow-2xl", className)}>
       
       {/* Container */}
       <div 
         className={cn(
-            "flex whitespace-nowrap min-w-full will-change-transform hidden md:flex", // Only show on Desktop
+            "flex whitespace-nowrap min-w-full will-change-transform", 
+            items && "hidden md:flex", // Only hide on mobile if using items mode
             direction === 'left' ? `animate-${animLeft}` : `animate-${animRight}`
         )}
       >
-        {repeatedItems.map((item, i) => (
-          <span
-            key={i}
-            className="mx-8 text-base font-bold uppercase tracking-[0.2em] text-white/90 flex items-center gap-8 shrink-0"
-          >
-            {item}
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
-          </span>
-        ))}
+        {/* Render content multiple times for infinite loop */}
+        {content}
+        {content}
+        {content}
+        {content}
       </div>
       
-      {/* VIGNETTES */}
-      <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-slate-900 to-transparent z-10 hidden md:block" />
-      <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-slate-900 to-transparent z-10 hidden md:block" />
+      {/* VIGNETTES (Only if items) */}
+      {!children && (
+        <>
+            <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-slate-900 to-transparent z-10 hidden md:block" />
+            <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-slate-900 to-transparent z-10 hidden md:block" />
+        </>
+      )}
 
       {/* STYLES INJECTED */}
       <style dangerouslySetInnerHTML={{__html: `

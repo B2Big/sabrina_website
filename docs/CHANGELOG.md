@@ -1,22 +1,29 @@
 # Changelog
 
-## [Unreleased] - 2026-01-22
+## [Unreleased] - 2026-01-22 (Soirée)
 
-### Ajouts Majeurs
-- **Supabase Integration** : Installation du client, middleware d'authentification.
-- **Admin Dashboard** : Création de `/admin` pour gérer le contenu sans toucher au code.
-- **Système de Promotion Avancé ("Panic Sell")** :
-    - Bandeau d'urgence en haut du site.
-    - Gestion des dates (Ventes flash 24h/48h).
-    - **Réductions Multi-Produits** : Une promo peut s'appliquer à une liste de services.
-- **Dynamic Pricing** : Le frontend recalcule les prix en temps réel selon les promos actives.
+### ✨ Features (Fonctionnalités)
+- **Multi-Service Promo** : Possibilité de sélectionner plusieurs services pour une même promotion.
+- **Auto-Discount Logic** : Le formulaire admin génère automatiquement le texte (ex: "-20% sur X services") et le frontend applique la réduction mathématique.
+- **Smart Dates** : Ajout de boutons "Vente Flash" (24h/48h) qui calculent automatiquement la date de fin.
+- **Badge Promo** : Affichage visuel du pourcentage de réduction dans la liste admin.
 
-### Technique
-- **Prisma** : Mise à jour du schéma (Relations Service <-> Promotion).
-- **Downgrade Prisma** : Passage à v5 pour stabilité immédiate.
-- **Refactoring** : Centralisation des appels DB dans `src/lib/db-services.ts`.
+### 🐛 Bug Fixes & Polishing
+- **Prisma Windows/WSL** : Ajout de `binaryTargets = ["native", "windows"]` pour corriger les erreurs de compilation cross-platform.
+- **Mobile UX** : Ajout de `pb-24` au footer pour éviter que la barre de navigation mobile ne cache le lien Dashboard.
+- **Build Error** : Correction du typage strict sur `PromoBanner` (gestion des textes nuls).
+- **Refactoring** : Nettoyage de `promo-list.tsx` après une erreur de copier-coller.
 
-### UI/UX
-- Ajout d'un lien discret "Dashboard" dans le footer.
-- Formulaire d'admin ergonomique avec sélection multiple (Checkbox grid).
-- Badges de réduction sur les cartes services.
+---
+
+## [Unreleased] - 2026-01-22 (Après-midi)
+
+### 🚀 Major Updates
+- **Supabase Integration** : Mise en place complète de l'auth et du client DB.
+- **Admin Dashboard** : Interface sécurisée pour gérer Services et Promotions.
+- **Panic Sell V1** : Première version du bandeau défilant.
+- **Database** : Migration vers Prisma avec relation Many-to-Many (Services <-> Promotions).
+
+### 🛠 Technique
+- **Prisma Downgrade** : Retour à la v5 pour assurer la stabilité.
+- **Seed Script** : Création de `prisma/seed.ts` pour importer les données existantes.

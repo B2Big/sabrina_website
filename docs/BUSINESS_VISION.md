@@ -1,28 +1,31 @@
 # Vision Business & Stratégie
 
-## Objectif Principal
-Convertir les visiteurs en clients récurrents grâce à une image de marque forte (Premium & Accessible) et des leviers psychologiques de vente (Urgence, Rareté).
+## 1. La Philosophie : "Premium & Urgent"
+L'objectif n'est pas seulement d'afficher des tarifs, mais de **déclencher l'achat** via deux leviers :
+1.  **L'Image de Marque (Premium)** : Design épuré, animations fluides, photos professionnelles.
+2.  **L'Urgence (Panic Sell)** : Système de promotions imprévisibles pour contrer la procrastination des clients.
 
-## Piliers de la Stratégie
+## 2. Le Moteur "Panic Sell" (Mode d'Emploi)
 
-### 1. Autorité & Confiance
-- Design professionnel et moderne ("Ce n'est pas un petit coach amateur").
-- Preuve sociale (Témoignages) et section "Valeurs" mise en avant.
+### Qu'est-ce que c'est ?
+C'est votre outil de pilotage du chiffre d'affaires. Il permet de transformer des créneaux vides en opportunités pour le client.
 
-### 2. FOMO (Fear Of Missing Out) - "Panic Sell"
-L'outil principal de conversion est le système de promotion dynamique.
-- **Concept** : Créer des "Ventes Flash" imprévisibles.
-- **Mécanique** :
-    - Un bandeau rouge urgent apparaît en haut du site.
-    - Les prix sont barrés visuellement sur les cartes.
-    - Un compte à rebours (implicite via la date de fin) incite à l'action.
-- **Usage recommandé** : Activer une promo "Flash 24h" sur les créneaux vides ou en fin de mois.
+### Scénarios d'Utilisation :
+- **Scénario "Agenda Vide"** : C'est mardi, le planning de jeudi est vide.
+    - *Action* : Créer une promo "Flash 24h" -> "-20% sur tous les Massages".
+    - *Résultat* : Le site barre les prix, affiche un bandeau rouge. Les clients se dépêchent de réserver.
+- **Scénario "Lancement"** : Nouveau programme de coaching.
+    - *Action* : Promo planifiée (Du 1er au 5 du mois).
+    - *Résultat* : Création d'un événement marketing sans effort technique.
 
-### 3. Simplicité d'Achat
-- Pas de tunnel de vente complexe.
-- "Réserver" mène directement au contact ou au paiement (Lien Stripe).
-- Le panier flottant permet de garder une trace des envies.
+## 3. Parcours Client Cible
+1.  **Découverte** : Arrivée sur le site (Mobile). Effet "Wow" visuel.
+2.  **Séduction** : Lecture des valeurs et témoignages.
+3.  **Hésitation** : Le client regarde les prix.
+4.  **Déclencheur (Trigger)** : Il voit le bandeau "Vente Flash - Fin dans 4h" et le prix barré.
+5.  **Conversion** : Clic sur "Réserver" (Panier flottant ou lien direct).
 
-## Évolutions Futures
-- Intégration complète du paiement Stripe (Webhooks) pour automatiser la réservation.
-- Espace membre pour les clients (suivi progression).
+## 4. Feuille de Route Business
+- **Phase 1 (Actuelle)** : Site vitrine dynamique + Gestion manuelle des réservations (Contact/Lien Stripe simple).
+- **Phase 2** : Paiement intégré. Le client paie et réserve son créneau directement (Calendly/Stripe API).
+- **Phase 3** : Fidélisation. Espace membre avec suivi des séances de coaching.

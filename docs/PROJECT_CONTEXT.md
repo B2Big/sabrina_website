@@ -1,40 +1,56 @@
 # Contexte du Projet Sabrina Coaching
 
-## 1. Vue d'ensemble
-Application web pour Sabrina, coach sportive et praticienne bien-être.
-Le site est une PWA (Progressive Web App) Next.js moderne, visuellement riche ("Wow effect"), et orientée conversion.
+## 1. Vue d'ensemble 360°
+Plateforme web "Mobile-First" pour Sabrina, coach sportive et masseuse.
+Le projet dépasse le simple site vitrine : c'est un **outil de conversion dynamique** (PWA) équipé d'un moteur de promotion psychologique ("Panic Sell").
 
 ## 2. Stack Technique
-- **Frontend** : Next.js 16 (App Router), React 19, TailwindCSS 4.
-- **Backend** : Supabase (PostgreSQL), Prisma ORM.
-- **Auth** : Supabase Auth.
-- **UI/UX** : Framer Motion, Lucide React, Design "Bento" et "Glassmorphism".
-- **Hébergement** : Vercel (prévu).
+- **Framework** : Next.js 16 (App Router).
+- **Langage** : TypeScript / React 19.
+- **Styling** : Tailwind CSS 4 + Framer Motion (Animations).
+- **Backend (BaaS)** : Supabase (PostgreSQL + Auth).
+- **ORM** : Prisma v5 (Downgrade de v7 pour stabilité WSL/Windows).
+- **Déploiement** : Vercel (Cible).
 
-## 3. Fonctionnalités Clés
+## 3. Architecture des Données
+La base de données gère une relation **Many-to-Many** entre Services et Promotions.
 
-### A. Partie Publique
-- **Présentation** : Hero section impactante, section "Pourquoi moi", témoignages.
-- **Catalogue** : Liste des services (Coaching, Massages, Cures) avec prix et détails.
-- **Panier Flottant** : Système de sélection de services simple.
-- **Bandeau "Panic Sell"** : Marquee défilant en haut de page pour les promos urgentes.
-- **Calcul de Prix Dynamique** : Les prix s'ajustent automatiquement si une promo est active.
+### Modèles Principaux :
+1.  **Service** : La prestation de base (Titre, Prix, Description, Catégorie).
+2.  **Promotion** : L'offre temporaire.
+    - `discountPercent` : % de réduction automatique.
+    - `startDate` / `endDate` : Période de validité.
+    - `services` : Liste des services concernés (Relation M:N).
+3.  **User** : Administrateur (Sabrina) géré via Supabase Auth.
 
-### B. Administration (/admin)
-- **Authentification** : Sécurisée via email/password.
-- **Gestion des Services** : CRUD complet (Ajouter, Modifier, Supprimer, Mettre en avant).
-- **Gestion des Promotions** :
-    - Création de messages défilants.
-    - **Ventes Flash** : Activation pour 24h, 48h ou dates précises.
-    - **Réductions Automatiques** : Application d'un % de réduction sur un ou plusieurs services.
-    - Le site barre automatiquement l'ancien prix et affiche le nouveau.
+## 4. Fonctionnalités Implémentées
 
-## 4. Structure de Données
-- `User` : Admin access.
-- `Service` : Les prestations vendues.
-- `Promotion` : Les offres temporaires (liées à plusieurs services via Many-to-Many).
+### A. Partie Publique (Front-Office)
+- **Navigation** : Navbar rétractable + Mobile Nav (App-like) + Footer ajusté.
+- **Catalogue** : Affichage dynamique des services (Coaching/Massage).
+- **Moteur de Prix (Pricing Engine)** :
+    - Le site détecte si une promo est active pour chaque service.
+    - Si oui : calcul automatique du nouveau prix, affichage du prix barré et badge "-X%".
+- **Bandeau "Panic Sell"** :
+    - S'affiche uniquement si une promo est active ET dans les dates valides.
+    - Défilement (Marquee) urgent en haut de page.
+- **Mode Secours** : Si la BDD est hors ligne, le site bascule sur un fichier JSON statique (`content.ts`).
+
+### B. Administration (Back-Office)
+Accessible via `/admin` ou le lien discret en bas de page.
+- **Dashboard Services** : CRUD complet (Créer, Lire, Mettre à jour, Supprimer).
+- **Dashboard Promotions (Le "Cerveau")** :
+    - **Ventes Flash** : Boutons rapides (24h, 48h, 3j) ou dates manuelles.
+    - **Ciblage** : Sélection multiple de services via une grille de cases à cocher.
+    - **Visualisation** : Indicateurs d'état (En cours, Planifié, Expiré).
 
 ## 5. État Actuel (22/01/2026)
-- Le site est fonctionnel.
-- La base de données est configurée (attente de connexion valide dans `.env`).
-- Mode "Secours" actif : Si la BDD ne répond pas, le site affiche des données statiques.
+- **Codebase** : Stable, build fonctionnel.
+- **Base de données** : Schéma prêt. **Nécessite une connexion valide dans `.env`**.
+- **UX Mobile** : Optimisée (Padding footer corrigé pour ne pas masquer le dashboard).
+
+## 6. À Faire (Roadmap Technique)
+1.  [URGENT] Corriger `DATABASE_URL` et lancer `npx prisma db push`.
+2.  [URGENT] Créer le user Admin dans Supabase.
+3.  [Medium] Connecter Stripe (Webhooks) pour valider les paiements automatiquement.
+4.  [Low] Blog / Articles SEO.
