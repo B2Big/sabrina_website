@@ -67,7 +67,7 @@ export function Testimonials() {
                 ))}
               </div>
               <p className="text-slate-700 font-medium text-lg mb-4 italic">
-                "{t.text}"
+                &quot;{t.text}&quot;
               </p>
               <p className="text-slate-400 text-sm font-bold uppercase tracking-wider">
                 — {t.name}
@@ -106,7 +106,7 @@ export function Testimonials() {
              </div>
               
               <p className="text-slate-800 font-bold text-lg mb-4 leading-relaxed">
-                "{currentTestimonial.text}"
+                &quot;{currentTestimonial.text}&quot;
               </p>
               <p className="text-slate-400 text-xs font-black uppercase tracking-widest text-right">
                 — {currentTestimonial.name}

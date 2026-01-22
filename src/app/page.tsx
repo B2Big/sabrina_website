@@ -14,6 +14,7 @@ import { Faq } from "@/components/faq";
 import { ValuesSection } from "@/components/values-section";
 import { PhotoMarquee } from "@/components/photo-marquee";
 import { SERVICES } from "@/data/content";
+import { PaceCalculator } from "@/components/pace-calculator";
 
 export default function Home() {
   const coachingServices = SERVICES.filter((s) => s.category === "Coaching");
@@ -63,14 +64,20 @@ export default function Home() {
                 <p className="text-slate-600 text-lg font-medium leading-relaxed max-w-md backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
                   Ne perdez plus de temps avec des programmes génériques.
                   <span className="block mt-2 font-bold text-slate-900">
-                    Choisissez l'excellence.
+                    Choisissez l&apos;excellence.
                   </span>
                 </p>
               </div>
 
-              {/* Forme Abstraite Training */}
-              <div className="lg:w-1/2 w-full flex justify-center">
-                <AbstractShape type="training" />
+              {/* Pace Calculator Integration */}
+              <div className="lg:w-1/2 w-full flex flex-col items-center gap-8">
+                <div className="w-full transform hover:scale-[1.02] transition-transform duration-500">
+                   <PaceCalculator />
+                </div>
+                {/* Visual Connector */}
+                <p className="text-xs font-bold text-training/60 uppercase tracking-widest text-center">
+                   ▲ Testez votre potentiel avec le simulateur Club Run
+                </p>
               </div>
             </div>
 
@@ -104,7 +111,7 @@ export default function Home() {
                 <p className="text-slate-600 text-lg font-medium leading-relaxed max-w-md ml-auto backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
                   Votre corps est votre moteur, entretenez-le.
                   <span className="block mt-2 font-bold text-slate-900">
-                    Drainage, relâchement musculaire ou pure détente : faites un "Reset" complet.
+                    Drainage, relâchement musculaire ou pure détente : faites un &quot;Reset&quot; complet.
                   </span>
                 </p>
               </div>
@@ -138,10 +145,10 @@ export default function Home() {
                 <div className="space-y-10 flex flex-col justify-center">
                   <div>
                     <h2 className="text-5xl md:text-7xl font-black tracking-tight mb-6">
-                      Let's <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">Start</span>.
+                      Let&apos;s <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">Start</span>.
                     </h2>
                     <p className="text-slate-400 text-xl leading-relaxed max-w-md">
-                      Prêt(e) à changer ? N'attendez plus, les créneaux partent vite.
+                      Prêt(e) à changer ? N&apos;attendez plus, les créneaux partent vite.
                     </p>
                   </div>
 

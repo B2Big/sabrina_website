@@ -1,4 +1,3 @@
-
 export const CONTACT_INFO = {
   phone: "06 66 26 24 29",
   email: "sabcompan8306@gmail.com",
@@ -25,110 +24,153 @@ export type Service = {
 };
 
 export const SERVICES: Service[] = [
-  // SAAS OFFER (DIGITAL) - CLUB RUN
+  // --- COACHING (Bleu) ---
+
+  // MIX RUNNING & RENFO (149€)
   {
-    id: "club-run-saas",
+    id: "mix-running-renfo",
     category: "Coaching",
-    title: "Club Run (App)",
-    price: "29.90 € / mois",
-    originalPrice: "49 €",
-    description: "L'expérience digitale complète. Entraînez-vous où vous voulez, quand vous voulez, avec mes programmes experts.",
-    objective: "Autonomie, Progression, Communauté.",
+    title: "Mix Running & Renfo",
+    price: "149 €",
+    duration: "Suivi mensuel",
+    description: "L'alliance parfaite pour progresser. Un programme complet combinant course à pied et renforcement musculaire.",
+    objective: "Performance globale, Prévention blessures.",
     bestValue: true,
-    paymentLink: "https://buy.stripe.com/test_saas_29",
+    paymentLink: "https://buy.stripe.com/test_mix_149",
     features: [
-      "Programmes illimités & Vidéothèque",
-      "Calculateur d'allure dynamique",
-      "Chat Communautaire",
-      "**AVANTAGES MEMBRES (VIP):**",
-      "👉 **-10% sur les Massages**",
-      "👉 **Small Groups à 8€ (au lieu de 10€)**"
+      "Suivi hebdomadaire inclus",
+      "Planification Running personnalisée",
+      "Séances de Renfo adaptées",
+      "Ajustements illimités"
     ]
   },
 
-  // MASSAGES & SOINS
+  // COACHING 1-TO-1 (50€ / 225€ / 400€)
   {
-    id: "madero",
-    category: "Massages",
-    title: "Madérothérapie",
+    id: "one-to-one-unit",
+    category: "Coaching",
+    title: "Coaching 1-to-1",
     duration: "1h",
-    price: "70 €", // Aligned
-    description: "Le secret pour lisser la peau et casser la cellulite. Résultats visibles et silhouette sculptée dès la première séance.",
-    objective: "Sculpter, Drainer, Lisser.",
+    price: "50 €",
+    description: "Séance individuelle sur-mesure. Technique, motivation et dépassement de soi avec votre coach dédiée.",
+    objective: "Progression rapide, Technique.",
+    paymentLink: "https://buy.stripe.com/test_coaching_50"
+  },
+  {
+    id: "one-to-one-5",
+    category: "Coaching",
+    title: "Pack 5 Séances",
+    duration: "5 x 1h",
+    price: "225 €",
+    originalPrice: "250 €",
+    description: "Un premier cap à passer. Idéal pour ancrer de nouvelles habitudes et voir les premiers résultats.",
+    objective: "Engagement court terme.",
+    paymentLink: "https://buy.stripe.com/test_coaching_225"
+  },
+  {
+    id: "one-to-one-10",
+    category: "Coaching",
+    title: "Pack 10 Séances",
+    duration: "10 x 1h",
+    price: "400 €",
+    originalPrice: "500 €",
+    description: "La transformation durable. Un accompagnement complet pour atteindre vos objectifs les plus ambitieux.",
+    objective: "Transformation physique & mentale.",
     popular: true,
-    paymentLink: "https://buy.stripe.com/test_massage_70"
-  },
-  {
-    id: "jambes-legeres",
-    category: "Massages",
-    title: "Jambes légères",
-    duration: "45 min",
-    price: "45 €", // Kept
-    description: "Adieu la rétention d'eau. Un drainage express pour retrouver des jambes fines, légères et dégonflées instantanément.",
-    objective: "Drainage express, Soulagement immédiat."
-  },
-  {
-    id: "californien-balinais-1h",
-    category: "Massages",
-    title: "Californien / Balinais",
-    duration: "1h",
-    price: "70 €", // Aligned
-    description: "Débranchez le cerveau. Un cocon de douceur absolue pour évacuer tout le stress accumulé et mieux dormir.",
-    objective: "Lâcher-prise total, Anti-stress."
-  },
-  {
-    id: "sportif-1h",
-    category: "Massages",
-    title: "Massage Sportif",
-    duration: "1h",
-    price: "70 €", // Aligned
-    description: "Réparez la machine. Élimine les toxines, dénoue les tensions profondes et prépare votre corps au prochain effort.",
-    objective: "Récupération, Performance, Souplesse.",
-    popular: true
+    paymentLink: "https://buy.stripe.com/test_coaching_400"
   },
 
-  // COACHING
-  {
-    id: "one-to-one",
-    category: "Coaching",
-    title: "Coaching Premium 1-to-1",
-    duration: "1h",
-    price: "60 €", // Updated to 60€
-    description: "Haut niveau de personnalisation. Un plan d'attaque sur-mesure et une motivation constante pour dépasser vos objectifs.", 
-    objective: "Sur-mesure, Motivation, Résultats rapides.",
-    popular: true,
-    paymentLink: "https://buy.stripe.com/test_coaching_60"
-  },
-  {
-    id: "coaching-boxe",
-    category: "Coaching",
-    title: "Cardio Boxe",
-    duration: "1h",
-    price: "50 €", // Kept
-    description: "L'anti-stress ultime. Videz-vous la tête et brûlez un max de calories dans une séance explosive et ludique.",
-    objective: "Cardio, Mental d'acier, Défouloir.",
-    paymentLink: "https://buy.stripe.com/test_boxe_50"
-  },
+  // SMALL GROUP (15€)
   {
     id: "small-group",
     category: "Coaching",
     title: "Small Group",
     duration: "1h",
-    price: "10 € / pers.", // Kept
-    description: "Seul on va vite, ensemble on va loin. Challengez-vous en équipe dans une ambiance fun et motivante.",
-    objective: "Esprit d'équipe, Fun, Accessible.",
-    note: "⚠️ Session confirmée dès 5 participants", // Added note
-    paymentLink: "https://buy.stripe.com/test_group_10"
+    price: "15 € / pers.",
+    description: "L'énergie du collectif. Entraînez-vous entre amis ou collègues dans une ambiance motivante.",
+    objective: "Fun, Cohésion, Challenge.",
+    note: "⚠️ Min. 5 participants",
+    paymentLink: "https://buy.stripe.com/test_group_15"
+  },
+
+
+  // --- MASSAGES & SOINS (Rose/Corail) ---
+
+  // MASSAGES (70€ / 95€)
+  {
+    id: "massage-1h",
+    category: "Massages",
+    title: "Massage Signature",
+    duration: "1h",
+    price: "70 €",
+    description: "Une heure de détente absolue ou de récupération sportive, adaptée à vos besoins du moment.",
+    objective: "Détente, Récupération.",
+    paymentLink: "https://buy.stripe.com/test_massage_70"
   },
   {
-    id: "forfait-10",
+    id: "massage-1h30",
+    category: "Massages",
+    title: "Grand Soin",
+    duration: "1h30",
+    price: "95 €",
+    description: "L'expérience bien-être prolongée. Prenez le temps de lâcher prise totalement.",
+    objective: "Lâcher-prise profond.",
+    paymentLink: "https://buy.stripe.com/test_massage_95"
+  },
+
+  // CURES (320€ / 450€)
+  {
+    id: "cure-5-1h",
+    category: "Cures",
+    title: "Cure Essentielle",
+    duration: "5 x 1h",
+    price: "320 €",
+    originalPrice: "350 €",
+    description: "Un rituel bien-être régulier pour maintenir votre équilibre physique et mental.",
+    objective: "Entretien, Régularité.",
+    paymentLink: "https://buy.stripe.com/test_cure_320"
+  },
+  {
+    id: "cure-5-1h30",
+    category: "Cures",
+    title: "Cure Profonde",
+    duration: "5 x 1h30",
+    price: "450 €",
+    originalPrice: "475 €",
+    description: "L'immersion totale. 5 séances longues pour un travail en profondeur sur le corps et l'esprit.",
+    objective: "Bien-être intense.",
+    paymentLink: "https://buy.stripe.com/test_cure_450"
+  },
+
+  // FORFAITS COMBINÉS (185€ / 330€ / 650€)
+  {
+    id: "combo-essentiel",
+    category: "Coaching", // Ou une caté "Mixte" si possible, mais on garde Coaching pour le bleu ou on mixera
+    title: "Pack Essentiel",
+    price: "185 €",
+    description: "L'équilibre. Combinez sport et récupération pour une approche santé globale.",
+    objective: "Découverte Mixte.",
+    features: ["Training & Soin", "Approche holistique"],
+    paymentLink: "https://buy.stripe.com/test_combo_185"
+  },
+  {
+    id: "combo-perf",
     category: "Coaching",
-    title: "Pack Transformation",
-    duration: "10 Séances",
-    price: "550 €", // Updated to 550€
-    description: "3 mois pour tout changer. Un engagement envers vous-même pour une métamorphose physique et mentale durable.",
-    objective: "Transformation, Suivi long terme.",
+    title: "Pack Performance",
+    price: "330 €",
+    description: "Passez au niveau supérieur avec un suivi plus poussé et une récupération optimisée.",
+    objective: "Performance & Soin.",
+    popular: true,
+    paymentLink: "https://buy.stripe.com/test_combo_330"
+  },
+  {
+    id: "combo-premium",
+    category: "Coaching",
+    title: "Pack Premium",
+    price: "650 €",
+    description: "L'expérience ultime. Un accompagnement VIP sur tous les plans pour des résultats exceptionnels.",
+    objective: "Excellence.",
     bestValue: true,
-    paymentLink: "https://buy.stripe.com/test_pack_550"
+    paymentLink: "https://buy.stripe.com/test_combo_650"
   }
 ];

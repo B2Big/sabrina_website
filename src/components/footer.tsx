@@ -13,7 +13,7 @@ export function Footer() {
             </h3>
             <p className="text-slate-500 text-sm leading-relaxed max-w-xs">
               Coach sportive & Praticienne bien-être.
-              Allier le corps et l'esprit pour une santé durable.
+              Allier le corps et l&apos;esprit pour une santé durable.
             </p>
           </div>
 

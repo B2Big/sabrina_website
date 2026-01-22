@@ -1,10 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+// Define the event interface
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => void;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 export default function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
@@ -12,29 +18,41 @@ export default function InstallPrompt() {
     const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
     if (isStandaloneMode) {
       setIsStandalone(true);
-      return; 
+      // We don't return here to allow other cleanup if needed, but in this case just stop further prompt logic
+    } else {
+        // Check if dismissed in the last 24h ONLY if not standalone
+        const lastDismissed = localStorage.getItem('installPromptDismissed');
+        let shouldShow = true;
+        
+        if (lastDismissed) {
+          const timeSinceDismissed = Date.now() - parseInt(lastDismissed, 10);
+          const oneDay = 24 * 60 * 60 * 1000;
+          if (timeSinceDismissed < oneDay) {
+            shouldShow = false;
+          }
+        }
+
+        if (shouldShow) {
+            const userAgent = window.navigator.userAgent.toLowerCase();
+            const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
+            setIsIOS(isIosDevice);
+
+            const handleBeforeInstallPrompt = (e: Event) => {
+              e.preventDefault();
+              setDeferredPrompt(e as BeforeInstallPromptEvent);
+              setShowPrompt(true);
+            };
+
+            window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+            
+            // Always show on iOS after delay (unless installed)
+            if (isIosDevice) {
+              setTimeout(() => setShowPrompt(true), 2000);
+            }
+            
+            return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        }
     }
-
-    // REMOVED: The localStorage check. Now it shows every visit.
-
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
-    setIsIOS(isIosDevice);
-
-    const handleBeforeInstallPrompt = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setShowPrompt(true);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    
-    // Always show on iOS after delay (unless installed)
-    if (isIosDevice) {
-      setTimeout(() => setShowPrompt(true), 2000);
-    }
-
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
   }, []);
 
   const handleInstallClick = async () => {
@@ -48,8 +66,8 @@ export default function InstallPrompt() {
   };
 
   const handleClose = () => {
-    // Just hide it for this session. Do NOT save to localStorage.
-    // It will reappear on next reload.
+    // Hide and save timestamp to localStorage (24h cooldown)
+    localStorage.setItem('installPromptDismissed', Date.now().toString());
     setShowPrompt(false);
   };
 
@@ -59,7 +77,7 @@ export default function InstallPrompt() {
     <div className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-4 z-50 flex flex-col items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-2xl md:max-w-md animate-in slide-in-from-bottom-5 fade-in duration-500">
       <div className="flex items-start justify-between w-full">
         <div className="flex-1 mr-4">
-          <h3 className="font-bold text-gray-900">Installer l'application</h3>
+          <h3 className="font-bold text-gray-900">Installer l&apos;application</h3>
           <p className="mt-1 text-sm text-gray-600">
             {isIOS 
               ? "Ajoutez l'app à l'écran d'accueil pour y accéder tout le temps." 
@@ -76,7 +94,7 @@ export default function InstallPrompt() {
 
       {isIOS ? (
         <div className="w-full mt-3 p-2 bg-gray-50 rounded text-sm text-gray-700 border border-gray-100">
-          Appuyez sur <span className="font-bold">Partager</span> <span className="text-lg">⍐</span> puis sur <span className="font-bold">Sur l'écran d'accueil</span> <span className="text-lg">➕</span>
+          Appuyez sur <span className="font-bold">Partager</span> <span className="text-lg">⍐</span> puis sur <span className="font-bold">Sur l&apos;écran d&apos;accueil</span> <span className="text-lg">➕</span>
         </div>
       ) : (
         <button

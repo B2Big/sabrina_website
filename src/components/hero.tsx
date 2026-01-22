@@ -77,7 +77,7 @@ export function Hero() {
             </h1>
 
             <p className="text-xl md:text-2xl text-slate-600 font-medium leading-relaxed max-w-2xl">
-              L'alliance parfaite entre l'intensité du <span className="text-training font-bold">sport</span> et la douceur du <span className="text-care font-bold">soin</span>.
+              L&apos;alliance parfaite entre l&apos;intensité du <span className="text-training font-bold">sport</span> et la douceur du <span className="text-care font-bold">soin</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 pt-8">
