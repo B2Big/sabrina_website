@@ -1,29 +1,31 @@
 # Changelog
 
-## [Unreleased] - 2026-01-22 (Soirée)
+## [Unreleased] - 2026-01-23 (Soirée)
 
-### ✨ Features (Fonctionnalités)
-- **Multi-Service Promo** : Possibilité de sélectionner plusieurs services pour une même promotion.
-- **Auto-Discount Logic** : Le formulaire admin génère automatiquement le texte (ex: "-20% sur X services") et le frontend applique la réduction mathématique.
-- **Smart Dates** : Ajout de boutons "Vente Flash" (24h/48h) qui calculent automatiquement la date de fin.
-- **Badge Promo** : Affichage visuel du pourcentage de réduction dans la liste admin.
+### 🚀 Major Features (Fonctionnalités Majeures)
+- **Database Full Sync** : Connexion réussie à Supabase (contournement du port 5432 via Pooler 6543).
+    - Création des tables `services` et `promotions` avec mappage strict PostgreSQL.
+    - Import (Seed) de toutes les offres historiques (Mix Running, Cures, Massages...).
+- **Admin Dashboard 2.0** :
+    - Refonte UX complète : Couleurs Pop & Wellness (Bleu/Corail).
+    - Formulaire Services : Ajout automatique du symbole "€".
+    - Formulaire Panic Sell : Interface simplifiée "Vente Flash" (Titre, %, Durée).
+- **Stripe Integration** :
+    - Configuration du SDK Stripe.
+    - API `/api/checkout` fonctionnelle.
+    - Bouton "Payer" dans le panier flottant connecté au Checkout.
+    - Page de succès avec confettis 🎉.
+- **Mobile UX** :
+    - **Promo Banner** : Nouveau slider vertical pour mobile (plus lisible).
+    - **Hero Marquee** : Retour de l'animation "3D/Slide" pour les mots clés sur mobile.
+    - **Optimisation** : Animations allégées (Fade/Slide) pour éviter les lags.
 
-### 🐛 Bug Fixes & Polishing
-- **Prisma Windows/WSL** : Ajout de `binaryTargets = ["native", "windows"]` pour corriger les erreurs de compilation cross-platform.
-- **Mobile UX** : Ajout de `pb-24` au footer pour éviter que la barre de navigation mobile ne cache le lien Dashboard.
-- **Build Error** : Correction du typage strict sur `PromoBanner` (gestion des textes nuls).
-- **Refactoring** : Nettoyage de `promo-list.tsx` après une erreur de copier-coller.
+### 🛠 Fixes & Improvements
+- **Fix Prisma** : Correction des erreurs `table not found` (case sensitivity).
+- **Fix Marquee** : Correction du bug CSS `min-w-full` sur mobile (remplacé par `w-max`).
+- **Cleanup** : Abandon du projet d'application native séparée (code archivé/ignoré) au profit de la PWA unique.
 
 ---
 
-## [Unreleased] - 2026-01-22 (Après-midi)
-
-### 🚀 Major Updates
-- **Supabase Integration** : Mise en place complète de l'auth et du client DB.
-- **Admin Dashboard** : Interface sécurisée pour gérer Services et Promotions.
-- **Panic Sell V1** : Première version du bandeau défilant.
-- **Database** : Migration vers Prisma avec relation Many-to-Many (Services <-> Promotions).
-
-### 🛠 Technique
-- **Prisma Downgrade** : Retour à la v5 pour assurer la stabilité.
-- **Seed Script** : Création de `prisma/seed.ts` pour importer les données existantes.
+## [Unreleased] - 2026-01-22 (Soirée)
+*Voir historique précédent...*

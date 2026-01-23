@@ -75,12 +75,12 @@ export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 bg-white p-1 rounded-xl w-fit border border-slate-200 shadow-sm">
+        <div className="flex gap-2 mb-8 bg-white p-1.5 rounded-2xl w-fit border border-slate-200 shadow-sm backdrop-blur-xl">
             <button 
                 onClick={() => setActiveTab('services')}
                 className={cn(
-                    "px-6 py-2.5 rounded-lg font-bold text-sm transition-all",
-                    activeTab === 'services' ? "bg-slate-900 text-white shadow-md" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                    "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
+                    activeTab === 'services' ? "bg-blue-500 text-white shadow-lg shadow-blue-200" : "text-slate-500 hover:text-blue-500 hover:bg-blue-50"
                 )}
             >
                 Services
@@ -88,8 +88,8 @@ export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
             <button 
                 onClick={() => setActiveTab('promotions')}
                 className={cn(
-                    "px-6 py-2.5 rounded-lg font-bold text-sm transition-all",
-                    activeTab === 'promotions' ? "bg-red-600 text-white shadow-md" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                    "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
+                    activeTab === 'promotions' ? "bg-rose-400 text-white shadow-lg shadow-rose-200" : "text-slate-500 hover:text-rose-400 hover:bg-rose-50"
                 )}
             >
                 Promotions
@@ -102,66 +102,58 @@ export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
         ) : (
             <>
                 <div className="flex justify-end mb-6">
-                    <Button onClick={handleCreate} className="bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 shadow-lg hover:shadow-xl transition-all">
-                        <Plus size={18} className="mr-2" /> Nouveau Service
+                    <Button onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-6 py-6 font-bold shadow-xl shadow-blue-200 transition-all active:scale-95">
+                        <Plus size={20} className="mr-2" /> Ajouter un Service
                     </Button>
                 </div>
 
-                <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
                     <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="border-b border-slate-100 bg-slate-50/50">
-                        <th className="p-4 font-bold text-slate-400 text-xs uppercase tracking-wider pl-8">Titre</th>
-                        <th className="p-4 font-bold text-slate-400 text-xs uppercase tracking-wider">Catégorie</th>
-                        <th className="p-4 font-bold text-slate-400 text-xs uppercase tracking-wider">Prix</th>
-                        <th className="p-4 font-bold text-slate-400 text-xs uppercase tracking-wider">Lien Paiement</th>
-                        <th className="p-4 font-bold text-slate-400 text-xs uppercase tracking-wider text-right pr-8">Actions</th>
+                        <tr className="bg-slate-50/80 backdrop-blur-sm">
+                        <th className="p-6 font-black text-slate-400 text-xs uppercase tracking-widest pl-10">Prestation</th>
+                        <th className="p-6 font-black text-slate-400 text-xs uppercase tracking-widest">Catégorie</th>
+                        <th className="p-6 font-black text-slate-400 text-xs uppercase tracking-widest">Tarif</th>
+                        <th className="p-6 font-black text-slate-400 text-xs uppercase tracking-widest text-right pr-10">Gestion</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-slate-50">
                         {services.map((s) => (
-                        <tr key={s.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition-colors">
-                            <td className="p-4 pl-8">
-                                <div className="font-bold text-slate-900">{s.title}</div>
-                                {s.popular && <span className="text-[10px] bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full mr-1">Top</span>}
-                                {s.bestValue && <span className="text-[10px] bg-teal-100 text-teal-800 px-2 py-0.5 rounded-full">Best Value</span>}
+                        <tr key={s.id} className="group hover:bg-blue-50/30 transition-all">
+                            <td className="p-6 pl-10">
+                                <div className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{s.title}</div>
+                                <div className="flex gap-2 mt-1">
+                                    {s.popular && <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">POPULAIRE</span>}
+                                    {s.bestValue && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">OFFRE SPÉCIALE</span>}
+                                </div>
                             </td>
-                            <td className="p-4">
-                            <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${
-                                s.category === 'Coaching' ? 'bg-blue-50 text-blue-600' : 
-                                s.category === 'Massages' ? 'bg-pink-50 text-pink-600' :
-                                'bg-purple-50 text-purple-600'
+                            <td className="p-6">
+                            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
+                                s.category === 'Coaching' || s.category === 'Training' ? 'bg-blue-500 text-white' : 
+                                s.category === 'Massages' || s.category === 'Care' ? 'bg-rose-400 text-white' :
+                                'bg-slate-900 text-white'
                             }`}>
                                 {s.category}
                             </span>
                             </td>
-                            <td className="p-4 font-medium text-slate-600">
-                                {s.price}
-                                {s.originalPrice && <span className="text-slate-300 line-through text-xs ml-2">{s.originalPrice}</span>}
+                            <td className="p-6">
+                                <span className="font-black text-slate-900 text-lg">{s.price}</span>
+                                {s.originalPrice && <span className="text-slate-300 line-through text-sm ml-2 font-medium">{s.originalPrice}</span>}
                             </td>
-                            <td className="p-4">
-                                {s.paymentLink ? (
-                                    <a href={s.paymentLink} target="_blank" className="text-xs text-blue-500 hover:underline truncate max-w-[150px] block">
-                                        {s.paymentLink}
-                                    </a>
-                                ) : (
-                                    <span className="text-xs text-slate-300">Aucun</span>
-                                )}
-                            </td>
-                            <td className="p-4 text-right pr-8">
-                            <div className="flex items-center justify-end gap-2">
+                            <td className="p-6 text-right pr-10">
+                            <div className="flex items-center justify-end gap-3">
                                 <button 
                                     onClick={() => handleEdit(s)}
-                                    className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-lg transition-all border border-transparent hover:border-slate-200 shadow-sm"
+                                    className="p-3 text-slate-400 hover:text-blue-500 hover:bg-white rounded-2xl transition-all shadow-sm hover:shadow-md border border-transparent hover:border-blue-100"
                                 >
-                                <Pencil size={16} />
+                                <Pencil size={18} />
                                 </button>
                                 <button 
                                     onClick={() => handleDelete(s.id)}
-                                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-lg transition-all border border-transparent hover:border-red-100 shadow-sm"
+                                    className="p-3 text-slate-400 hover:text-rose-500 hover:bg-white rounded-2xl transition-all shadow-sm hover:shadow-md border border-transparent hover:border-rose-100"
                                 >
-                                <Trash2 size={16} />
+                                <Trash2 size={18} />
                                 </button>
                             </div>
                             </td>

@@ -1,31 +1,23 @@
-# Vision Business & Stratégie
+# Vision Business & Stratégie - Sabrina Coaching
 
-## 1. La Philosophie : "Premium & Urgent"
-L'objectif n'est pas seulement d'afficher des tarifs, mais de **déclencher l'achat** via deux leviers :
-1.  **L'Image de Marque (Premium)** : Design épuré, animations fluides, photos professionnelles.
-2.  **L'Urgence (Panic Sell)** : Système de promotions imprévisibles pour contrer la procrastination des clients.
+## 1. La Philosophie : "L'Expérience Premium Unique"
+L'objectif est d'offrir un parcours client sans couture, de la découverte à l'achat, via une **PWA (Progressive Web App)** performante. 
+On abandonne la multiplication des applications (Native) pour se concentrer sur un outil unique, accessible instantanément sur mobile sans téléchargement.
 
-## 2. Le Moteur "Panic Sell" (Mode d'Emploi)
+## 2. Le Moteur "Panic Sell" (Cerveau de Conversion)
+C'est l'outil de pilotage du chiffre d'affaires. 
+- **Urgence** : Le bandeau rouge (Slider sur mobile) crée une tension psychologique.
+- **Transparence** : Les prix barrés sont calculés automatiquement en base de données.
+- **Simplicité** : Sabrina peut lancer une offre en 3 clics depuis son mobile sur `/admin`.
 
-### Qu'est-ce que c'est ?
-C'est votre outil de pilotage du chiffre d'affaires. Il permet de transformer des créneaux vides en opportunités pour le client.
+## 3. Parcours d'Achat (Stripe Integrated)
+1.  **Séduction** : Design Pop & Wellness, animations fluides.
+2.  **Sélection** : Ajout des prestations au panier flottant.
+3.  **Action** : Paiement immédiat via Stripe (Cartes, Apple Pay, Google Pay).
+4.  **Confirmation** : Page de succès festive et prise de contact sous 24h.
 
-### Scénarios d'Utilisation :
-- **Scénario "Agenda Vide"** : C'est mardi, le planning de jeudi est vide.
-    - *Action* : Créer une promo "Flash 24h" -> "-20% sur tous les Massages".
-    - *Résultat* : Le site barre les prix, affiche un bandeau rouge. Les clients se dépêchent de réserver.
-- **Scénario "Lancement"** : Nouveau programme de coaching.
-    - *Action* : Promo planifiée (Du 1er au 5 du mois).
-    - *Résultat* : Création d'un événement marketing sans effort technique.
-
-## 3. Parcours Client Cible
-1.  **Découverte** : Arrivée sur le site (Mobile). Effet "Wow" visuel.
-2.  **Séduction** : Lecture des valeurs et témoignages.
-3.  **Hésitation** : Le client regarde les prix.
-4.  **Déclencheur (Trigger)** : Il voit le bandeau "Vente Flash - Fin dans 4h" et le prix barré.
-5.  **Conversion** : Clic sur "Réserver" (Panier flottant ou lien direct).
-
-## 4. Feuille de Route Business
-- **Phase 1 (Actuelle)** : Site vitrine dynamique + Gestion manuelle des réservations (Contact/Lien Stripe simple).
-- **Phase 2** : Paiement intégré. Le client paie et réserve son créneau directement (Calendly/Stripe API).
-- **Phase 3** : Fidélisation. Espace membre avec suivi des séances de coaching.
+## 4. Roadmap Business 2026
+- **Phase 1 (Terminée)** : Site dynamique connecté à Supabase, Admin Dashboard optimisé.
+- **Phase 2 (En cours)** : Déploiement production et tests de paiements réels.
+- **Phase 3** : Intégration des outils de performance (Chrono/Parser) directement dans l'espace membre de la PWA pour fidéliser les coureurs.
+- **Phase 4** : Marketing automatisé via les données clients collectées.

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { PromotionFormData } from '@/app/admin/actions'
-import { X, Calendar, Clock, Zap, Percent, Tag } from 'lucide-react'
+import { X, Calendar, Clock, Zap, Percent, Tag, Check } from 'lucide-react'
 
 interface PromoFormProps {
   initialData?: PromotionFormData | null
@@ -14,7 +14,7 @@ interface PromoFormProps {
 }
 
 export function PromoForm({ initialData, services, onSubmit, onCancel, isLoading }: PromoFormProps) {
-  // Helper to format Date to input value "YYYY-MM-DDTHH:mm"
+  // Helper to format Date
   const formatDateForInput = (dateStr?: string | Date | null) => {
     if (!dateStr) return ''
     const d = new Date(dateStr)
@@ -36,30 +36,15 @@ export function PromoForm({ initialData, services, onSubmit, onCancel, isLoading
     discountPercent: undefined
   })
 
-  // Mode: "general" (text only) or "discount" (service linked)
-  const [promoType, setPromoType] = useState<'general' | 'discount'>(
-    (initialData as any)?.services?.length > 0 ? 'discount' : 'general'
-  )
-
-  // Auto-generate text when discount changes
+  // Auto-generate text if empty when selecting discount
   useEffect(() => {
-    if (promoType === 'discount' && formData.serviceIds && formData.serviceIds.length > 0 && formData.discountPercent) {
-      if (formData.serviceIds.length === 1) {
-          const service = services.find(s => s.id === formData.serviceIds![0])
-          if (service) {
-            setFormData(prev => ({
-              ...prev,
-              text: `Vente Flash : -${formData.discountPercent}% sur ${service.title} !`
-            }))
-          }
-      } else {
-          setFormData(prev => ({
-              ...prev,
-              text: `Vente Flash : -${formData.discountPercent}% sur une sélection de services !`
-            }))
-      }
+    if (!initialData && formData.discountPercent && !formData.text) {
+        setFormData(prev => ({
+            ...prev,
+            text: `VENTE FLASH : -${formData.discountPercent}% !`
+        }))
     }
-  }, [formData.serviceIds, formData.discountPercent, promoType, services])
+  }, [formData.discountPercent, initialData, formData.text])
 
   const toggleService = (id: string) => {
       setFormData(prev => {
@@ -70,6 +55,13 @@ export function PromoForm({ initialData, services, onSubmit, onCancel, isLoading
               return { ...prev, serviceIds: [...current, id] }
           }
       })
+  }
+
+  const selectAllServices = () => {
+      setFormData(prev => ({ 
+          ...prev, 
+          serviceIds: services.map(s => s.id) 
+      }))
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -89,197 +81,137 @@ export function PromoForm({ initialData, services, onSubmit, onCancel, isLoading
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-slate-900">
-            {initialData ? 'Modifier la Promotion' : 'Nouvelle Vente Flash'}
-          </h2>
-          <button onClick={onCancel} className="text-slate-400 hover:text-slate-600">
-            <X size={24} />
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-y-auto">
+        
+        {/* Header */}
+        <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
+          <div>
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+              {initialData ? 'Modifier la Promo' : 'Créer une Vente Flash'}
+            </h2>
+            <p className="text-slate-500 text-sm mt-1">Configurez votre opération "Panic Sell".</p>
+          </div>
+          <button onClick={onCancel} className="bg-slate-100 p-2 rounded-full hover:bg-slate-200 transition-colors">
+            <X size={20} className="text-slate-600" />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* TYPE SELECTOR */}
-          <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
-            <button
-              type="button"
-              onClick={() => { setPromoType('general'); setFormData(p => ({ ...p, serviceIds: [], discountPercent: undefined })) }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${promoType === 'general' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Message Général
-            </button>
-            <button
-              type="button"
-              onClick={() => setPromoType('discount')}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${promoType === 'discount' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Réduction Services
-            </button>
-          </div>
-
-          {/* DISCOUNT SETTINGS */}
-          {promoType === 'discount' && (
-            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 space-y-4">
-                <div className="space-y-2">
-                    <label className="text-sm font-bold text-blue-900">1. Pourcentage de remise</label>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            name="discountPercent"
-                            value={formData.discountPercent || ''}
-                            onChange={(e) => setFormData(p => ({ ...p, discountPercent: parseInt(e.target.value) }))}
-                            className="w-full p-3 pl-10 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="Ex: 20"
-                        />
-                        <Percent className="absolute left-3 top-3.5 w-5 h-5 text-blue-400" />
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    <label className="text-sm font-bold text-blue-900">2. Choisir les Services</label>
-                    <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto p-2 bg-white rounded-xl border border-blue-200">
-                        {services.map(s => (
-                            <label key={s.id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer">
-                                <input 
-                                    type="checkbox" 
-                                    checked={formData.serviceIds?.includes(s.id)}
-                                    onChange={() => toggleService(s.id)}
-                                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
-                                />
-                                <span className="text-sm text-slate-700 font-medium">{s.title}</span>
-                                <span className="text-xs text-slate-400 ml-auto">{s.price}</span>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-            </div>
-          )}
-
-          {/* Message & Link */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">
-                    {promoType === 'discount' ? 'Message (Généré auto, modifiable)' : 'Message (Texte défilant)'}
-                </label>
-                <input
+        <div className="p-8 space-y-8">
+          
+          {/* 1. TEXTE DE L'OFFRE */}
+          <div className="space-y-3">
+             <label className="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                <Tag size={16} className="text-red-500" /> 1. Titre de l'offre
+             </label>
+             <input
                 name="text"
                 value={formData.text}
                 onChange={handleChange}
-                className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900/10 outline-none font-bold text-slate-900"
+                className="w-full p-4 text-lg font-bold border-2 border-slate-200 rounded-2xl focus:border-red-500 focus:ring-4 focus:ring-red-500/10 outline-none placeholder:text-slate-300 transition-all"
                 placeholder="Ex: -20% SUR TOUT LE SITE !"
-                required
-                />
-            </div>
-            
-            {promoType === 'general' && (
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">Lien (Stripe / Autre)</label>
-                    <input
-                    name="link"
-                    value={formData.link || ''}
-                    onChange={handleChange}
-                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900/10 outline-none text-blue-600"
-                    placeholder="https://..."
-                    />
-                </div>
-            )}
+                autoFocus={!initialData}
+             />
           </div>
 
-          <div className="h-px bg-slate-100" />
+          {/* 2. REDUCTION (Optionnel) */}
+          <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-6">
+             <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+                    <Percent size={20} className="text-blue-600" />
+                </div>
+                <div>
+                    <h3 className="font-bold text-slate-900">Appliquer une réduction ?</h3>
+                    <p className="text-xs text-slate-500">Calculera automatiquement les nouveaux prix barrés.</p>
+                </div>
+             </div>
 
-          {/* DURATION SETTINGS */}
+             <div className="flex gap-4 items-center">
+                 <div className="relative flex-1">
+                    <input
+                        type="number"
+                        name="discountPercent"
+                        value={formData.discountPercent || ''}
+                        onChange={(e) => setFormData(p => ({ ...p, discountPercent: parseInt(e.target.value) }))}
+                        className="w-full p-3 pl-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 outline-none font-bold text-blue-600"
+                        placeholder="0"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">%</span>
+                 </div>
+                 <div className="text-sm text-slate-400 font-medium">de remise</div>
+             </div>
+
+             {/* Services Selector (Only if discount set) */}
+             {formData.discountPercent ? (
+                 <div className="animate-in fade-in slide-in-from-top-2">
+                    <div className="flex justify-between items-center mb-2">
+                        <label className="text-xs font-bold text-slate-500 uppercase">Sur quels services ?</label>
+                        <button onClick={selectAllServices} className="text-xs text-blue-600 font-bold hover:underline">Tout sélectionner</button>
+                    </div>
+                    <div className="bg-white border border-slate-200 rounded-xl max-h-40 overflow-y-auto p-2">
+                        {services.map(s => (
+                            <div 
+                                key={s.id} 
+                                onClick={() => toggleService(s.id)}
+                                className="flex items-center gap-3 p-2 hover:bg-blue-50/50 rounded-lg cursor-pointer transition-colors group select-none"
+                            >
+                                <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${formData.serviceIds?.includes(s.id) ? 'bg-blue-500 border-blue-500' : 'border-slate-300 bg-white'}`}>
+                                    {formData.serviceIds?.includes(s.id) && <Check size={12} className="text-white" />}
+                                </div>
+                                <span className="text-sm text-slate-700 font-medium group-hover:text-blue-700">{s.title}</span>
+                            </div>
+                        ))}
+                    </div>
+                 </div>
+             ) : null}
+          </div>
+
+          {/* 3. DUREE */}
           <div className="space-y-4">
-            <label className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <Clock size={16} /> Durée de la promotion
+            <label className="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                <Clock size={16} className="text-orange-500" /> 3. Durée (Flash)
             </label>
 
-            {/* Quick Actions (Flash) */}
-            <div className="grid grid-cols-3 gap-2">
-                <button 
-                    type="button"
-                    onClick={() => setFlashDuration(24)}
-                    className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-slate-200 hover:border-yellow-400 hover:bg-yellow-50 transition-colors group"
-                >
-                    <Zap className="w-5 h-5 text-slate-400 group-hover:text-yellow-500 fill-current" />
-                    <span className="text-xs font-bold text-slate-600">24 Heures</span>
-                </button>
-                <button 
-                    type="button"
-                    onClick={() => setFlashDuration(48)}
-                    className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-slate-200 hover:border-orange-400 hover:bg-orange-50 transition-colors group"
-                >
-                    <Zap className="w-5 h-5 text-slate-400 group-hover:text-orange-500 fill-current" />
-                    <span className="text-xs font-bold text-slate-600">48 Heures</span>
-                </button>
-                <button 
-                    type="button"
-                    onClick={() => setFlashDuration(72)}
-                    className="flex flex-col items-center justify-center gap-1 p-3 rounded-xl border border-slate-200 hover:border-red-400 hover:bg-red-50 transition-colors group"
-                >
-                    <Zap className="w-5 h-5 text-slate-400 group-hover:text-red-500 fill-current" />
-                    <span className="text-xs font-bold text-slate-600">3 Jours</span>
-                </button>
+            <div className="grid grid-cols-3 gap-3">
+                {[24, 48, 72].map(hours => (
+                    <button 
+                        key={hours}
+                        type="button"
+                        onClick={() => setFlashDuration(hours)}
+                        className="py-3 px-2 rounded-xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 hover:text-orange-600 font-bold text-sm text-slate-600 transition-all active:scale-95"
+                    >
+                        {hours}h
+                    </button>
+                ))}
             </div>
-
-            {/* Manual Date Inputs */}
-            <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Début</label>
-                    <input
-                        type="datetime-local"
-                        name="startDate"
-                        value={formData.startDate || ''}
-                        onChange={handleChange}
-                        className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10"
-                    />
-                </div>
-                <div className="space-y-1">
-                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Fin</label>
-                    <input
-                        type="datetime-local"
-                        name="endDate"
-                        value={formData.endDate || ''}
-                        onChange={handleChange}
-                        className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10"
-                    />
-                </div>
-                <p className="col-span-2 text-[10px] text-slate-400 text-center">
-                    Laissez vide pour une durée indéterminée (manuel)
-                </p>
+            
+            <div className="grid grid-cols-2 gap-4">
+                <input type="datetime-local" name="startDate" value={formData.startDate || ''} onChange={handleChange} className="bg-slate-50 border-none rounded-xl p-3 text-xs text-slate-600 font-medium" />
+                <input type="datetime-local" name="endDate" value={formData.endDate || ''} onChange={handleChange} className="bg-slate-50 border-none rounded-xl p-3 text-xs text-slate-600 font-medium" />
             </div>
           </div>
 
-          <div className="h-px bg-slate-100" />
-
-          {/* Active Switch */}
-          <label className="flex items-center gap-3 p-3 border border-slate-100 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-            <div className={`w-10 h-6 rounded-full p-1 transition-colors ${formData.isActive ? 'bg-green-500' : 'bg-slate-300'}`}>
-              <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${formData.isActive ? 'translate-x-4' : 'translate-x-0'}`} />
+          {/* ACTIVER */}
+          <label className="flex items-center gap-4 p-4 bg-green-50 rounded-2xl cursor-pointer border border-green-100 transition-all hover:shadow-md">
+            <div className={`w-12 h-7 rounded-full p-1 transition-colors duration-300 ${formData.isActive ? 'bg-green-500' : 'bg-slate-300'}`}>
+              <div className={`w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${formData.isActive ? 'translate-x-5' : 'translate-x-0'}`} />
             </div>
-            <input
-              type="checkbox"
-              checked={formData.isActive}
-              onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
-              className="hidden"
-            />
             <div>
-                <span className="font-bold text-slate-900 block">Activer la promotion</span>
-                <span className="text-xs text-slate-500">Si désactivé, la réduction ne s'appliquera pas.</span>
+                <span className="font-black text-green-900 block">Activer immédiatement</span>
+                <span className="text-xs text-green-700 font-medium">La promo sera visible sur le site.</span>
             </div>
           </label>
+
         </div>
 
-        <div className="p-6 border-t border-slate-100 flex justify-end gap-3 rounded-b-2xl bg-white sticky bottom-0">
-          <Button variant="outline" onClick={onCancel} className="rounded-xl">
-            Annuler
-          </Button>
+        {/* Footer */}
+        <div className="p-6 border-t border-slate-100 bg-white sticky bottom-0 rounded-b-[2rem]">
           <Button 
             onClick={() => onSubmit(formData)} 
             disabled={isLoading}
-            className="bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold"
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl py-6 text-lg font-black shadow-xl shadow-slate-200 active:scale-[0.98] transition-all"
           >
-            {isLoading ? 'Sauvegarde...' : 'Sauvegarder'}
+            {isLoading ? 'Lancement...' : 'LANCER LA VENTE FLASH 🚀'}
           </Button>
         </div>
       </div>

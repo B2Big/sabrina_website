@@ -15,19 +15,21 @@ model Service {
   title         String
   description   String
   price         String   
-  originalPrice String?  
+  originalPrice String?  @map("originalprice")
   duration      String?
   objective     String?
   popular       Boolean  @default(false)
-  bestValue     Boolean  @default(false)
+  bestValue     Boolean  @default(false) @map("bestvalue")
   note          String?  
   features      String[]  
-  paymentLink   String?
+  paymentLink   String?  @map("paymentlink")
   
   promotions    Promotion[]
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now()) @map("createdat")
+  updatedAt     DateTime @updatedAt @map("updatedat")
+
+  @@map("services")
 }
 
 model Promotion {
@@ -35,13 +37,15 @@ model Promotion {
   text      String?
   link      String?
   
-  discountPercent Int?
+  discountPercent Int? @map("discountpercent")
   services        Service[]
 
-  isActive  Boolean  @default(true)
-  startDate DateTime?
-  endDate   DateTime?
-  createdAt DateTime @default(now())
+  isActive  Boolean  @default(true) @map("isactive")
+  startDate DateTime? @map("startdate")
+  endDate   DateTime? @map("enddate")
+  createdAt DateTime @default(now()) @map("createdat")
+
+  @@map("promotions")
 }
 
 model User {
@@ -49,4 +53,6 @@ model User {
   email    String   @unique
   password String
   name     String?
+
+  @@map("users")
 }

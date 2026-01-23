@@ -1,56 +1,59 @@
 # Contexte du Projet Sabrina Coaching
 
 ## 1. Vue d'ensemble 360°
-Plateforme web "Mobile-First" pour Sabrina, coach sportive et masseuse.
-Le projet dépasse le simple site vitrine : c'est un **outil de conversion dynamique** (PWA) équipé d'un moteur de promotion psychologique ("Panic Sell").
+Plateforme web "Mobile-First" (PWA) pour Sabrina, coach sportive et masseuse.
+Le projet est désormais consolidé autour d'une **application web unique** (Next.js) qui gère :
+- La vitrine des services (Coaching & Massages).
+- La réservation et le paiement en ligne (Stripe).
+- Un moteur de promotion psychologique ("Panic Sell").
+- Une administration complète.
+
+*Note : Le projet d'application native séparée a été abandonné pour centraliser les efforts sur cette PWA.*
 
 ## 2. Stack Technique
 - **Framework** : Next.js 16 (App Router).
 - **Langage** : TypeScript / React 19.
 - **Styling** : Tailwind CSS 4 + Framer Motion (Animations).
 - **Backend (BaaS)** : Supabase (PostgreSQL + Auth).
-- **ORM** : Prisma v5 (Downgrade de v7 pour stabilité WSL/Windows).
-- **Déploiement** : Vercel (Cible).
+- **ORM** : Prisma v5 (Mappage PostgreSQL strict).
+- **Paiement** : Stripe Checkout.
+- **Déploiement** : Vercel / Netlify.
 
-## 3. Architecture des Données
-La base de données gère une relation **Many-to-Many** entre Services et Promotions.
+## 3. Architecture des Données (PostgreSQL)
+La base de données est hébergée sur Supabase et gérée via Prisma.
 
 ### Modèles Principaux :
-1.  **Service** : La prestation de base (Titre, Prix, Description, Catégorie).
-2.  **Promotion** : L'offre temporaire.
-    - `discountPercent` : % de réduction automatique.
-    - `startDate` / `endDate` : Période de validité.
-    - `services` : Liste des services concernés (Relation M:N).
-3.  **User** : Administrateur (Sabrina) géré via Supabase Auth.
+1.  **services** : Prestations (Titre, Prix, Catégorie, etc.).
+2.  **promotions** : Offres temporaires ("Panic Sell").
+    - Relation Many-to-Many avec les services.
+    - Gestion des dates de validité et du % de réduction.
+3.  **users** : Administrateurs (Sabrina).
 
-## 4. Fonctionnalités Implémentées
+## 4. Fonctionnalités Clés
 
 ### A. Partie Publique (Front-Office)
-- **Navigation** : Navbar rétractable + Mobile Nav (App-like) + Footer ajusté.
-- **Catalogue** : Affichage dynamique des services (Coaching/Massage).
-- **Moteur de Prix (Pricing Engine)** :
-    - Le site détecte si une promo est active pour chaque service.
-    - Si oui : calcul automatique du nouveau prix, affichage du prix barré et badge "-X%".
-- **Bandeau "Panic Sell"** :
-    - S'affiche uniquement si une promo est active ET dans les dates valides.
-    - Défilement (Marquee) urgent en haut de page.
-- **Mode Secours** : Si la BDD est hors ligne, le site bascule sur un fichier JSON statique (`content.ts`).
+- **Catalogue Dynamique** : Services récupérés en temps réel depuis la BDD.
+- **Panic Sell (Vente Flash)** :
+    - Bandeau d'alerte rouge en haut de page (Mobile : Slider Vertical / Desktop : Marquee).
+    - Calcul automatique des prix barrés.
+- **Panier Flottant** : Affiche le total et permet le paiement direct.
+- **Paiement Stripe** : Tunnel de paiement sécurisé avec redirection vers page de succès.
 
 ### B. Administration (Back-Office)
-Accessible via `/admin` ou le lien discret en bas de page.
-- **Dashboard Services** : CRUD complet (Créer, Lire, Mettre à jour, Supprimer).
-- **Dashboard Promotions (Le "Cerveau")** :
-    - **Ventes Flash** : Boutons rapides (24h, 48h, 3j) ou dates manuelles.
-    - **Ciblage** : Sélection multiple de services via une grille de cases à cocher.
-    - **Visualisation** : Indicateurs d'état (En cours, Planifié, Expiré).
+Accessible via `/admin`.
+- **Dashboard Services** : CRUD complet. Prix gérés automatiquement en Euros.
+- **Gestion Panic Sell** : 
+    - Interface simplifiée "One-Click".
+    - Création de promos globales ou ciblées.
+    - Boutons rapides (24h, 48h).
 
-## 5. État Actuel (22/01/2026)
-- **Codebase** : Stable, build fonctionnel.
-- **Base de données** : Schéma prêt. **Nécessite une connexion valide dans `.env`**.
-- **UX Mobile** : Optimisée (Padding footer corrigé pour ne pas masquer le dashboard).
+## 5. État Actuel (23/01/2026)
+- **Base de Données** : Connectée et Peuplée (Seed initial effectué avec les offres historiques).
+- **Admin** : Opérationnel et designé (Pop & Wellness).
+- **Paiement** : Connecté à Stripe (Mode Test).
+- **Mobile UX** : Animations optimisées (Marquee Hero & Promo).
 
-## 6. À Faire (Roadmap Technique)
-1.  [URGENT] Corriger `DATABASE_URL` et lancer `npx prisma db push`.
-2.  [URGENT] Créer le user Admin dans Supabase.
-3.  [Medium] Connecter Stripe (Webhooks) pour valider les paiements automatiquement.
-4.  [Low] Blog / Articles SEO.
+## 6. À Faire (Roadmap)
+1.  **Déploiement** : Pousser en production (Vercel/Netlify) avec les variables d'environnement.
+2.  **Emailing** : Configurer Resend pour les notifications de commande (webhook Stripe).
+3.  **App Course** : Intégrer les outils (Chrono, Parser) directement dans la PWA (Section `/tools` ?) à la place de l'app native.

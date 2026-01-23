@@ -18,7 +18,14 @@ interface ServiceFormProps {
 }
 
 export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: ServiceFormProps) {
-  const [formData, setFormData] = useState<ServiceFormData>(initialData || {
+  // Helper to strip " €" for the form display
+  const cleanPrice = (price: string) => price.replace(/[^0-9.]/g, '');
+
+  const [formData, setFormData] = useState<ServiceFormData>(initialData ? {
+    ...initialData,
+    price: cleanPrice(initialData.price),
+    originalPrice: initialData.originalPrice ? cleanPrice(initialData.originalPrice) : ''
+  } : {
     title: '',
     category: 'Coaching',
     price: '',
@@ -110,25 +117,33 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Prix (Affichage)</label>
-              <input
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900/10 outline-none"
-                placeholder="Ex: 50 €"
-                required
-              />
+              <label className="text-sm font-medium text-slate-700">Prix (en €)</label>
+              <div className="relative">
+                <input
+                  name="price"
+                  type="number"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900/10 outline-none pr-8"
+                  placeholder="50"
+                  required
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">€</span>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Prix Barré (Optionnel)</label>
-              <input
-                name="originalPrice"
-                value={formData.originalPrice || ''}
-                onChange={handleChange}
-                className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900/10 outline-none"
-                placeholder="Ex: 70 €"
-              />
+              <div className="relative">
+                <input
+                  name="originalPrice"
+                  type="number"
+                  value={formData.originalPrice || ''}
+                  onChange={handleChange}
+                  className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900/10 outline-none pr-8"
+                  placeholder="70"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">€</span>
+              </div>
             </div>
           </div>
           
@@ -234,7 +249,17 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
             Annuler
           </Button>
           <Button 
-            onClick={() => onSubmit(formData)} 
+            onClick={() => {
+                // Ensure prices have € symbol
+                const finalData = { ...formData };
+                if (finalData.price && !finalData.price.includes('€')) {
+                    finalData.price = `${finalData.price.trim()} €`;
+                }
+                if (finalData.originalPrice && !finalData.originalPrice.includes('€')) {
+                    finalData.originalPrice = `${finalData.originalPrice.trim()} €`;
+                }
+                onSubmit(finalData);
+            }} 
             disabled={isLoading}
             className="bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800"
           >

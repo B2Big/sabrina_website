@@ -48,27 +48,35 @@ export async function getPromotions() {
 
 export async function upsertPromotion(data: PromotionFormData) {
   try {
-    const formattedData = {
-      text: data.text,
-      link: data.link,
-      isActive: data.isActive,
-      startDate: data.startDate ? new Date(data.startDate) : null,
-      endDate: data.endDate ? new Date(data.endDate) : null,
-      discountPercent: data.discountPercent || null,
-      services: {
-        set: [], // Clear previous connections
-        connect: data.serviceIds?.map(id => ({ id })) || [] // Connect new ones
-      }
-    }
-
     if (data.id) {
       await prisma.promotion.update({
         where: { id: data.id },
-        data: formattedData
+        data: {
+          text: data.text,
+          link: data.link,
+          isActive: data.isActive,
+          startDate: data.startDate ? new Date(data.startDate) : null,
+          endDate: data.endDate ? new Date(data.endDate) : null,
+          discountPercent: data.discountPercent || null,
+          services: {
+            set: [], // Clear previous connections
+            connect: data.serviceIds?.map(id => ({ id })) || [] // Connect new ones
+          }
+        }
       })
     } else {
       await prisma.promotion.create({
-        data: formattedData
+        data: {
+          text: data.text,
+          link: data.link,
+          isActive: data.isActive,
+          startDate: data.startDate ? new Date(data.startDate) : null,
+          endDate: data.endDate ? new Date(data.endDate) : null,
+          discountPercent: data.discountPercent || null,
+          services: {
+            connect: data.serviceIds?.map(id => ({ id })) || []
+          }
+        }
       })
     }
     revalidatePath('/admin')

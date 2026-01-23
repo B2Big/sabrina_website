@@ -13,7 +13,7 @@ import { Testimonials } from "@/components/testimonials";
 import { Faq } from "@/components/faq";
 import { ValuesSection } from "@/components/values-section";
 import { PhotoMarquee } from "@/components/photo-marquee";
-import { SERVICES as STATIC_SERVICES, Service } from "@/data/content";
+import { Service } from "@/data/content";
 import { FloatingCart } from "@/components/ui/floating-cart";
 import { getAllServices, getActivePromotions } from "@/lib/db-services";
 import { PromoBanner } from "@/components/promo-banner";
@@ -67,8 +67,6 @@ export default async function Home() {
             objective: s.objective || undefined,
           };
       }) as Service[];
-  } else {
-      services = STATIC_SERVICES;
   }
 
   const coachingServices = services.filter((s) => s.category === "Coaching");
