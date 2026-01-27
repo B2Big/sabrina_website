@@ -1,0 +1,52 @@
+// FICHIER DEBUG - À utiliser temporairement
+
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
+
+export default async function AdminDebugPage() {
+  const cookieStore = await cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {}
+        },
+      },
+    }
+  )
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Debug Info</h1>
+
+      <div className="space-y-4">
+        <div className="bg-slate-100 p-4 rounded">
+          <h2 className="font-bold">User Session:</h2>
+          <pre>{JSON.stringify(user, null, 2)}</pre>
+        </div>
+
+        <div className="bg-slate-100 p-4 rounded">
+          <h2 className="font-bold">Cookies:</h2>
+          <pre>{JSON.stringify(cookieStore.getAll(), null, 2)}</pre>
+        </div>
+
+        <div className="bg-slate-100 p-4 rounded">
+          <h2 className="font-bold">App Metadata:</h2>
+          <pre>{JSON.stringify(user?.app_metadata, null, 2)}</pre>
+        </div>
+      </div>
+    </div>
+  )
+}

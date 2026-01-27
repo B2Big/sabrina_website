@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { hasAdminAccess, getUserRole } from '@/lib/auth/roles'
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
@@ -49,12 +50,31 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (request.nextUrl.pathname.startsWith('/admin') && !user) {
-    return NextResponse.redirect(new URL('/login', request.url))
+  // Protection de la route /admin
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    // 1. Vérifier si l'utilisateur est connecté
+    if (!user) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    // 2. Vérifier si l'utilisateur a un rôle admin (ADMIN ou DEVELOPER)
+    if (!hasAdminAccess(user)) {
+      console.warn(`Tentative d'accès non autorisée à /admin par ${user.email}`)
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+
+    // L'utilisateur a accès, afficher son rôle dans les logs
+    const role = getUserRole(user)
+    console.log(`Accès /admin autorisé pour ${user.email} (rôle: ${role})`)
   }
 
+  // Rediriger les utilisateurs connectés de /login vers /admin
   if (request.nextUrl.pathname.startsWith('/login') && user) {
-    return NextResponse.redirect(new URL('/admin', request.url))
+    if (hasAdminAccess(user)) {
+      return NextResponse.redirect(new URL('/admin', request.url))
+    }
+    // Si connecté mais pas admin, rediriger vers l'accueil
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   return response

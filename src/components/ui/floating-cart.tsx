@@ -13,10 +13,17 @@ export function FloatingCart() {
   const handleCheckout = async () => {
     setIsLoading(true);
     try {
+      // 🔒 SÉCURITÉ : N'envoyer que les IDs et quantités, pas les prix
+      // Les prix seront récupérés côté serveur depuis la base de données
+      const checkoutItems = items.map(item => ({
+        id: item.id,
+        quantity: item.quantity
+      }));
+
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items: checkoutItems }),
       });
 
       const data = await response.json();
@@ -27,7 +34,7 @@ export function FloatingCart() {
       }
     } catch (error) {
       console.error(error);
-      alert('Une erreur est survenue lors de la connexion à Stripe.');
+      toast.error('Une erreur est survenue lors de la connexion à Stripe.');
       setIsLoading(false);
     }
   };

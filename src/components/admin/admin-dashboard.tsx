@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Plus, Pencil, Trash2, ArrowLeft, LogOut } from 'lucide-react'
 import Link from 'next/link'
-import { ServiceFormData, upsertService, deleteService } from '@/app/admin/actions'
+import { ServiceFormData, upsertService, deleteService, signOut } from '@/app/admin/actions'
 import { ServiceForm } from '@/components/admin/service-form'
 import { PromoList } from '@/components/admin/promo-list'
 import { createClient } from '@/lib/supabase/client'
@@ -25,8 +25,10 @@ export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
   const supabase = createClient()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.refresh()
+    console.log('Client: handleSignOut clicked');
+    await signOut()
+    console.log('Client: signOut action completed, redirecting...');
+    window.location.href = '/' // Force full reload
   }
 
   const handleCreate = () => {

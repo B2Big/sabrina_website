@@ -7,6 +7,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Service {
@@ -14,16 +15,16 @@ model Service {
   category      String   // "Coaching", "Massages", "Cures"
   title         String
   description   String
-  price         String   
+  price         String
   originalPrice String?  @map("originalprice")
   duration      String?
   objective     String?
   popular       Boolean  @default(false)
   bestValue     Boolean  @default(false) @map("bestvalue")
-  note          String?  
-  features      String[]  
+  note          String?
+  features      String[]
   paymentLink   String?  @map("paymentlink")
-  
+
   promotions    Promotion[]
 
   createdAt     DateTime @default(now()) @map("createdat")
@@ -36,7 +37,7 @@ model Promotion {
   id        String   @id @default(cuid())
   text      String?
   link      String?
-  
+
   discountPercent Int? @map("discountpercent")
   services        Service[]
 
@@ -48,11 +49,34 @@ model Promotion {
   @@map("promotions")
 }
 
-model User {
-  id       String   @id @default(cuid())
-  email    String   @unique
-  password String
-  name     String?
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
 
-  @@map("users")
+model Order {
+  id               String      @id @default(cuid())
+  stripeSessionId  String      @unique @map("stripe_session_id")
+  stripePaymentId  String?     @map("stripe_payment_id")
+
+  amount           Float       // Montant en euros
+  currency         String      @default("eur")
+  status           OrderStatus @default(PENDING)
+
+  customerEmail    String      @map("customer_email")
+  customerName     String?     @map("customer_name")
+
+  serviceIds       String[]    @map("service_ids")
+  itemCount        Int         @map("item_count")
+
+  paidAt           DateTime?   @map("paid_at")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+
+  @@index([customerEmail])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
 }

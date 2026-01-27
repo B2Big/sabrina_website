@@ -5,6 +5,7 @@ import { CONTACT_INFO } from "@/data/content";
 import { MobileNav } from "@/components/mobile-nav";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import { CartProvider } from "@/context/cart-context";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -98,6 +99,7 @@ export default function RootLayout({
           {children}
           <InstallPrompt />
           <MobileNav />
+          <Toaster position="top-center" />
         </CartProvider>
       </body>
     </html>

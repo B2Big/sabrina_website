@@ -2,6 +2,103 @@
 
 import { prisma, getAllServices } from '@/lib/db-services'
 import { revalidatePath } from 'next/cache'
+import { createServerClient } from '@supabase/ssr'
+import { cookies, headers } from 'next/headers'
+import { hasAdminAccess, getUserRole } from '@/lib/auth/roles'
+import { serviceSchema, promotionSchema } from '@/lib/validations/schemas'
+import { rateLimit, RateLimitConfigs, getClientIp } from '@/lib/rate-limit'
+import { z } from 'zod'
+
+/**
+ * Vérifie l'authentification, les permissions admin et le rate limiting
+ * Lève une erreur si l'utilisateur n'est pas connecté ou n'a pas de rôle admin
+ */
+async function checkAuth() {
+  // 🔒 RATE LIMITING : Protection des actions admin
+  const headersList = await headers()
+  const request = new Request('http://localhost', { headers: headersList })
+  const clientIp = getClientIp(request)
+
+  const cookieStore = await cookies()
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
+    }
+  )
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Vérifier que l'utilisateur est connecté
+  if (!user) {
+    throw new Error('Non authentifié - Connexion requise')
+  }
+
+  // Vérifier que l'utilisateur a un rôle admin (ADMIN ou DEVELOPER)
+  if (!hasAdminAccess(user)) {
+    const role = getUserRole(user)
+    console.warn(`Tentative d'action admin non autorisée par ${user.email} (rôle: ${role})`)
+    throw new Error('Non autorisé - Rôle admin requis')
+  }
+
+  // Rate limiting par utilisateur (email)
+  const rateLimitKey = `admin-action:${user.email}`
+  const rateLimitResult = rateLimit(rateLimitKey, RateLimitConfigs.ADMIN_ACTIONS)
+
+  if (!rateLimitResult.success) {
+    console.warn(`🚫 Rate limit dépassé pour actions admin par ${user.email}`)
+    throw new Error('Trop de modifications rapides. Veuillez patienter quelques instants.')
+  }
+
+  return user
+}
+
+export async function signOut() {
+  console.log('Server Action: signOut called');
+  const cookieStore = await cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+          }
+        },
+      },
+    }
+  )
+  const { error } = await supabase.auth.signOut()
+  if (error) console.error('SignOut Error:', error)
+  else console.log('SignOut Success')
+  
+  revalidatePath('/', 'layout')
+  return { success: true }
+}
 
 export type ServiceFormData = {
   id?: string
@@ -48,33 +145,38 @@ export async function getPromotions() {
 
 export async function upsertPromotion(data: PromotionFormData) {
   try {
-    if (data.id) {
+    await checkAuth() // Security Check
+
+    // 🔒 Validation Zod
+    const validatedData = promotionSchema.parse(data)
+
+    if (validatedData.id) {
       await prisma.promotion.update({
-        where: { id: data.id },
+        where: { id: validatedData.id },
         data: {
-          text: data.text,
-          link: data.link,
-          isActive: data.isActive,
-          startDate: data.startDate ? new Date(data.startDate) : null,
-          endDate: data.endDate ? new Date(data.endDate) : null,
-          discountPercent: data.discountPercent || null,
+          text: validatedData.text,
+          link: validatedData.link,
+          isActive: validatedData.isActive,
+          startDate: validatedData.startDate ? new Date(validatedData.startDate) : null,
+          endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
+          discountPercent: validatedData.discountPercent || null,
           services: {
             set: [], // Clear previous connections
-            connect: data.serviceIds?.map(id => ({ id })) || [] // Connect new ones
+            connect: validatedData.serviceIds?.map(id => ({ id })) || [] // Connect new ones
           }
         }
       })
     } else {
       await prisma.promotion.create({
         data: {
-          text: data.text,
-          link: data.link,
-          isActive: data.isActive,
-          startDate: data.startDate ? new Date(data.startDate) : null,
-          endDate: data.endDate ? new Date(data.endDate) : null,
-          discountPercent: data.discountPercent || null,
+          text: validatedData.text,
+          link: validatedData.link,
+          isActive: validatedData.isActive,
+          startDate: validatedData.startDate ? new Date(validatedData.startDate) : null,
+          endDate: validatedData.endDate ? new Date(validatedData.endDate) : null,
+          discountPercent: validatedData.discountPercent || null,
           services: {
-            connect: data.serviceIds?.map(id => ({ id })) || []
+            connect: validatedData.serviceIds?.map(id => ({ id })) || []
           }
         }
       })
@@ -84,12 +186,16 @@ export async function upsertPromotion(data: PromotionFormData) {
     return { success: true }
   } catch (error) {
     console.error("Failed to upsert promotion:", error)
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0].message }
+    }
     return { success: false, error: 'Failed to save promotion' }
   }
 }
 
 export async function deletePromotion(id: string) {
   try {
+    await checkAuth()
     await prisma.promotion.delete({ where: { id } })
     revalidatePath('/admin')
     revalidatePath('/')
@@ -101,6 +207,7 @@ export async function deletePromotion(id: string) {
 
 export async function togglePromotion(id: string, isActive: boolean) {
   try {
+    await checkAuth()
     await prisma.promotion.update({
       where: { id },
       data: { isActive }
@@ -115,39 +222,44 @@ export async function togglePromotion(id: string, isActive: boolean) {
 
 export async function upsertService(data: ServiceFormData) {
   try {
-    if (data.id) {
+    await checkAuth()
+
+    // 🔒 Validation Zod
+    const validatedData = serviceSchema.parse(data)
+
+    if (validatedData.id) {
       await prisma.service.update({
-        where: { id: data.id },
+        where: { id: validatedData.id },
         data: {
-          title: data.title,
-          category: data.category,
-          price: data.price,
-          originalPrice: data.originalPrice,
-          description: data.description,
-          duration: data.duration,
-          objective: data.objective,
-          popular: data.popular,
-          bestValue: data.bestValue,
-          note: data.note,
-          features: data.features,
-          paymentLink: data.paymentLink
+          title: validatedData.title,
+          category: validatedData.category,
+          price: validatedData.price,
+          originalPrice: validatedData.originalPrice,
+          description: validatedData.description,
+          duration: validatedData.duration,
+          objective: validatedData.objective,
+          popular: validatedData.popular,
+          bestValue: validatedData.bestValue,
+          note: validatedData.note,
+          features: validatedData.features,
+          paymentLink: validatedData.paymentLink
         }
       })
     } else {
       await prisma.service.create({
         data: {
-          title: data.title,
-          category: data.category,
-          price: data.price,
-          originalPrice: data.originalPrice,
-          description: data.description,
-          duration: data.duration,
-          objective: data.objective,
-          popular: data.popular,
-          bestValue: data.bestValue,
-          note: data.note,
-          features: data.features,
-          paymentLink: data.paymentLink
+          title: validatedData.title,
+          category: validatedData.category,
+          price: validatedData.price,
+          originalPrice: validatedData.originalPrice,
+          description: validatedData.description,
+          duration: validatedData.duration,
+          objective: validatedData.objective,
+          popular: validatedData.popular,
+          bestValue: validatedData.bestValue,
+          note: validatedData.note,
+          features: validatedData.features,
+          paymentLink: validatedData.paymentLink
         }
       })
     }
@@ -156,12 +268,16 @@ export async function upsertService(data: ServiceFormData) {
     return { success: true }
   } catch (error) {
     console.error("Failed to upsert service:", error)
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0].message }
+    }
     return { success: false, error: 'Failed to save service' }
   }
 }
 
 export async function deleteService(id: string) {
   try {
+    await checkAuth()
     await prisma.service.delete({
       where: { id }
     })
