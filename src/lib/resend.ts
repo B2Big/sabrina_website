@@ -100,7 +100,7 @@ export async function sendReservationToSabrina({
 
             <!-- Action Button -->
             <div style="text-align: center; margin-top: 30px;">
-              <a href="mailto:${customerEmail}?subject=Re: Votre réservation Sabrina Wellness"
+              <a href="mailto:${customerEmail}?subject=Re: Votre réservation Sab-Fit"
                  style="display: inline-block; background: #3b82f6; color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 16px;">
                 📧 Répondre au client
               </a>
@@ -111,8 +111,8 @@ export async function sendReservationToSabrina({
           <!-- Footer -->
           <div style="background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
             <p style="margin: 0; color: #94a3b8; font-size: 12px;">
-              Sabrina Wellness - Dashboard Admin<br>
-              <a href="http://localhost:3000/admin" style="color: #3b82f6; text-decoration: none;">Gérer les réservations</a>
+              Sab-Fit - Dashboard Admin<br>
+              <a href="https://www.sab-fit.com/admin" style="color: #3b82f6; text-decoration: none;">Gérer les réservations</a>
             </p>
           </div>
 
@@ -188,7 +188,7 @@ export async function sendConfirmationToCustomer({
             </p>
 
             <p style="color: #475569; line-height: 1.6; font-size: 16px;">
-              Merci pour votre réservation chez <strong>Sabrina Wellness</strong> ! 🎉
+              Merci pour votre réservation chez <strong>Sab-Fit</strong> ! 🎉
             </p>
 
             <p style="color: #475569; line-height: 1.6; font-size: 16px;">
@@ -223,7 +223,7 @@ export async function sendConfirmationToCustomer({
           <!-- Footer -->
           <div style="background: #f8fafc; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0;">
             <p style="margin: 0; color: #94a3b8; font-size: 12px;">
-              Sabrina Wellness - Coaching & Bien-être<br>
+              Sab-Fit - Coaching & Bien-être<br>
               Vous recevez cet email suite à votre demande de réservation
             </p>
           </div>
@@ -236,7 +236,7 @@ export async function sendConfirmationToCustomer({
   return await resend.emails.send({
     from: FROM_EMAIL,
     to: customerEmail,
-    subject: '✅ Réservation confirmée - Sabrina Wellness',
+    subject: '✅ Réservation confirmée - Sab-Fit',
     html,
   });
 }
