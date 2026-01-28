@@ -10,32 +10,16 @@ export function FloatingCart() {
   const { items, total } = useCart();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCheckout = async () => {
-    setIsLoading(true);
-    try {
-      // 🔒 SÉCURITÉ : N'envoyer que les IDs et quantités, pas les prix
-      // Les prix seront récupérés côté serveur depuis la base de données
-      const checkoutItems = items.map(item => ({
-        id: item.id,
-        quantity: item.quantity
-      }));
-
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: checkoutItems }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || 'Erreur lors du paiement');
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('Une erreur est survenue lors de la connexion à Stripe.');
-      setIsLoading(false);
+  const handleCheckout = () => {
+    // Scroll vers le formulaire de contact au lieu d'aller directement à Stripe
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Petit flash pour attirer l'attention sur le formulaire
+      contactSection.classList.add('ring-4', 'ring-blue-500/30', 'ring-offset-4');
+      setTimeout(() => {
+        contactSection.classList.remove('ring-4', 'ring-blue-500/30', 'ring-offset-4');
+      }, 2000);
     }
   };
 

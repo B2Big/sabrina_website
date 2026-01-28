@@ -1,12 +1,14 @@
 'use server'
 
 import { z } from "zod";
+import { sendReservationToSabrina, sendConfirmationToCustomer } from "@/lib/resend";
 
 const ContactSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   email: z.string().email("Email invalide"),
   phone: z.string().min(10, "Veuillez entrer un numéro de téléphone valide (10 chiffres)"),
   message: z.string().min(10, "Le message doit contenir au moins 10 caractères"),
+  cart: z.string().optional(), // JSON stringifié du panier
 });
 
 export async function sendContactEmail(prevState: any, formData: FormData) {
@@ -15,6 +17,7 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
     email: formData.get("email"),
     phone: formData.get("phone"),
     message: formData.get("message"),
+    cart: formData.get("cart"),
   };
 
   const result = ContactSchema.safeParse(rawData);
@@ -23,45 +26,56 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
     return { success: false, errors: result.error.flatten().fieldErrors };
   }
 
-  const { name, email, phone, message } = result.data;
+  const { name, email, phone, message, cart } = result.data;
 
   try {
-    // SOLUTION SIMPLE : FormSubmit.co
-    // Envoi des données via une simple requête HTTP
-    // L'email arrivera sur : sabcompan8306@gmail.com
-    const response = await fetch("https://formsubmit.co/ajax/sabcompan8306@gmail.com", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify({
-        _subject: `🔔 Nouveau contact : ${name}`, // Sujet du mail
-        nom: name,
-        email: email,
-        telephone: phone || "Non renseigné",
-        message: message,
-        _template: "table", // Format propre
-        _captcha: "false" // Désactive le captcha de leur côté (on gère le nôtre si besoin)
-      }),
-    });
+    // Parser le panier si présent
+    let cartItems: Array<{ title: string; price: string; quantity: number }> | undefined;
+    let total: string | undefined;
 
-    if (!response.ok) {
-      throw new Error("Erreur service FormSubmit");
+    if (cart) {
+      try {
+        const parsedCart = JSON.parse(cart);
+        cartItems = parsedCart.items;
+        total = parsedCart.total;
+      } catch (e) {
+        console.error("Erreur parsing cart:", e);
+      }
     }
 
-    console.log("📨 Données transmises à FormSubmit pour:", name);
+    // 1. Envoyer email à Sabrina (notification de réservation)
+    await sendReservationToSabrina({
+      customerName: name,
+      customerEmail: email,
+      customerPhone: phone,
+      message: message,
+      cartItems,
+      total,
+    });
 
-    return { 
-      success: true, 
-      message: "Message envoyé avec succès ! Sabrina vous recontactera très vite." 
+    console.log("✅ Email envoyé à Sabrina pour:", name);
+
+    // 2. Envoyer email de confirmation au client
+    await sendConfirmationToCustomer({
+      customerName: name,
+      customerEmail: email,
+      message: message,
+      cartItems,
+      total,
+    });
+
+    console.log("✅ Email de confirmation envoyé à:", email);
+
+    return {
+      success: true,
+      message: "Réservation confirmée ! Vous recevrez un email de confirmation."
     };
 
   } catch (error) {
-    console.error("❌ Erreur lors de l'envoi:", error);
-    return { 
-        success: false, 
-        message: "Une erreur est survenue. Veuillez réessayer." 
+    console.error("❌ Erreur lors de l'envoi des emails:", error);
+    return {
+        success: false,
+        message: "Une erreur est survenue. Veuillez réessayer ou contactez-nous directement."
     };
   }
 }

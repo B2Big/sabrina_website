@@ -145,6 +145,51 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       console.log('✅ Commande enregistrée en base de données:', order.id)
     }
 
+    // 📧 Gérer l'abonnement newsletter
+    const customFields = session.custom_fields || []
+    const newsletterField = customFields.find((field: any) => field.key === 'newsletter_consent')
+
+    if (newsletterField?.dropdown?.value === 'yes' && session.customer_details?.email) {
+      try {
+        // Vérifier si l'email existe déjà
+        const existingSubscriber = await prisma.newsletterSubscriber.findUnique({
+          where: { email: session.customer_details.email }
+        })
+
+        if (existingSubscriber) {
+          // Réabonner si désinscrit
+          if (!existingSubscriber.isSubscribed) {
+            await prisma.newsletterSubscriber.update({
+              where: { email: session.customer_details.email },
+              data: {
+                isSubscribed: true,
+                subscribedAt: new Date(),
+                unsubscribedAt: null
+              }
+            })
+            console.log('✅ Client réabonné à la newsletter:', session.customer_details.email)
+          } else {
+            console.log('ℹ️  Client déjà abonné à la newsletter')
+          }
+        } else {
+          // Créer un nouvel abonné
+          await prisma.newsletterSubscriber.create({
+            data: {
+              email: session.customer_details.email,
+              name: session.customer_details.name || '',
+              source: 'checkout',
+              consentGiven: true,
+              isSubscribed: true
+            }
+          })
+          console.log('✅ Nouvel abonné newsletter:', session.customer_details.email)
+        }
+      } catch (error) {
+        console.error('❌ Erreur lors de l\'enregistrement newsletter:', error)
+        // Ne pas bloquer le reste du traitement
+      }
+    }
+
     // TODO: Envoyer un email de confirmation à la cliente
     // TODO: Envoyer un email de notification à Sabrina
     console.log('📧 Email de confirmation à envoyer à:', session.customer_details?.email)

@@ -25,8 +25,8 @@ function ContactFormContent() {
   const [state, formAction, isPending] = useActionState(sendContactEmail, initialState);
   const [selectedSubject, setSelectedSubject] = useState<string>('coaching');
   const [messageText, setMessageText] = useState('');
-  
-  const { items, total, removeFromCart } = useCart();
+
+  const { items, total, removeFromCart, clearCart } = useCart();
   const searchParams = useSearchParams();
 
   // Auto-fill from Cart OR URL
@@ -60,9 +60,13 @@ function ContactFormContent() {
     }
   }, [items, total, searchParams]);
 
-  // Trigger Confetti on Success
+  // Trigger Confetti on Success & Clear Cart
   useEffect(() => {
     if (state.success) {
+      // Vider le panier
+      clearCart();
+
+      // Confettis
       const duration = 3 * 1000;
       const animationEnd = Date.now() + duration;
       const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999 };
@@ -78,7 +82,7 @@ function ContactFormContent() {
         confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors });
       }, 250);
     }
-  }, [state.success]);
+  }, [state.success, clearCart]);
 
   return (
     <form action={formAction} className="space-y-8">
@@ -192,8 +196,17 @@ function ContactFormContent() {
                 </div>
             </div>
           )}
-          
+
           <input type="hidden" name="subject" value={selectedSubject} />
+
+          {/* Panier en JSON pour l'email */}
+          {items.length > 0 && (
+            <input
+              type="hidden"
+              name="cart"
+              value={JSON.stringify({ items, total })}
+            />
+          )}
 
           <div className="space-y-6">
             <div className="space-y-2">
@@ -296,7 +309,7 @@ function ContactFormContent() {
                     Envoi...
                 </>
                 ) : (
-                "Réserver"
+                "Réserver et régler sur place"
                 )}
             </Button>
 

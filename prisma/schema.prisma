@@ -80,3 +80,28 @@ model Order {
   @@index([createdAt])
   @@map("orders")
 }
+
+model NewsletterSubscriber {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+
+  // Source d'inscription
+  source            String    @default("checkout") // "checkout", "footer", "popup"
+
+  // Statut
+  isSubscribed      Boolean   @default(true) @map("is_subscribed")
+  unsubscribeToken  String    @unique @default(cuid()) @map("unsubscribe_token")
+
+  // Dates
+  subscribedAt      DateTime  @default(now()) @map("subscribed_at")
+  unsubscribedAt    DateTime? @map("unsubscribed_at")
+
+  // RGPD
+  consentGiven      Boolean   @default(true) @map("consent_given")
+  ipAddress         String?   @map("ip_address")
+
+  @@index([email])
+  @@index([isSubscribed])
+  @@map("newsletter_subscribers")
+}

@@ -120,8 +120,8 @@ export type PromotionInput = z.infer<typeof promotionSchema>
  */
 export const checkoutItemSchema = z.object({
   id: z.string()
-    .cuid('ID de service invalide')
-    .min(1, 'ID de service requis'),
+    .min(1, 'ID de service requis')
+    .max(100, 'ID trop long'),
   quantity: z.number()
     .int('La quantité doit être un nombre entier')
     .min(1, 'La quantité minimum est 1')

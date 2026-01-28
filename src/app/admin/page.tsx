@@ -1,4 +1,5 @@
 import { getServices, getPromotions } from './actions'
+import { getNewsletterSubscribers, getNewsletterStats } from './newsletter-actions'
 import { AdminDashboard } from '@/components/admin/admin-dashboard'
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
@@ -42,9 +43,18 @@ export default async function AdminPage() {
     redirect('/')
   }
 
-  // Utilisateur authentifié et autorisé
+  // Utilisateur authentifié et autorisé - Charger les données
   const services = await getServices()
   const promotions = await getPromotions()
+  const newsletterSubscribers = await getNewsletterSubscribers()
+  const newsletterStats = await getNewsletterStats()
 
-  return <AdminDashboard services={services} promotions={promotions} />
+  return (
+    <AdminDashboard
+      services={services}
+      promotions={promotions}
+      newsletterSubscribers={newsletterSubscribers}
+      newsletterStats={newsletterStats}
+    />
+  )
 }

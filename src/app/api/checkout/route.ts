@@ -93,6 +93,26 @@ export async function POST(req: Request) {
       mode: 'payment',
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?canceled=true#contact`,
+
+      // 📧 Champ personnalisé : Newsletter (max 50 caractères pour Stripe)
+      custom_fields: [
+        {
+          key: 'newsletter_consent',
+          label: {
+            type: 'custom',
+            custom: '📧 Recevoir nos offres par email'
+          },
+          type: 'dropdown',
+          dropdown: {
+            options: [
+              { label: 'Oui, je m\'abonne', value: 'yes' },
+              { label: 'Non merci', value: 'no' }
+            ]
+          },
+          optional: true
+        }
+      ],
+
       metadata: {
         item_count: items.length.toString(),
         total_amount: (totalAmount / 100).toFixed(2), // En euros

@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { ServiceFormData, upsertService, deleteService, signOut } from '@/app/admin/actions'
 import { ServiceForm } from '@/components/admin/service-form'
 import { PromoList } from '@/components/admin/promo-list'
+import { NewsletterList } from '@/components/admin/newsletter-list'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -14,10 +15,12 @@ import { cn } from '@/lib/utils'
 interface AdminDashboardProps {
   services: any[]
   promotions: any[]
+  newsletterSubscribers?: any[]
+  newsletterStats?: any
 }
 
-export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'services' | 'promotions'>('services')
+export function AdminDashboard({ services, promotions, newsletterSubscribers, newsletterStats }: AdminDashboardProps) {
+  const [activeTab, setActiveTab] = useState<'services' | 'promotions' | 'newsletter'>('services')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingService, setEditingService] = useState<ServiceFormData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -78,7 +81,7 @@ export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
 
         {/* Tabs */}
         <div className="flex gap-2 mb-8 bg-white p-1.5 rounded-2xl w-fit border border-slate-200 shadow-sm backdrop-blur-xl">
-            <button 
+            <button
                 onClick={() => setActiveTab('services')}
                 className={cn(
                     "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
@@ -87,7 +90,7 @@ export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
             >
                 Services
             </button>
-            <button 
+            <button
                 onClick={() => setActiveTab('promotions')}
                 className={cn(
                     "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
@@ -96,11 +99,25 @@ export function AdminDashboard({ services, promotions }: AdminDashboardProps) {
             >
                 Promotions
             </button>
+            <button
+                onClick={() => setActiveTab('newsletter')}
+                className={cn(
+                    "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
+                    activeTab === 'newsletter' ? "bg-purple-500 text-white shadow-lg shadow-purple-200" : "text-slate-500 hover:text-purple-500 hover:bg-purple-50"
+                )}
+            >
+                📧 Newsletter
+            </button>
         </div>
 
         {/* Content */}
         {activeTab === 'promotions' ? (
             <PromoList promotions={promotions} services={services} />
+        ) : activeTab === 'newsletter' ? (
+            <NewsletterList
+              subscribers={newsletterSubscribers || []}
+              stats={newsletterStats || { total: 0, active: 0, unsubscribed: 0, newThisWeek: 0 }}
+            />
         ) : (
             <>
                 <div className="flex justify-end mb-6">
