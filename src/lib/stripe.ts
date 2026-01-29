@@ -9,6 +9,6 @@ console.log('🔑 [STRIPE] Clé présente:', !!process.env.STRIPE_SECRET_KEY);
 console.log('🔑 [STRIPE] Préfixe clé:', stripeKey.substring(0, 10) + '...');
 
 export const stripe = new Stripe(stripeKey, {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2025-12-15.clover',
   typescript: true,
 });
