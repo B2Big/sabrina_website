@@ -4,12 +4,15 @@ import { Resend } from 'resend';
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Email de Sabrina (destinataire des notifications)
-// TEMPORAIRE: Utiliser johan.dev.pro@gmail.com (compte vérifié Resend)
-export const SABRINA_EMAIL = 'johan.dev.pro@gmail.com';
+// Une fois le domaine sab-fit.com vérifié sur Resend, cet email fonctionnera
+export const SABRINA_EMAIL = 'sabcompan8306@gmail.com';
 
-// Email d'expédition (doit être vérifié dans Resend)
-// Par défaut, Resend fournit onboarding@resend.dev pour les tests
-export const FROM_EMAIL = 'onboarding@resend.dev';
+// Email d'expédition (email professionnel vérifié)
+// Utiliser contact@sab-fit.com une fois le domaine vérifié sur Resend
+// En attendant, utiliser onboarding@resend.dev (sandbox mode)
+export const FROM_EMAIL = process.env.NODE_ENV === 'production'
+  ? 'contact@sab-fit.com'  // Production: email professionnel
+  : 'onboarding@resend.dev'; // Dev: email Resend par défaut
 
 /**
  * Envoie un email de notification à Sabrina pour une nouvelle réservation
