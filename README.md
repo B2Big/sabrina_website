@@ -218,6 +218,8 @@ Voir les tests manuels dans [`docs/SECURITE_RECAPITULATIF.md`](./docs/SECURITE_R
 | Document | Description |
 |----------|-------------|
 | [`docs/README.md`](./docs/README.md) | Documentation complète |
+| [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | 🏗️ Architecture technique détaillée |
+| [`docs/CHANGELOG.md`](./docs/CHANGELOG.md) | 📜 Historique complet de développement |
 | [`docs/SECURITE_RECAPITULATIF.md`](./docs/SECURITE_RECAPITULATIF.md) | ⭐ Récapitulatif sécurité |
 | [`docs/CREDENTIAL_ROTATION.md`](./docs/CREDENTIAL_ROTATION.md) | 🔴 Rotation credentials |
 | [`docs/STRIPE_WEBHOOKS.md`](./docs/STRIPE_WEBHOOKS.md) | Config webhooks Stripe |
@@ -317,26 +319,46 @@ Voir [`docs/README.md`](./docs/README.md) section "Dépannage" pour plus de solu
 
 ## 📝 Changelog
 
-### v2.0.0 - 2026-01-27
+**🎉 Voir l'historique complet dans [`docs/CHANGELOG.md`](./docs/CHANGELOG.md)**
 
-**🔐 Sécurité** :
+### [Production Release] - 2026-01-29 🚀
+
+**Status**: ✅ EN LIGNE sur https://www.sab-fit.com
+
+**🌐 Déploiement Production** :
+- Déploiement Netlify avec domaine sab-fit.com
+- Stripe LIVE configuré avec webhook
+- Row Level Security (RLS) activé sur Supabase
+- Rotation de clé Resend pour sécurité
+- Configuration DNS complète (SSL/HTTPS)
+- Documentation technique (ARCHITECTURE.md, CHANGELOG.md)
+
+### [Security Release] - 2026-01-27 🔒
+
+**🔐 Sécurité & Authentification** :
 - Système de rôles (ADMIN, DEVELOPER)
 - Validation des prix côté serveur
 - Rate limiting complet
 - Validation Zod de tous les inputs
 - Protection API avec authentification
 
+**📧 Newsletter & Emails** :
+- Système newsletter RGPD-compliant
+- Migration vers Resend (emails professionnels)
+- Intégration checkout Stripe
+- Onglet Newsletter dans dashboard admin
+
 **💳 Paiements** :
-- Webhooks Stripe
+- Webhooks Stripe configurés
 - Enregistrement commandes en DB
-- Support PayPal
+- Support PayPal via Stripe
 
 **📖 Documentation** :
 - Guide sécurité complet
 - Guide rotation credentials
 - Guide webhooks Stripe
 
-### v1.0.0 - 2025-01-22
+### v1.0.0 - 2026-01-22
 
 - Site vitrine initial
 - PWA basique
