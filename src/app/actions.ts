@@ -39,32 +39,45 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
         cartItems = parsedCart.items;
         total = parsedCart.total;
       } catch (e) {
-        console.error("Erreur parsing cart:", e);
+        console.error("❌ Erreur parsing cart:", e);
       }
     }
 
-    // 1. Envoyer email à Sabrina (notification de réservation)
-    await sendReservationToSabrina({
-      customerName: name,
-      customerEmail: email,
-      customerPhone: phone,
-      message: message,
-      cartItems,
-      total,
-    });
+    console.log("📧 Tentative d'envoi d'emails pour:", name);
+    console.log("📦 Cart items:", cartItems?.length || 0, "items");
 
-    console.log("✅ Email envoyé à Sabrina pour:", name);
+    // 1. Envoyer email à Sabrina (notification de réservation)
+    try {
+      const sabrinaresult = await sendReservationToSabrina({
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone,
+        message: message,
+        cartItems,
+        total,
+      });
+
+      console.log("✅ Email PROPRIETAIRE envoyé avec succès:", JSON.stringify(sabrinaresult));
+    } catch (sabraError) {
+      console.error("❌ ERREUR email PROPRIETAIRE:", sabraError);
+      // On continue quand même pour envoyer l'email client
+    }
 
     // 2. Envoyer email de confirmation au client
-    await sendConfirmationToCustomer({
-      customerName: name,
-      customerEmail: email,
-      message: message,
-      cartItems,
-      total,
-    });
+    try {
+      const customerResult = await sendConfirmationToCustomer({
+        customerName: name,
+        customerEmail: email,
+        message: message,
+        cartItems,
+        total,
+      });
 
-    console.log("✅ Email de confirmation envoyé à:", email);
+      console.log("✅ Email CLIENT envoyé avec succès:", JSON.stringify(customerResult));
+    } catch (clientError) {
+      console.error("❌ ERREUR email CLIENT:", clientError);
+      throw clientError; // Si l'email client échoue, on throw
+    }
 
     return {
       success: true,
@@ -72,7 +85,7 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
     };
 
   } catch (error) {
-    console.error("❌ Erreur lors de l'envoi des emails:", error);
+    console.error("❌ Erreur globale lors de l'envoi des emails:", error);
     return {
         success: false,
         message: "Une erreur est survenue. Veuillez réessayer ou contactez-nous directement."

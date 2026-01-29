@@ -29,6 +29,11 @@ export async function sendReservationToSabrina({
   cartItems?: Array<{ title: string; price: string; quantity: number }>;
   total?: string;
 }) {
+  console.log("🔔 sendReservationToSabrina appelée");
+  console.log("   → Destinataire:", SABRINA_EMAIL);
+  console.log("   → From:", FROM_EMAIL);
+  console.log("   → Client:", customerName, "-", customerEmail);
+
   const cartHTML = cartItems && cartItems.length > 0 ? `
     <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3 style="margin: 0 0 15px 0; color: #334155; font-size: 16px; font-weight: bold;">🛒 Prestations réservées :</h3>
@@ -122,12 +127,16 @@ export async function sendReservationToSabrina({
     </html>
   `;
 
-  return await resend.emails.send({
+  const result = await resend.emails.send({
     from: FROM_EMAIL,
     to: SABRINA_EMAIL,
     subject: `🔔 Nouvelle réservation : ${customerName}`,
     html,
   });
+
+  console.log("📬 Résultat Resend (Sabrina):", JSON.stringify(result));
+
+  return result;
 }
 
 /**
@@ -146,6 +155,10 @@ export async function sendConfirmationToCustomer({
   cartItems?: Array<{ title: string; price: string; quantity: number }>;
   total?: string;
 }) {
+  console.log("✉️ sendConfirmationToCustomer appelée");
+  console.log("   → Destinataire:", customerEmail);
+  console.log("   → From:", FROM_EMAIL);
+
   const cartHTML = cartItems && cartItems.length > 0 ? `
     <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3 style="margin: 0 0 15px 0; color: #334155; font-size: 16px; font-weight: bold;">📋 Récapitulatif de votre sélection :</h3>
@@ -234,10 +247,14 @@ export async function sendConfirmationToCustomer({
     </html>
   `;
 
-  return await resend.emails.send({
+  const result = await resend.emails.send({
     from: FROM_EMAIL,
     to: customerEmail,
     subject: '✅ Réservation confirmée - Sab-Fit',
     html,
   });
+
+  console.log("📬 Résultat Resend (Client):", JSON.stringify(result));
+
+  return result;
 }
