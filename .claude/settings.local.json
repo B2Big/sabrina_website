@@ -9,7 +9,8 @@
       "Bash(ls:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: update brand name to Sab-Fit and production URLs\n\n- Replace \"Sabrina Wellness\" with \"Sab-Fit\" in email templates\n- Update admin dashboard link to production domain\n- Update footer branding in confirmation emails\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nsecurity: remove exposed Resend API key from documentation\n\n- Replace real Resend key with placeholder values\n- Prevent future exposure in documentation files\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   },
   "enableAllProjectMcpServers": true,
