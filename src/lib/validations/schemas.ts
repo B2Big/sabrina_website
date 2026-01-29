@@ -4,7 +4,7 @@ import { z } from 'zod'
  * Schéma de validation pour un Service
  */
 export const serviceSchema = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().min(1).max(100).optional(),
   title: z.string()
     .min(3, 'Le titre doit contenir au moins 3 caractères')
     .max(100, 'Le titre ne peut pas dépasser 100 caractères')
@@ -63,7 +63,7 @@ export type ServiceInput = z.infer<typeof serviceSchema>
  * Schéma de validation pour une Promotion
  */
 export const promotionSchema = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().min(1).max(100).optional(),
   text: z.string()
     .min(5, 'Le texte doit contenir au moins 5 caractères')
     .max(200, 'Le texte ne peut pas dépasser 200 caractères')
@@ -96,7 +96,7 @@ export const promotionSchema = z.object({
     .optional()
     .nullable()
     .transform(val => val === '' ? null : val),
-  serviceIds: z.array(z.string().cuid())
+  serviceIds: z.array(z.string().min(1).max(100))
     .max(50, 'Maximum 50 services par promotion')
     .optional()
 }).refine(
