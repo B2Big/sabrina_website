@@ -25,6 +25,7 @@ function ContactFormContent() {
   const [state, formAction, isPending] = useActionState(sendContactEmail, initialState);
   const [selectedSubject, setSelectedSubject] = useState<string>('coaching');
   const [messageText, setMessageText] = useState('');
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
   const { items, total, removeFromCart, clearCart } = useCart();
   const searchParams = useSearchParams();
@@ -300,8 +301,8 @@ function ContactFormContent() {
           <div className="flex flex-col gap-3 pt-2">
             <Button
                 type="submit"
-                disabled={isPending}
-                className="w-full h-16 text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0"
+                disabled={isPending || isCheckoutLoading}
+                className="w-full h-16 text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
             >
                 {isPending ? (
                 <>
@@ -323,19 +324,54 @@ function ContactFormContent() {
             {items.length > 0 && (
                 <Button
                     type="button"
+                    disabled={isPending || isCheckoutLoading}
                     onClick={async () => {
-                        const res = await fetch('/api/checkout', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ items }),
-                        });
-                        const data = await res.json();
-                        if (data.url) window.location.href = data.url;
+                        try {
+                            setIsCheckoutLoading(true);
+
+                            // 🔒 Envoyer seulement id et quantity (sécurité)
+                            const checkoutItems = items.map(item => ({
+                                id: item.id,
+                                quantity: item.quantity
+                            }));
+
+                            const res = await fetch('/api/checkout', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ items: checkoutItems }),
+                            });
+
+                            const data = await res.json();
+
+                            if (!res.ok) {
+                                throw new Error(data.error || 'Erreur lors du paiement');
+                            }
+
+                            if (data.url) {
+                                window.location.href = data.url;
+                            } else {
+                                throw new Error('URL de paiement manquante');
+                            }
+                        } catch (error) {
+                            console.error('❌ Erreur checkout:', error);
+                            alert(error instanceof Error ? error.message : 'Erreur lors du paiement. Veuillez réessayer.');
+                        } finally {
+                            setIsCheckoutLoading(false);
+                        }
                     }}
-                    className="w-full h-16 text-base md:text-lg rounded-2xl bg-[#3B82F6] text-white hover:bg-blue-600 shadow-xl shadow-blue-500/20 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 px-4"
+                    className="w-full h-16 text-base md:text-lg rounded-2xl bg-[#3B82F6] text-white hover:bg-blue-600 shadow-xl shadow-blue-500/20 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 px-4 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 >
-                    <CreditCard className="w-5 h-5 shrink-0" />
-                    <span className="truncate">Réserver & Payer en ligne</span>
+                    {isCheckoutLoading ? (
+                        <>
+                            <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                            <span className="truncate">Chargement...</span>
+                        </>
+                    ) : (
+                        <>
+                            <CreditCard className="w-5 h-5 shrink-0" />
+                            <span className="truncate">Réserver & Payer en ligne</span>
+                        </>
+                    )}
                 </Button>
             )}
           </div>

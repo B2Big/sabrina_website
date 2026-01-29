@@ -4,7 +4,8 @@ import { Resend } from 'resend';
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Email de Sabrina (destinataire des notifications)
-export const SABRINA_EMAIL = 'sabcompan8306@gmail.com';
+// TEMPORAIRE: Email de test pour faciliter les tests
+export const SABRINA_EMAIL = 'syups4@gmail.com';
 
 // Email d'expédition (doit être vérifié dans Resend)
 // Par défaut, Resend fournit onboarding@resend.dev pour les tests
