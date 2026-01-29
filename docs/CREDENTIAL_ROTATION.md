@@ -82,7 +82,7 @@ DIRECT_URL="postgresql://postgres.xxx:NOUVEAU_MOT_DE_PASSE@..."
 ## 3️⃣ Régénérer la Clé API Resend
 
 1. Aller sur https://resend.com/api-keys
-2. Trouver la clé actuelle : `re_T87XcjJ6_...`
+2. Trouver la clé actuelle : `re_EXAMPLE_...`
 3. Cliquer sur "Delete" ou "Revoke"
 4. Créer une nouvelle clé :
    - Cliquer sur "Create API Key"
@@ -94,7 +94,7 @@ DIRECT_URL="postgresql://postgres.xxx:NOUVEAU_MOT_DE_PASSE@..."
 
 ```bash
 # Ancien (EXPOSÉ - NE PLUS UTILISER)
-RESEND_API_KEY=re_T87XcjJ6_XczUGHKk2gKmmKyF1ti9fZvE
+RESEND_API_KEY=re_VOTRE_NOUVELLE_CLE_ICI
 
 # Nouveau
 RESEND_API_KEY=re_NOUVELLE_CLE_ICI
@@ -256,7 +256,7 @@ Après rotation, tester :
    ```bash
    # Rechercher les anciens secrets dans le code
    grep -r "12345@johan" .
-   grep -r "re_T87XcjJ6" .
+   grep -r "re_EXAMPLE" .
 
    # Ne devrait rien trouver (sauf dans ce fichier doc)
    ```
