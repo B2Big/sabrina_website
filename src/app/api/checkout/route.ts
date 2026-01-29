@@ -7,6 +7,8 @@ import { z } from 'zod';
 
 export async function POST(req: Request) {
   try {
+    console.log('🛒 [CHECKOUT] Début de la requête checkout');
+
     // 🔒 RATE LIMITING : Protection contre les abus de checkout
     const clientIp = getClientIp(req);
     const rateLimitKey = `checkout:${clientIp}`;
@@ -18,13 +20,17 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+    console.log('📦 [CHECKOUT] Body reçu:', JSON.stringify(body));
 
     // 🔒 Validation Zod
     const { items } = checkoutSchema.parse(body);
+    console.log('✅ [CHECKOUT] Validation Zod OK:', items.length, 'items');
 
     // 🔒 SÉCURITÉ : Récupérer les prix RÉELS depuis la base de données
     // Ne JAMAIS faire confiance aux prix envoyés par le client !
     const serviceIds = items.map(item => item.id);
+    console.log('🔍 [CHECKOUT] Recherche services DB:', serviceIds);
+
     const servicesFromDb = await prisma.service.findMany({
       where: {
         id: { in: serviceIds }
@@ -38,8 +44,11 @@ export async function POST(req: Request) {
       }
     });
 
+    console.log('📊 [CHECKOUT] Services trouvés:', servicesFromDb.length, '/', items.length);
+
     // Vérifier que tous les services existent
     if (servicesFromDb.length !== items.length) {
+      console.error('❌ [CHECKOUT] Services manquants!');
       return NextResponse.json(
         { error: 'Certains services n\'existent pas' },
         { status: 404 }
@@ -86,6 +95,9 @@ export async function POST(req: Request) {
 
     // Créer la session Stripe
     const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+    console.log('💳 [CHECKOUT] Création session Stripe...');
+    console.log('🔑 [CHECKOUT] Stripe key présente:', !!process.env.STRIPE_SECRET_KEY);
+    console.log('🌐 [CHECKOUT] Base URL:', baseUrl);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'paypal'],
@@ -120,9 +132,17 @@ export async function POST(req: Request) {
       }
     });
 
+    console.log('✅ [CHECKOUT] Session créée avec succès:', session.id);
+    console.log('🔗 [CHECKOUT] URL de paiement:', session.url);
+
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    console.error('[STRIPE_ERROR]', error);
+    console.error('❌ [CHECKOUT] ERREUR GLOBALE:', error);
+    console.error('❌ [CHECKOUT] Type:', error instanceof Error ? error.constructor.name : typeof error);
+    console.error('❌ [CHECKOUT] Message:', error instanceof Error ? error.message : String(error));
+    if (error instanceof Error && error.stack) {
+      console.error('❌ [CHECKOUT] Stack:', error.stack);
+    }
 
     // Erreur de validation Zod
     if (error instanceof z.ZodError) {
