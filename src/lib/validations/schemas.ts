@@ -20,28 +20,36 @@ export const serviceSchema = z.object({
   price: z.string()
     .regex(/^\d+(\.\d{1,2})?\s*€?$/, 'Format de prix invalide (ex: 70 €)')
     .transform(val => val.trim()),
-  originalPrice: z.string()
-    .regex(/^\d+(\.\d{1,2})?\s*€?$/, 'Format de prix invalide')
-    .transform(val => val.trim())
-    .optional()
-    .nullable(),
-  duration: z.string()
-    .max(50, 'La durée ne peut pas dépasser 50 caractères')
-    .trim()
-    .optional()
-    .nullable(),
-  objective: z.string()
-    .max(500, 'L\'objectif ne peut pas dépasser 500 caractères')
-    .trim()
-    .optional()
-    .nullable(),
+  originalPrice: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().regex(/^\d+(\.\d{1,2})?\s*€?$/, 'Format de prix invalide').nullable().optional()
+  ),
+  duration: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().max(50, 'La durée ne peut pas dépasser 50 caractères').nullable().optional()
+  ),
+  objective: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().max(500, 'L\'objectif ne peut pas dépasser 500 caractères').nullable().optional()
+  ),
   popular: z.boolean().default(false),
   bestValue: z.boolean().default(false),
-  note: z.string()
-    .max(200, 'La note ne peut pas dépasser 200 caractères')
-    .trim()
-    .optional()
-    .nullable(),
+  note: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().max(200, 'La note ne peut pas dépasser 200 caractères').nullable().optional()
+  ),
   features: z.array(
     z.string()
       .min(1, 'Une caractéristique ne peut pas être vide')
@@ -65,19 +73,20 @@ export type ServiceInput = z.infer<typeof serviceSchema>
  */
 export const promotionSchema = z.object({
   id: z.string().min(1).max(100).optional(),
-  text: z.string()
-    .min(5, 'Le texte doit contenir au moins 5 caractères')
-    .max(200, 'Le texte ne peut pas dépasser 200 caractères')
-    .trim()
-    .optional()
-    .nullable(),
-  link: z.string()
-    .url('Lien invalide')
-    .max(500)
-    .trim()
-    .optional()
-    .nullable()
-    .or(z.literal('')),
+  text: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().min(5, 'Le texte doit contenir au moins 5 caractères').max(200, 'Le texte ne peut pas dépasser 200 caractères').nullable().optional()
+  ),
+  link: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().url('Lien invalide').max(500).nullable().optional()
+  ),
   discountPercent: z.number()
     .int('Le pourcentage doit être un nombre entier')
     .min(1, 'Le pourcentage minimum est 1%')
@@ -85,18 +94,20 @@ export const promotionSchema = z.object({
     .optional()
     .nullable(),
   isActive: z.boolean().default(true),
-  startDate: z.string()
-    .datetime('Date de début invalide')
-    .or(z.string().length(0))
-    .optional()
-    .nullable()
-    .transform(val => val === '' ? null : val),
-  endDate: z.string()
-    .datetime('Date de fin invalide')
-    .or(z.string().length(0))
-    .optional()
-    .nullable()
-    .transform(val => val === '' ? null : val),
+  startDate: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().datetime('Date de début invalide').nullable().optional()
+  ),
+  endDate: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().datetime('Date de fin invalide').nullable().optional()
+  ),
   serviceIds: z.array(z.string().min(1).max(100))
     .max(50, 'Maximum 50 services par promotion')
     .optional()
