@@ -17,15 +17,27 @@ export const serviceSchema = z.object({
     .min(10, 'La description doit contenir au moins 10 caractères')
     .max(2000, 'La description ne peut pas dépasser 2000 caractères')
     .trim(),
-  price: z.string()
-    .regex(/^\d+(\.\d{1,2})?\s*€?$/, 'Format de prix invalide (ex: 70 €)')
-    .transform(val => val.trim()),
+  price: z.preprocess(
+    (val) => {
+      if (!val) return '';
+      // Nettoyer: enlever tout sauf chiffres et point
+      const cleaned = String(val).replace(/[^0-9.]/g, '');
+      if (!cleaned) return '';
+      // Ajouter automatiquement " €"
+      return `${cleaned} €`;
+    },
+    z.string().min(1, 'Le prix est requis')
+  ),
   originalPrice: z.preprocess(
     (val) => {
       if (val === '' || val === null || val === undefined) return null;
-      return val;
+      // Nettoyer: enlever tout sauf chiffres et point
+      const cleaned = String(val).replace(/[^0-9.]/g, '');
+      if (!cleaned) return null;
+      // Ajouter automatiquement " €"
+      return `${cleaned} €`;
     },
-    z.string().regex(/^\d+(\.\d{1,2})?\s*€?$/, 'Format de prix invalide').nullable().optional()
+    z.string().nullable().optional()
   ),
   duration: z.preprocess(
     (val) => {
