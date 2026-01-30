@@ -48,13 +48,14 @@ export const serviceSchema = z.object({
       .max(200, 'Une caractéristique ne peut pas dépasser 200 caractères')
       .trim()
   ).max(20, 'Maximum 20 caractéristiques'),
-  paymentLink: z.string()
-    .url('Lien de paiement invalide')
-    .max(500)
-    .trim()
-    .optional()
-    .nullable()
-    .or(z.literal('')),
+  paymentLink: z.preprocess(
+    (val) => {
+      // Transformer chaîne vide en null
+      if (val === '' || val === null || val === undefined) return null;
+      return val;
+    },
+    z.string().url('Lien de paiement invalide').max(500).nullable().optional()
+  ),
 })
 
 export type ServiceInput = z.infer<typeof serviceSchema>
