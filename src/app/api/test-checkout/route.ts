@@ -13,7 +13,6 @@ export async function GET(req: Request) {
     diagnostics.steps.step1_getService = { status: 'starting' };
 
     const testService = await prisma.service.findFirst({
-      where: { isActive: true },
       select: {
         id: true,
         title: true,
