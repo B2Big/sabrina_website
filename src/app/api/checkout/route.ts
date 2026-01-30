@@ -100,30 +100,30 @@ export async function POST(req: Request) {
     console.log('🌐 [CHECKOUT] Base URL:', baseUrl);
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'], // PayPal retiré car non activé sur le compte Stripe
+      payment_method_types: ['card'], // PayPal non activé sur le compte Stripe
       line_items: lineItems,
       mode: 'payment',
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?canceled=true#contact`,
 
-      // 📧 Champ personnalisé : Newsletter (TEMPORAIREMENT DÉSACTIVÉ POUR DEBUG)
-      // custom_fields: [
-      //   {
-      //     key: 'newsletter_consent',
-      //     label: {
-      //       type: 'custom',
-      //       custom: '📧 Recevoir nos offres par email'
-      //     },
-      //     type: 'dropdown',
-      //     dropdown: {
-      //       options: [
-      //         { label: 'Oui, je m\'abonne', value: 'yes' },
-      //         { label: 'Non merci', value: 'no' }
-      //       ]
-      //     },
-      //     optional: true
-      //   }
-      // ],
+      // 📧 Champ personnalisé : Newsletter
+      custom_fields: [
+        {
+          key: 'newsletter_consent',
+          label: {
+            type: 'custom',
+            custom: 'Recevoir nos offres par email'
+          },
+          type: 'dropdown',
+          dropdown: {
+            options: [
+              { label: 'Oui, je m\'abonne', value: 'yes' },
+              { label: 'Non merci', value: 'no' }
+            ]
+          },
+          optional: true
+        }
+      ],
 
       metadata: {
         item_count: items.length.toString(),
@@ -153,8 +153,7 @@ export async function POST(req: Request) {
     }
 
     // Ne pas exposer les détails techniques en production
-    // TEMPORAIREMENT: Afficher les vraies erreurs pour déboguer
-    const isDev = true; // process.env.NODE_ENV === 'development';
+    const isDev = process.env.NODE_ENV === 'development';
 
     if (error instanceof Error) {
       return NextResponse.json(
