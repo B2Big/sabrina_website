@@ -106,24 +106,24 @@ export async function POST(req: Request) {
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?canceled=true#contact`,
 
-      // 📧 Champ personnalisé : Newsletter (max 50 caractères pour Stripe)
-      custom_fields: [
-        {
-          key: 'newsletter_consent',
-          label: {
-            type: 'custom',
-            custom: '📧 Recevoir nos offres par email'
-          },
-          type: 'dropdown',
-          dropdown: {
-            options: [
-              { label: 'Oui, je m\'abonne', value: 'yes' },
-              { label: 'Non merci', value: 'no' }
-            ]
-          },
-          optional: true
-        }
-      ],
+      // 📧 Champ personnalisé : Newsletter (TEMPORAIREMENT DÉSACTIVÉ POUR DEBUG)
+      // custom_fields: [
+      //   {
+      //     key: 'newsletter_consent',
+      //     label: {
+      //       type: 'custom',
+      //       custom: '📧 Recevoir nos offres par email'
+      //     },
+      //     type: 'dropdown',
+      //     dropdown: {
+      //       options: [
+      //         { label: 'Oui, je m\'abonne', value: 'yes' },
+      //         { label: 'Non merci', value: 'no' }
+      //       ]
+      //     },
+      //     optional: true
+      //   }
+      // ],
 
       metadata: {
         item_count: items.length.toString(),
@@ -153,7 +153,8 @@ export async function POST(req: Request) {
     }
 
     // Ne pas exposer les détails techniques en production
-    const isDev = process.env.NODE_ENV === 'development';
+    // TEMPORAIREMENT: Afficher les vraies erreurs pour déboguer
+    const isDev = true; // process.env.NODE_ENV === 'development';
 
     if (error instanceof Error) {
       return NextResponse.json(
