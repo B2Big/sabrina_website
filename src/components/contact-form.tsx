@@ -43,7 +43,7 @@ function ContactFormContent() {
         else setSelectedSubject('autre'); // Mixed
 
         // Generate Message
-        const summary = items.map(i => `- ${i.quantity}x ${i.title} (${i.price})`).join('\n');
+        const summary = items.map(i => `- ${i.quantity}x ${i.title} : ${i.price}`).join('\n');
         setMessageText(`Bonjour Sabrina,\n\nJe souhaite réserver les séances suivantes :\n${summary}\n\nTotal estimé : ${total} €\n\nMes disponibilités sont...`);
         return;
     }
@@ -130,7 +130,7 @@ function ContactFormContent() {
                                 <span className="bg-slate-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
                                     {item.quantity}
                                 </span>
-                                <span className="font-bold text-slate-700 text-sm">{item.title}</span>
+                                <span className="font-bold text-slate-700 text-sm">{item.title} :</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <span className="font-black text-slate-900">{item.price}</span>

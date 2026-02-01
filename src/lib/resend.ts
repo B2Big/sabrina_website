@@ -44,7 +44,7 @@ export async function sendReservationToSabrina({
         <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <span style="background: #1e293b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-right: 8px;">${item.quantity}x</span>
-            <strong>${item.title}</strong>
+            <strong>${item.title} :</strong>
           </div>
           <span style="font-weight: bold; color: #1e293b;">${item.price}</span>
         </div>
@@ -169,7 +169,7 @@ export async function sendConfirmationToCustomer({
         <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-right: 8px;">${item.quantity}x</span>
-            <strong>${item.title}</strong>
+            <strong>${item.title} :</strong>
           </div>
           <span style="font-weight: bold; color: #1e293b;">${item.price}</span>
         </div>
