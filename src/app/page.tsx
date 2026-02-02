@@ -3,7 +3,6 @@ import { Hero } from "@/components/hero";
 import { Footer } from "@/components/footer";
 import { ServiceCard } from "@/components/service-card";
 import { ContactForm } from "@/components/contact-form";
-import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
 import { ParallaxBackground } from "@/components/parallax-background";
 import { AbstractShape } from "@/components/ui/abstract-shape";

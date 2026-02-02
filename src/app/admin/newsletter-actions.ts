@@ -1,19 +1,15 @@
 'use server'
 
 import { prisma } from '@/lib/db-services'
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 import { hasAdminAccess } from '@/lib/auth/roles'
-import { rateLimit, RateLimitConfigs, getClientIp } from '@/lib/rate-limit'
+import { rateLimit, RateLimitConfigs } from '@/lib/rate-limit'
 
 /**
  * Vérifie l'authentification admin (même que dans actions.ts)
  */
 async function checkAuth() {
-  const headersList = await headers()
-  const request = new Request('http://localhost', { headers: headersList })
-  const clientIp = getClientIp(request)
-
   const cookieStore = await cookies()
 
   const supabase = createServerClient(

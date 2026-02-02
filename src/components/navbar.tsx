@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, ArrowUpRight, Wallet, CreditCard, Globe } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
 
 const navLinks = [
   { name: 'Coaching', href: '#coaching' },

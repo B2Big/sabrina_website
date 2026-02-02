@@ -4,11 +4,10 @@ import { useCart } from '@/context/cart-context';
 import { ShoppingBag, ArrowRight, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { toast } from 'sonner'; // Assuming sonner or similar exists, or I'll use alert/simple feedback if not sure
 
 export function FloatingCart() {
   const { items, total } = useCart();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
   const handleCheckout = () => {
     // Scroll vers le formulaire de contact au lieu d'aller directement à Stripe

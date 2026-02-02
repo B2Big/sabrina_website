@@ -3,10 +3,10 @@
 import { prisma, getAllServices } from '@/lib/db-services'
 import { revalidatePath } from 'next/cache'
 import { createServerClient } from '@supabase/ssr'
-import { cookies, headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { hasAdminAccess, getUserRole } from '@/lib/auth/roles'
 import { serviceSchema, promotionSchema } from '@/lib/validations/schemas'
-import { rateLimit, RateLimitConfigs, getClientIp } from '@/lib/rate-limit'
+import { rateLimit, RateLimitConfigs } from '@/lib/rate-limit'
 import { z } from 'zod'
 
 /**
@@ -14,11 +14,6 @@ import { z } from 'zod'
  * Lève une erreur si l'utilisateur n'est pas connecté ou n'a pas de rôle admin
  */
 async function checkAuth() {
-  // 🔒 RATE LIMITING : Protection des actions admin
-  const headersList = await headers()
-  const request = new Request('http://localhost', { headers: headersList })
-  const clientIp = getClientIp(request)
-
   const cookieStore = await cookies()
 
   const supabase = createServerClient(
