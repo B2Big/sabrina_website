@@ -26,6 +26,7 @@ function ContactFormContent() {
   const [selectedSubject, setSelectedSubject] = useState<string>('coaching');
   const [messageText, setMessageText] = useState('');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const { items, total, removeFromCart, clearCart } = useCart();
   const searchParams = useSearchParams();
@@ -298,6 +299,14 @@ function ContactFormContent() {
             </div>
           </div>
 
+          {/* Erreur checkout */}
+          {checkoutError && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm font-bold text-center flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"/>
+              {checkoutError}
+            </div>
+          )}
+
           <div className="flex flex-col gap-3 pt-2">
             <Button
                 type="submit"
@@ -328,6 +337,7 @@ function ContactFormContent() {
                     onClick={async () => {
                         try {
                             setIsCheckoutLoading(true);
+                            setCheckoutError(null);
 
                             // Valider les champs obligatoires avant checkout
                             const nameInput = document.getElementById('name') as HTMLInputElement;
@@ -335,9 +345,8 @@ function ContactFormContent() {
                             const phoneInput = document.getElementById('phone') as HTMLInputElement;
 
                             if (!nameInput?.value?.trim() || !emailInput?.value?.trim() || !phoneInput?.value?.trim()) {
-                                alert('Veuillez remplir tous les champs obligatoires (nom, email, téléphone) avant de procéder au paiement.');
+                                setCheckoutError('Veuillez remplir tous les champs obligatoires (nom, email, téléphone) avant de procéder au paiement.');
                                 setIsCheckoutLoading(false);
-                                // Focus sur le premier champ vide
                                 if (!nameInput?.value?.trim()) nameInput?.focus();
                                 else if (!emailInput?.value?.trim()) emailInput?.focus();
                                 else phoneInput?.focus();
@@ -345,7 +354,7 @@ function ContactFormContent() {
                             }
 
                             if (!emailInput.checkValidity()) {
-                                alert('Veuillez entrer une adresse email valide.');
+                                setCheckoutError('Veuillez entrer une adresse email valide.');
                                 emailInput?.focus();
                                 setIsCheckoutLoading(false);
                                 return;
@@ -382,7 +391,7 @@ function ContactFormContent() {
                             }
                         } catch (error) {
                             console.error('❌ Erreur checkout:', error);
-                            alert(error instanceof Error ? error.message : 'Erreur lors du paiement. Veuillez réessayer.');
+                            setCheckoutError(error instanceof Error ? error.message : 'Erreur lors du paiement. Veuillez réessayer.');
                         } finally {
                             setIsCheckoutLoading(false);
                         }
