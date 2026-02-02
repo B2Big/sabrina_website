@@ -174,6 +174,7 @@ export const checkoutSchema = z.object({
     .trim()
     .optional()
     .default(''),
+  newsletter: z.boolean().optional().default(false),
 })
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>

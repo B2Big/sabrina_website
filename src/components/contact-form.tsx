@@ -29,6 +29,7 @@ function ContactFormContent() {
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [cguAccepted, setCguAccepted] = useState(false);
+  const [newsletterOptIn, setNewsletterOptIn] = useState(false);
 
   const { items, total, removeFromCart, clearCart } = useCart();
   const searchParams = useSearchParams();
@@ -329,6 +330,21 @@ function ContactFormContent() {
             </label>
           </div>
 
+          {/* Newsletter Checkbox */}
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="newsletter"
+              name="newsletter"
+              checked={newsletterOptIn}
+              onChange={(e) => setNewsletterOptIn(e.target.checked)}
+              className="mt-1 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500 cursor-pointer"
+            />
+            <label htmlFor="newsletter" className="text-sm text-slate-500 cursor-pointer">
+              Je souhaite recevoir les offres promotionnelles et actualités de Sab-Fit par email
+            </label>
+          </div>
+
           <div className="flex flex-col gap-3 pt-2">
             <Button
                 type="submit"
@@ -403,6 +419,7 @@ function ContactFormContent() {
                                     customerEmail: emailInput.value.trim(),
                                     customerPhone: phoneInput.value.trim(),
                                     message: messageText,
+                                    newsletter: newsletterOptIn,
                                 }),
                             });
 

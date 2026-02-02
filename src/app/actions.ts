@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { sendReservationToSabrina, sendConfirmationToCustomer } from "@/lib/resend";
+import { prisma } from "@/lib/db-services";
 
 const ContactSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
@@ -18,6 +19,7 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
     phone: formData.get("phone"),
     message: formData.get("message"),
     cart: formData.get("cart"),
+    newsletter: formData.get("newsletter"),
   };
 
   const result = ContactSchema.safeParse(rawData);
@@ -77,6 +79,32 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
     } catch (clientError) {
       console.error("❌ ERREUR email CLIENT:", clientError);
       throw clientError; // Si l'email client échoue, on throw
+    }
+
+    // 3. Inscrire à la newsletter si opt-in
+    if (rawData.newsletter === "on") {
+      try {
+        const existingSubscriber = await prisma.newsletterSubscriber.findUnique({
+          where: { email }
+        });
+
+        if (existingSubscriber) {
+          if (!existingSubscriber.isSubscribed) {
+            await prisma.newsletterSubscriber.update({
+              where: { email },
+              data: { isSubscribed: true, subscribedAt: new Date(), unsubscribedAt: null }
+            });
+            console.log("✅ Client réabonné à la newsletter:", email);
+          }
+        } else {
+          await prisma.newsletterSubscriber.create({
+            data: { email, name, source: 'contact_form', isSubscribed: true }
+          });
+          console.log("✅ Nouvel abonné newsletter:", email);
+        }
+      } catch (nlError) {
+        console.error("❌ Erreur inscription newsletter:", nlError);
+      }
     }
 
     return {

@@ -150,11 +150,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       shouldSendEmails = true
     }
 
-    // 📧 Gérer l'abonnement newsletter
+    // 📧 Gérer l'abonnement newsletter (dropdown Stripe OU checkbox formulaire)
     const customFields = session.custom_fields || []
     const newsletterField = customFields.find((field: any) => field.key === 'newsletter_consent')
+    const newsletterFromForm = session.metadata?.newsletter_optin === 'yes'
 
-    if (newsletterField?.dropdown?.value === 'yes' && session.customer_details?.email) {
+    if ((newsletterField?.dropdown?.value === 'yes' || newsletterFromForm) && session.customer_details?.email) {
       try {
         // Vérifier si l'email existe déjà
         const existingSubscriber = await prisma.newsletterSubscriber.findUnique({

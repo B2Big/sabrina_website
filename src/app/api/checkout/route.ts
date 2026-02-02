@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     console.log('📦 [CHECKOUT] Body reçu:', JSON.stringify(body));
 
     // 🔒 Validation Zod
-    const { items, customerName, customerEmail, customerPhone, message } = checkoutSchema.parse(body);
+    const { items, customerName, customerEmail, customerPhone, message, newsletter } = checkoutSchema.parse(body);
     console.log('✅ [CHECKOUT] Validation Zod OK:', items.length, 'items', '- Client:', customerName, customerEmail);
 
     // 🔒 SÉCURITÉ : Récupérer les prix RÉELS depuis la base de données
@@ -136,6 +136,7 @@ export async function POST(req: Request) {
         customer_email: customerEmail,
         customer_phone: customerPhone,
         customer_message: message?.substring(0, 500) || '',
+        newsletter_optin: newsletter ? 'yes' : 'no',
       }
     });
 
