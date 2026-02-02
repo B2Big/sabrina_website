@@ -24,7 +24,7 @@ export default function CGUPage() {
           <div className="prose prose-slate max-w-none">
             <h2>1. Présentation du service</h2>
             <p>
-              Le site Sabrina Wellness (ci-après "le Site") est édité par Sabrina, proposant des services de coaching sportif et de massage.
+              Le site Sab-Fit (ci-après "le Site"), accessible à l&apos;adresse sab-fit.com, est édité par Sabrina, proposant des services de coaching sportif et de massage.
             </p>
 
             <h2>2. Acceptation des conditions</h2>
@@ -96,7 +96,7 @@ export default function CGUPage() {
               <li><strong>Droit à la portabilité</strong> : recevoir vos données dans un format structuré</li>
             </ul>
             <p>
-              Pour exercer ces droits, contactez-nous à : <strong>sabcompan8306@gmail.com</strong>
+              Pour exercer ces droits, contactez-nous à : <strong>contact@sab-fit.com</strong>
             </p>
 
             <h2>7. Newsletter</h2>
@@ -125,7 +125,7 @@ export default function CGUPage() {
 
             <h2>11. Réclamations</h2>
             <p>
-              Pour toute réclamation, contactez-nous à : <strong>sabcompan8306@gmail.com</strong>
+              Pour toute réclamation, contactez-nous à : <strong>contact@sab-fit.com</strong>
             </p>
             <p>
               En cas de litige non résolu, vous pouvez recourir à la médiation de la consommation.
@@ -140,9 +140,9 @@ export default function CGUPage() {
 
             <h2>Contact</h2>
             <p>
-              <strong>Sabrina Wellness</strong><br />
-              Email : sabcompan8306@gmail.com<br />
-              Site : {typeof window !== 'undefined' ? window.location.origin : 'https://sabrina-wellness.com'}
+              <strong>Sab-Fit</strong><br />
+              Email : contact@sab-fit.com<br />
+              Site : https://www.sab-fit.com
             </p>
           </div>
         </div>
