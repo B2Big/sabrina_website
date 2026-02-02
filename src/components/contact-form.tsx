@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X, Wallet, CreditCard, Globe } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useCart } from '@/context/cart-context';
 
@@ -27,6 +28,7 @@ function ContactFormContent() {
   const [messageText, setMessageText] = useState('');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [cguAccepted, setCguAccepted] = useState(false);
 
   const { items, total, removeFromCart, clearCart } = useCart();
   const searchParams = useSearchParams();
@@ -307,10 +309,30 @@ function ContactFormContent() {
             </div>
           )}
 
+          {/* CGU Checkbox */}
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="cgu"
+              name="cgu"
+              checked={cguAccepted}
+              onChange={(e) => setCguAccepted(e.target.checked)}
+              className="mt-1 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500 cursor-pointer"
+              required
+            />
+            <label htmlFor="cgu" className="text-sm text-slate-500 cursor-pointer">
+              J&apos;accepte les{' '}
+              <Link href="/cgu" target="_blank" className="text-slate-900 font-bold underline underline-offset-2 hover:text-blue-600 transition-colors">
+                Conditions Générales d&apos;Utilisation
+              </Link>
+              {' '}*
+            </label>
+          </div>
+
           <div className="flex flex-col gap-3 pt-2">
             <Button
                 type="submit"
-                disabled={isPending || isCheckoutLoading}
+                disabled={isPending || isCheckoutLoading || !cguAccepted}
                 className="w-full h-16 text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
             >
                 {isPending ? (
@@ -343,6 +365,12 @@ function ContactFormContent() {
                             const nameInput = document.getElementById('name') as HTMLInputElement;
                             const emailInput = document.getElementById('email') as HTMLInputElement;
                             const phoneInput = document.getElementById('phone') as HTMLInputElement;
+
+                            if (!cguAccepted) {
+                                setCheckoutError('Veuillez accepter les Conditions Générales d\'Utilisation pour continuer.');
+                                setIsCheckoutLoading(false);
+                                return;
+                            }
 
                             if (!nameInput?.value?.trim() || !emailInput?.value?.trim() || !phoneInput?.value?.trim()) {
                                 setCheckoutError('Veuillez remplir tous les champs obligatoires (nom, email, téléphone) avant de procéder au paiement.');
