@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const baseUrl = 'https://sabrina-coaching-massage.fr'; // À changer lors du déploiement réel
+const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://www.sab-fit.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -10,6 +10,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 1,
     },
-    // On pourrait ajouter d'autres pages si le site s'agrandit
+    {
+      url: `${baseUrl}/cgu`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ];
 }
