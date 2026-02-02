@@ -86,10 +86,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true })
   } catch (error) {
     console.error('[WEBHOOK] Erreur lors du traitement:', error)
-    return NextResponse.json(
-      { error: 'Erreur de traitement' },
-      { status: 500 }
-    )
+    // Toujours retourner 200 pour éviter que Stripe retry indéfiniment
+    return NextResponse.json({ received: true })
   }
 }
 
@@ -111,6 +109,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       where: { stripeSessionId: session.id }
     })
 
+    // Flag pour savoir si on doit envoyer les emails (seulement pour les nouvelles commandes)
+    let shouldSendEmails = false
+
     if (existingOrder) {
       console.log('⚠️  Commande déjà enregistrée:', session.id)
 
@@ -125,7 +126,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           }
         })
         console.log('✅ Statut de commande mis à jour')
+        shouldSendEmails = true // Première completion, envoyer emails
       }
+      // Si déjà COMPLETED, ne pas re-envoyer les emails (webhook retry)
     } else {
       // Créer la nouvelle commande
       const order = await prisma.order.create({
@@ -144,6 +147,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       })
 
       console.log('✅ Commande enregistrée en base de données:', order.id)
+      shouldSendEmails = true
     }
 
     // 📧 Gérer l'abonnement newsletter
@@ -191,7 +195,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       }
     }
 
-    // 📧 Envoyer les emails de confirmation après paiement
+    // 📧 Envoyer les emails de confirmation après paiement (seulement si nouvelle commande)
+    if (!shouldSendEmails) {
+      console.log('ℹ️  Emails déjà envoyés pour cette commande, skip')
+      return
+    }
+
     const customerEmail = session.metadata?.customer_email || session.customer_details?.email
     const customerName = session.metadata?.customer_name || session.customer_details?.name || 'Client'
     const customerPhone = session.metadata?.customer_phone || 'Non renseigné'
