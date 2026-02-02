@@ -100,7 +100,7 @@ export async function POST(req: Request) {
     console.log('🌐 [CHECKOUT] Base URL:', baseUrl);
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'], // PayPal non activé sur le compte Stripe
+      payment_method_types: ['card', 'paypal'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,

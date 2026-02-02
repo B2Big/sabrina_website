@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe'
 import { headers } from 'next/headers'
 import { prisma } from '@/lib/db-services'
 import Stripe from 'stripe'
+import { sendReservationToSabrina, sendConfirmationToCustomer } from '@/lib/resend'
 
 /**
  * Webhook Stripe pour recevoir les événements de paiement
@@ -190,10 +191,57 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       }
     }
 
-    // TODO: Envoyer un email de confirmation à la cliente
-    // TODO: Envoyer un email de notification à Sabrina
-    console.log('📧 Email de confirmation à envoyer à:', session.customer_details?.email)
-    console.log('📧 Email de notification à Sabrina pour nouvelle commande')
+    // 📧 Envoyer les emails de confirmation après paiement
+    const customerEmail = session.customer_details?.email
+    const customerName = session.customer_details?.name || 'Client'
+
+    if (customerEmail) {
+      try {
+        // Récupérer les line items de la session Stripe pour le récap
+        const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
+
+        const cartItems = lineItems.data.map(item => ({
+          title: item.description || 'Prestation',
+          price: `${(item.amount_total / 100).toFixed(0)} €`,
+          quantity: item.quantity || 1,
+        }))
+
+        const total = session.amount_total ? (session.amount_total / 100).toFixed(0) : '0'
+
+        // Email de confirmation au client
+        try {
+          await sendConfirmationToCustomer({
+            customerName,
+            customerEmail,
+            message: 'Paiement en ligne effectué avec succès.',
+            cartItems,
+            total,
+          })
+          console.log('✅ Email de confirmation envoyé au client:', customerEmail)
+        } catch (emailError) {
+          console.error('❌ Erreur envoi email client:', emailError)
+        }
+
+        // Email de notification à Sabrina (propriétaire)
+        try {
+          await sendReservationToSabrina({
+            customerName,
+            customerEmail,
+            customerPhone: 'Non renseigné (paiement en ligne)',
+            message: `Paiement en ligne confirmé - ${total} €`,
+            cartItems,
+            total,
+          })
+          console.log('✅ Email de notification envoyé à Sabrina')
+        } catch (emailError) {
+          console.error('❌ Erreur envoi email Sabrina:', emailError)
+        }
+      } catch (error) {
+        console.error('❌ Erreur récupération line items pour emails:', error)
+      }
+    } else {
+      console.warn('⚠️ Pas d\'email client disponible, emails non envoyés')
+    }
 
   } catch (error) {
     console.error('❌ Erreur lors de l\'enregistrement de la commande:', error)
