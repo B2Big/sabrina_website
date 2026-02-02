@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/db-services';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { hasAdminAccess } from '@/lib/auth/roles';
 import { serviceSchema } from '@/lib/validations/schemas';
 import { z } from 'zod';
-
-const prisma = new PrismaClient();
 
 /**
  * GET /api/services

@@ -3,6 +3,16 @@ import { Resend } from 'resend';
 // Initialiser Resend avec la clé API
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Échapper les caractères HTML pour éviter les injections XSS dans les emails
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Email de Sabrina (destinataire des notifications)
 // Une fois le domaine sab-fit.com vérifié sur Resend, cet email fonctionnera
 export const SABRINA_EMAIL = 'sabcompan8306@gmail.com';
@@ -37,6 +47,12 @@ export async function sendReservationToSabrina({
   console.log("   → From:", FROM_EMAIL);
   console.log("   → Client:", customerName, "-", customerEmail);
 
+  const safeName = escapeHtml(customerName);
+  const safeEmail = escapeHtml(customerEmail);
+  const safePhone = escapeHtml(customerPhone);
+  const safeMessage = escapeHtml(message);
+  const safeTotal = escapeHtml(total || '0');
+
   const cartHTML = cartItems && cartItems.length > 0 ? `
     <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3 style="margin: 0 0 15px 0; color: #334155; font-size: 16px; font-weight: bold;">🛒 Prestations réservées :</h3>
@@ -44,14 +60,14 @@ export async function sendReservationToSabrina({
         <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <span style="background: #1e293b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-right: 8px;">${item.quantity}x</span>
-            <strong>${item.title} :</strong>
+            <strong>${escapeHtml(item.title)} :</strong>
           </div>
-          <span style="font-weight: bold; color: #1e293b;">${item.price}</span>
+          <span style="font-weight: bold; color: #1e293b;">${escapeHtml(item.price)}</span>
         </div>
       `).join('')}
       <div style="border-top: 2px solid #e2e8f0; margin-top: 15px; padding-top: 15px; text-align: right;">
         <span style="font-size: 14px; color: #64748b; margin-right: 10px;">Total estimé :</span>
-        <span style="font-size: 20px; font-weight: bold; color: #1e293b;">${total} €</span>
+        <span style="font-size: 20px; font-weight: bold; color: #1e293b;">${safeTotal} €</span>
       </div>
     </div>
   ` : '';
@@ -81,20 +97,20 @@ export async function sendReservationToSabrina({
 
               <div style="margin-bottom: 12px;">
                 <strong style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Nom & Prénom</strong>
-                <div style="color: #1e293b; font-size: 16px; font-weight: 600; margin-top: 4px;">${customerName}</div>
+                <div style="color: #1e293b; font-size: 16px; font-weight: 600; margin-top: 4px;">${safeName}</div>
               </div>
 
               <div style="margin-bottom: 12px;">
                 <strong style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Téléphone</strong>
                 <div style="color: #1e293b; font-size: 16px; font-weight: 600; margin-top: 4px;">
-                  <a href="tel:${customerPhone}" style="color: #3b82f6; text-decoration: none;">📞 ${customerPhone}</a>
+                  <a href="tel:${safePhone}" style="color: #3b82f6; text-decoration: none;">📞 ${safePhone}</a>
                 </div>
               </div>
 
               <div style="margin-bottom: 0;">
                 <strong style="color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Email</strong>
                 <div style="color: #1e293b; font-size: 16px; font-weight: 600; margin-top: 4px;">
-                  <a href="mailto:${customerEmail}" style="color: #3b82f6; text-decoration: none;">${customerEmail}</a>
+                  <a href="mailto:${safeEmail}" style="color: #3b82f6; text-decoration: none;">${safeEmail}</a>
                 </div>
               </div>
             </div>
@@ -104,12 +120,12 @@ export async function sendReservationToSabrina({
             <!-- Message -->
             <div style="background: #f8fafc; padding: 20px; border-radius: 10px;">
               <h3 style="margin: 0 0 12px 0; color: #334155; font-size: 16px; font-weight: bold;">💬 Message du client :</h3>
-              <p style="margin: 0; color: #475569; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+              <p style="margin: 0; color: #475569; line-height: 1.6; white-space: pre-wrap;">${safeMessage}</p>
             </div>
 
             <!-- Action Button -->
             <div style="text-align: center; margin-top: 30px;">
-              <a href="mailto:${customerEmail}?subject=Re: Votre réservation Sab-Fit"
+              <a href="mailto:${safeEmail}?subject=Re: Votre réservation Sab-Fit"
                  style="display: inline-block; background: #3b82f6; color: white; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 16px;">
                 📧 Répondre au client
               </a>
@@ -133,7 +149,7 @@ export async function sendReservationToSabrina({
   const result = await resend.emails.send({
     from: FROM_EMAIL,
     to: SABRINA_EMAIL,
-    subject: `🔔 Nouvelle réservation : ${customerName}`,
+    subject: `🔔 Nouvelle réservation : ${safeName}`,
     html,
   });
 
@@ -162,6 +178,10 @@ export async function sendConfirmationToCustomer({
   console.log("   → Destinataire:", customerEmail);
   console.log("   → From:", FROM_EMAIL);
 
+  const safeName = escapeHtml(customerName);
+  const safeMessage = escapeHtml(message);
+  const safeTotal = escapeHtml(total || '0');
+
   const cartHTML = cartItems && cartItems.length > 0 ? `
     <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
       <h3 style="margin: 0 0 15px 0; color: #334155; font-size: 16px; font-weight: bold;">📋 Récapitulatif de votre sélection :</h3>
@@ -169,14 +189,14 @@ export async function sendConfirmationToCustomer({
         <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
           <div>
             <span style="background: #3b82f6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-right: 8px;">${item.quantity}x</span>
-            <strong>${item.title} :</strong>
+            <strong>${escapeHtml(item.title)} :</strong>
           </div>
-          <span style="font-weight: bold; color: #1e293b;">${item.price}</span>
+          <span style="font-weight: bold; color: #1e293b;">${escapeHtml(item.price)}</span>
         </div>
       `).join('')}
       <div style="border-top: 2px solid #e2e8f0; margin-top: 15px; padding-top: 15px; text-align: right;">
         <span style="font-size: 14px; color: #64748b; margin-right: 10px;">Total estimé :</span>
-        <span style="font-size: 20px; font-weight: bold; color: #3b82f6;">${total} €</span>
+        <span style="font-size: 20px; font-weight: bold; color: #3b82f6;">${safeTotal} €</span>
       </div>
     </div>
   ` : '';
@@ -201,7 +221,7 @@ export async function sendConfirmationToCustomer({
           <div style="padding: 30px;">
 
             <p style="color: #475569; line-height: 1.6; font-size: 16px;">
-              Bonjour <strong>${customerName}</strong>,
+              Bonjour <strong>${safeName}</strong>,
             </p>
 
             <p style="color: #475569; line-height: 1.6; font-size: 16px;">
@@ -209,7 +229,7 @@ export async function sendConfirmationToCustomer({
             </p>
 
             <p style="color: #475569; line-height: 1.6; font-size: 16px;">
-              J'ai bien reçu votre demande et je vous recontacterai très rapidement (sous 24h) pour confirmer vos disponibilités et finaliser votre rendez-vous.
+              J&apos;ai bien reçu votre demande et je vous recontacterai très rapidement (sous 24h) pour confirmer vos disponibilités et finaliser votre rendez-vous.
             </p>
 
             ${cartHTML}
@@ -217,7 +237,7 @@ export async function sendConfirmationToCustomer({
             <!-- Message Recap -->
             <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin: 20px 0;">
               <h3 style="margin: 0 0 12px 0; color: #334155; font-size: 14px; font-weight: bold;">📝 Votre message :</h3>
-              <p style="margin: 0; color: #64748b; font-size: 14px; line-height: 1.5; white-space: pre-wrap;">${message}</p>
+              <p style="margin: 0; color: #64748b; font-size: 14px; line-height: 1.5; white-space: pre-wrap;">${safeMessage}</p>
             </div>
 
             <!-- Contact Info -->
