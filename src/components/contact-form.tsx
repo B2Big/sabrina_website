@@ -329,7 +329,29 @@ function ContactFormContent() {
                         try {
                             setIsCheckoutLoading(true);
 
-                            // 🔒 Envoyer seulement id et quantity (sécurité)
+                            // Valider les champs obligatoires avant checkout
+                            const nameInput = document.getElementById('name') as HTMLInputElement;
+                            const emailInput = document.getElementById('email') as HTMLInputElement;
+                            const phoneInput = document.getElementById('phone') as HTMLInputElement;
+
+                            if (!nameInput?.value?.trim() || !emailInput?.value?.trim() || !phoneInput?.value?.trim()) {
+                                alert('Veuillez remplir tous les champs obligatoires (nom, email, téléphone) avant de procéder au paiement.');
+                                setIsCheckoutLoading(false);
+                                // Focus sur le premier champ vide
+                                if (!nameInput?.value?.trim()) nameInput?.focus();
+                                else if (!emailInput?.value?.trim()) emailInput?.focus();
+                                else phoneInput?.focus();
+                                return;
+                            }
+
+                            if (!emailInput.checkValidity()) {
+                                alert('Veuillez entrer une adresse email valide.');
+                                emailInput?.focus();
+                                setIsCheckoutLoading(false);
+                                return;
+                            }
+
+                            // 🔒 Envoyer id, quantity + infos client
                             const checkoutItems = items.map(item => ({
                                 id: item.id,
                                 quantity: item.quantity
@@ -338,7 +360,13 @@ function ContactFormContent() {
                             const res = await fetch('/api/checkout', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ items: checkoutItems }),
+                                body: JSON.stringify({
+                                    items: checkoutItems,
+                                    customerName: nameInput.value.trim(),
+                                    customerEmail: emailInput.value.trim(),
+                                    customerPhone: phoneInput.value.trim(),
+                                    message: messageText,
+                                }),
                             });
 
                             const data = await res.json();

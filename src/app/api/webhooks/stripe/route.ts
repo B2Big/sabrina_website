@@ -135,8 +135,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           amount: session.amount_total! / 100,
           currency: session.currency || 'eur',
           status: 'COMPLETED',
-          customerEmail: session.customer_details?.email || '',
-          customerName: session.customer_details?.name || '',
+          customerEmail: session.metadata?.customer_email || session.customer_details?.email || '',
+          customerName: session.metadata?.customer_name || session.customer_details?.name || '',
           serviceIds: session.metadata?.service_ids?.split(',') || [],
           itemCount: parseInt(session.metadata?.item_count || '0'),
           paidAt: new Date()
@@ -192,8 +192,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
 
     // 📧 Envoyer les emails de confirmation après paiement
-    const customerEmail = session.customer_details?.email
-    const customerName = session.customer_details?.name || 'Client'
+    const customerEmail = session.metadata?.customer_email || session.customer_details?.email
+    const customerName = session.metadata?.customer_name || session.customer_details?.name || 'Client'
+    const customerPhone = session.metadata?.customer_phone || 'Non renseigné'
+    const customerMessage = session.metadata?.customer_message || ''
 
     if (customerEmail) {
       try {
@@ -208,12 +210,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
         const total = session.amount_total ? (session.amount_total / 100).toFixed(0) : '0'
 
-        // Email de confirmation au client
+        // Email de confirmation au client (réservation + paiement)
         try {
           await sendConfirmationToCustomer({
             customerName,
             customerEmail,
-            message: 'Paiement en ligne effectué avec succès.',
+            message: customerMessage || 'Paiement en ligne effectué avec succès.',
             cartItems,
             total,
           })
@@ -222,13 +224,13 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
           console.error('❌ Erreur envoi email client:', emailError)
         }
 
-        // Email de notification à Sabrina (propriétaire)
+        // Email de notification à Sabrina (réservation + confirmation paiement)
         try {
           await sendReservationToSabrina({
             customerName,
             customerEmail,
-            customerPhone: 'Non renseigné (paiement en ligne)',
-            message: `Paiement en ligne confirmé - ${total} €`,
+            customerPhone,
+            message: `${customerMessage ? customerMessage + '\n\n' : ''}💳 Paiement en ligne confirmé - ${total} €`,
             cartItems,
             total,
           })

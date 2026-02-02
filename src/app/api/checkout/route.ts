@@ -23,8 +23,8 @@ export async function POST(req: Request) {
     console.log('📦 [CHECKOUT] Body reçu:', JSON.stringify(body));
 
     // 🔒 Validation Zod
-    const { items } = checkoutSchema.parse(body);
-    console.log('✅ [CHECKOUT] Validation Zod OK:', items.length, 'items');
+    const { items, customerName, customerEmail, customerPhone, message } = checkoutSchema.parse(body);
+    console.log('✅ [CHECKOUT] Validation Zod OK:', items.length, 'items', '- Client:', customerName, customerEmail);
 
     // 🔒 SÉCURITÉ : Récupérer les prix RÉELS depuis la base de données
     // Ne JAMAIS faire confiance aux prix envoyés par le client !
@@ -106,6 +106,9 @@ export async function POST(req: Request) {
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?canceled=true#contact`,
 
+      // Pré-remplir l'email client sur la page Stripe
+      customer_email: customerEmail,
+
       // 📧 Champ personnalisé : Newsletter
       custom_fields: [
         {
@@ -129,6 +132,10 @@ export async function POST(req: Request) {
         item_count: items.length.toString(),
         total_amount: (totalAmount / 100).toFixed(2), // En euros
         service_ids: serviceIds.join(','),
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: customerPhone,
+        customer_message: message?.substring(0, 500) || '',
       }
     });
 

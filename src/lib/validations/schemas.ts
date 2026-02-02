@@ -155,7 +155,25 @@ export const checkoutItemSchema = z.object({
 export const checkoutSchema = z.object({
   items: z.array(checkoutItemSchema)
     .min(1, 'Le panier ne peut pas être vide')
-    .max(50, 'Maximum 50 articles par commande')
+    .max(50, 'Maximum 50 articles par commande'),
+  customerName: z.string()
+    .min(2, 'Le nom doit contenir au moins 2 caractères')
+    .max(100, 'Le nom ne peut pas dépasser 100 caractères')
+    .trim(),
+  customerEmail: z.string()
+    .email('Email invalide')
+    .max(254, 'Email trop long')
+    .toLowerCase()
+    .trim(),
+  customerPhone: z.string()
+    .min(6, 'Le téléphone doit contenir au moins 6 caractères')
+    .max(20, 'Le téléphone ne peut pas dépasser 20 caractères')
+    .trim(),
+  message: z.string()
+    .max(5000, 'Le message ne peut pas dépasser 5000 caractères')
+    .trim()
+    .optional()
+    .default(''),
 })
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>
