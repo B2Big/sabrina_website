@@ -27,7 +27,6 @@ export async function POST(req: Request) {
     console.log('✅ [CHECKOUT] Validation Zod OK:', items.length, 'items', '- Client:', customerName, customerEmail);
 
     // 🔒 SÉCURITÉ : Récupérer les prix RÉELS depuis la base de données
-    // Ne JAMAIS faire confiance aux prix envoyés par le client !
     const serviceIds = items.map(item => item.id);
     console.log('🔍 [CHECKOUT] Recherche services DB:', serviceIds);
 
@@ -88,16 +87,36 @@ export async function POST(req: Request) {
       };
     });
 
-    // Calculer le montant total pour les métadonnées
+    // Calculer le montant total
     const totalAmount = lineItems.reduce((sum, item) => {
-      return sum + (item.price_data.unit_amount * item.quantity);
+      return sum + (item.price_data.unit_amount * item.quantity)
     }, 0);
+
+    // 💾 ÉTAPE 1: CRÉER LA RÉSERVATION EN BASE DE DONNÉES
+    console.log('💾 [CHECKOUT] Création de la réservation en DB...');
+    
+    const reservation = await prisma.reservation.create({
+      data: {
+        status: 'attente_paiement_sur_place',
+        customerName: customerName,
+        customerEmail: customerEmail,
+        customerPhone: customerPhone,
+        message: message || null,
+        serviceTitle: servicesFromDb.map(s => s.title).join(', '),
+        servicePrice: parseFloat(servicesFromDb[0].price.replace(/[^0-9.]/g, '')) || 0,
+        quantity: items.reduce((acc, item) => acc + item.quantity, 0),
+        totalAmount: totalAmount / 100, // Convertir centimes -> euros
+        paymentMethod: 'stripe',
+        requestedDate: body.serviceDate ? new Date(body.serviceDate) : null,
+      }
+    });
+
+    console.log('✅ [CHECKOUT] Réservation créée:', reservation.id);
 
     // Créer la session Stripe
     const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
     console.log('💳 [CHECKOUT] Création session Stripe...');
     console.log('🔑 [CHECKOUT] Stripe key présente:', !!process.env.STRIPE_SECRET_KEY);
-    console.log('🌐 [CHECKOUT] Base URL:', baseUrl);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'paypal'],
@@ -128,9 +147,11 @@ export async function POST(req: Request) {
         }
       ],
 
+      // 💾 Lier la session Stripe à notre réservation
       metadata: {
+        reservation_id: reservation.id,
         item_count: items.length.toString(),
-        total_amount: (totalAmount / 100).toFixed(2), // En euros
+        total_amount: (totalAmount / 100).toFixed(2),
         service_ids: serviceIds.join(','),
         customer_name: customerName,
         customer_email: customerEmail,
@@ -140,7 +161,13 @@ export async function POST(req: Request) {
       }
     });
 
-    console.log('✅ [CHECKOUT] Session créée avec succès:', session.id);
+    // 💾 ÉTAPE 2: METTRE À JOUR LA RÉSERVATION AVEC LE SESSION ID STRIPE
+    await prisma.reservation.update({
+      where: { id: reservation.id },
+      data: { stripeSessionId: session.id }
+    });
+
+    console.log('✅ [CHECKOUT] Session Stripe créée et liée:', session.id);
     console.log('🔗 [CHECKOUT] URL de paiement:', session.url);
 
     return NextResponse.json({ url: session.url });
@@ -148,9 +175,6 @@ export async function POST(req: Request) {
     console.error('❌ [CHECKOUT] ERREUR GLOBALE:', error);
     console.error('❌ [CHECKOUT] Type:', error instanceof Error ? error.constructor.name : typeof error);
     console.error('❌ [CHECKOUT] Message:', error instanceof Error ? error.message : String(error));
-    if (error instanceof Error && error.stack) {
-      console.error('❌ [CHECKOUT] Stack:', error.stack);
-    }
 
     // Erreur de validation Zod
     if (error instanceof z.ZodError) {

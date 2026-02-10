@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState, Suspense } from 'react';
-import { sendContactEmail } from '@/app/actions';
+import { createReservationSurPlace } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X, Wallet, CreditCard, Globe } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -23,7 +23,7 @@ const SUBJECTS = [
 ];
 
 function ContactFormContent() {
-  const [state, formAction, isPending] = useActionState(sendContactEmail, initialState);
+  const [state, formAction, isPending] = useActionState(createReservationSurPlace, initialState);
   const [selectedSubject, setSelectedSubject] = useState<string>('coaching');
   const [messageText, setMessageText] = useState('');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
@@ -97,9 +97,9 @@ function ContactFormContent() {
             <Send className="w-10 h-10 text-green-600" />
           </div>
           <div>
-             <h3 className="text-3xl font-black text-slate-900 mb-2">Message Envoyé !</h3>
+             <h3 className="text-3xl font-black text-slate-900 mb-2">Réservation Confirmée !</h3>
              <p className="text-slate-500 max-w-xs mx-auto font-medium">
-               Je vous réponds très vite (sous 24h). <br/>Merci de votre confiance.
+               Un email de confirmation vous a été envoyé.<br/>Je vous réponds sous 24h.
              </p>
           </div>
           <Button 
@@ -226,7 +226,7 @@ function ContactFormContent() {
                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
                 placeholder="Ex: Sophie Martin"
               />
-              {state.errors?.name && (
+              {state.errors?.name?.[0] && (
                 <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.name[0]}</p>
               )}
             </div>
@@ -244,7 +244,7 @@ function ContactFormContent() {
                   className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
                   placeholder="hello@gmail.com"
                 />
-                {state.errors?.email && (
+                {state.errors?.email?.[0] && (
                   <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.email[0]}</p>
                 )}
               </div>
@@ -277,7 +277,7 @@ function ContactFormContent() {
                 className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-medium placeholder:text-slate-300 focus:outline-none focus:border-slate-300 focus:bg-white transition-all resize-none shadow-sm"
                 placeholder="Bonjour, je souhaiterais avoir des informations sur..."
               />
-              {state.errors?.message && (
+              {state.errors?.message?.[0] && (
                 <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.message[0]}</p>
               )}
             </div>

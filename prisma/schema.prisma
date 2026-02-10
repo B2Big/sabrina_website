@@ -105,3 +105,51 @@ model NewsletterSubscriber {
   @@index([isSubscribed])
   @@map("newsletter_subscribers")
 }
+
+// ============================================
+// SYSTÈME DE RÉSERVATION AVEC EMAILS RESEND
+// ============================================
+
+enum ReservationStatus {
+  attente_paiement_sur_place
+  paye_confirme
+  annule
+  termine
+}
+
+model Reservation {
+  id                String            @id @default(cuid())
+  status            ReservationStatus @default(attente_paiement_sur_place)
+  
+  // Client
+  customerName      String            @map("customer_name")
+  customerEmail     String            @map("customer_email")
+  customerPhone     String            @map("customer_phone")
+  message           String?
+  
+  // Service
+  serviceTitle      String            @map("service_title")
+  servicePrice      Float             @map("service_price")
+  serviceDuration   String?           @map("service_duration")
+  quantity          Int               @default(1)
+  totalAmount       Float             @map("total_amount")
+  
+  // Paiement
+  paymentMethod     String            @map("payment_method") // "sur_place" | "stripe"
+  stripeSessionId   String?           @unique @map("stripe_session_id")
+  stripePaymentId   String?           @map("stripe_payment_id")
+  paidAt            DateTime?         @map("paid_at")
+  
+  // Dates
+  requestedDate     DateTime?         @map("requested_date") // Date souhaitée (si fournie)
+  confirmedDate     DateTime?         @map("confirmed_date") // Date confirmée par Sabrina
+  
+  // Timestamps
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  
+  @@index([status])
+  @@index([customerEmail])
+  @@index([createdAt])
+  @@map("reservations")
+}
