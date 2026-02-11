@@ -86,7 +86,12 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
     }
 
     if (cartItems.length === 0) {
-      return { success: false, message: "Veuillez sélectionner au moins un service." };
+      console.error("❌ [SUR PLACE] Panier vide");
+      return { 
+        success: false, 
+        errors: { cart: ['Veuillez ajouter au moins un service au panier'] },
+        message: "Veuillez ajouter au moins un service au panier."
+      };
     }
 
     // Calculer le total numérique

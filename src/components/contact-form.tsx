@@ -205,13 +205,11 @@ function ContactFormContent() {
           <input type="hidden" name="subject" value={selectedSubject} />
 
           {/* Panier en JSON pour l'email */}
-          {items.length > 0 && (
-            <input
-              type="hidden"
-              name="cart"
-              value={JSON.stringify({ items, total })}
-            />
-          )}
+          <input
+            type="hidden"
+            name="cart"
+            value={JSON.stringify({ items, total })}
+          />
 
           <div className="space-y-6">
             <div className="space-y-2">
