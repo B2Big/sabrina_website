@@ -1,222 +1,195 @@
 # 🚀 Prochaines Étapes - Sabrina PWA
 
-**Date** : 2026-01-27
-**Statut** : ✅ Système de newsletter + CGU implémentés !
+**Date** : 2026-02-11
+**Statut** : ✅ Système de réservation + emails 100% opérationnel !
 
 ---
 
-## ✅ Ce Qui Vient d'Être Ajouté
+## ✅ Ce Qui Vient d'Être Ajouté (Session 2026-02-11)
 
-### 📧 Système de Newsletter Complet
-- Checkbox au checkout Stripe
-- Enregistrement automatique via webhook
-- Dashboard admin avec statistiques
-- Export CSV et copie des emails
-- Conforme RGPD
+### 📧 Système de Réservation Complet (DUAL FLOW)
 
-### 📄 Page CGU
-- Route `/cgu` créée
-- Conforme au droit français
-- Section RGPD détaillée
+#### Flux "Paiement sur Place"
+- Bouton "Réserver et régler sur place"
+- Création réservation avec statut `attente_paiement_sur_place`
+- Emails de confirmation (thème 🟠 orange)
+- Validation formulaire avec Zod
+
+#### Flux "Paiement en Ligne" (Stripe)
+- Intégration Stripe Checkout
+- Webhook `checkout.session.completed`
+- Mise à jour auto DB → `paye_confirme`
+- Emails avec reçu Stripe (thème 🟢 vert)
+
+#### Emails Resend (Domaine Vérifié)
+- Domaine `sab-fit.com` : DKIM + SPF ✅
+- Expéditeur : `contact@sab-fit.com`
+- 4 templates : 2 orange (sur place) + 2 vert (payé)
+- Testé et validé en production
 
 ---
 
-## ⚠️ Action URGENTE : Résoudre Prisma
+## ⚠️ Actions URGENTES (Avant Go-Live)
 
-Vous avez une erreur d'authentification PostgreSQL.
+### 1. Configurer Webhook Stripe Production
 
-**Ouvrez `.env.local`** et vérifiez cette ligne :
+**Dans le Dashboard Stripe** :
+```
+https://dashboard.stripe.com/webhooks
+
+Endpoint URL: https://www.sab-fit.com/api/webhooks/stripe
+Events : checkout.session.completed
+```
+
+⚠️ **IMPORTANT** : L'URL doit être `www.sab-fit.com` (pas `.netlify.app`)
+
+### 2. Vérifier Variables Environnement Netlify
+
+Dans **Netlify** → Site Settings → Environment Variables :
+
+| Variable | Statut |
+|----------|--------|
+| `RESEND_API_KEY` | ✅ Vérifier présence |
+| `STRIPE_WEBHOOK_SECRET` | ✅ Vérifier présence |
+| `STRIPE_SECRET_KEY` | ✅ Vérifier présence |
+| `DATABASE_URL` | ✅ Vérifier présence |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ Vérifier présence |
+
+### 3. Tester Paiement Réel
+
+1. Passer Stripe en mode LIVE
+2. Faire un vrai paiement (petit montant)
+3. Vérifier les emails arrivent sur `sabcompan8306@gmail.com`
+
+---
+
+## 🧪 Guide de Test Complet
+
+### Test A - Réservation sur Place
 
 ```bash
-# Le @ dans le mot de passe DOIT être %40
-DIRECT_URL=postgresql://postgres.abfhvkrrlnuldwgzpxaj:12345%40johanXXX@db.abfhvkrrlnuldwgzpxaj.supabase.co:5432/postgres
-                                                         ^^^^
-                                                         Vérifier ici
+# 1. Aller sur le site
+https://www.sab-fit.com
+
+# 2. Ajouter un service au panier
+# 3. Cliquer "Réserver et régler sur place"
+# 4. Remplir le formulaire
+# 5. Confirmer
+
+# Résultat attendu :
+✅ Message succès
+✅ Email reçu sur l'adresse client (thème orange)
+✅ Email reçu sur sabcompan8306@gmail.com (thème orange)
 ```
 
-Si ce n'est pas `%40`, corrigez et relancez :
+### Test B - Paiement en Ligne
 
 ```bash
-npx prisma db push
-```
+# 1. Aller sur le site
+https://www.sab-fit.com
 
-Vous devriez voir :
-```
-✔ Database synced with Prisma schema
+# 2. Ajouter un service au panier
+# 3. Cliquer "Réserver & Payer en ligne"
+# 4. Remplir le formulaire
+# 5. Payer avec carte test : 4242 4242 4242 4242
+# 6. Valider le paiement Stripe
+
+# Résultat attendu :
+✅ Redirection vers page de succès
+✅ Email reçu sur l'adresse client (thème vert avec reçu)
+✅ Email reçu sur sabcompan8306@gmail.com (thème vert)
+✅ Réservation en statut "paye_confirme" dans la DB
 ```
 
 ---
 
-## 🧪 Tester le Système Newsletter
-
-```bash
-# 1. Démarrer
-npm run dev
-
-# 2. Tester un achat
-http://localhost:3000
-→ Ajouter un service au panier
-→ Cliquer "Payer"
-→ Cocher "Oui, je m'abonne" dans le formulaire Stripe
-→ Payer avec 4242 4242 4242 4242
-
-# 3. Vérifier dans l'admin
-http://localhost:3000/admin
-→ Onglet "📧 Newsletter"
-→ Vous devriez voir 1 abonné !
-```
-
----
-
-## 📚 Documentation Créée
+## 📚 Documentation Disponible
 
 | Document | Contenu |
 |----------|---------|
-| `docs/NEWSLETTER_SETUP.md` | Guide complet du système newsletter |
-| `docs/SECURITE_RECAPITULATIF.md` | Récap sécurité (à lire ⭐) |
-| `docs/CREDENTIAL_ROTATION.md` | Rotation credentials (URGENT 🔴) |
-| `docs/STRIPE_WEBHOOKS.md` | Configuration webhooks Stripe |
-| `docs/README.md` | Documentation technique complète |
-| `/cgu` | Page CGU/RGPD accessible sur le site |
-
----
-
-## 🎯 Checklist de Mise en Production
-
-### Sécurité (À faire AVANT déploiement)
-- [ ] Rotation des credentials exposés (voir `CREDENTIAL_ROTATION.md`)
-- [ ] Prisma DB push réussi
-- [ ] Webhooks Stripe configurés en production
-- [ ] Variables d'environnement production configurées
-
-### Tests
-- [ ] Connexion admin fonctionne (2 comptes : Sabrina + Developer) ✅
-- [ ] CRUD services fonctionne
-- [ ] Panier + Checkout fonctionne
-- [ ] Checkbox newsletter apparaît
-- [ ] Abonné enregistré après paiement
-- [ ] Dashboard newsletter accessible
-
-### Contenu
-- [ ] Ajouter les vrais services dans l'admin
-- [ ] Créer des promotions
-- [ ] Vérifier les textes et prix
-- [ ] Tester sur mobile (PWA)
-
----
-
-## 💡 Utiliser la Newsletter
-
-### Méthode Rapide (Gmail/Outlook)
-1. Admin → Newsletter → "Copier emails actifs"
-2. Nouvel email → Cci (coller)
-3. Écrire votre promo
-4. Envoyer !
-
-### Méthode Professionnelle (Brevo)
-1. Admin → Newsletter → "Exporter CSV"
-2. Importer dans Brevo (gratuit 300 emails/jour)
-3. Créer campagne avec template
-4. Envoyer
-
-**Guide complet** : `docs/NEWSLETTER_SETUP.md`
+| `docs/SESSION_LOG.md` | Journal complet des sessions |
+| `docs/PROJECT_CONTEXT.md` | Contexte projet à jour |
+| `docs/NEWSLETTER_SETUP.md` | Guide système newsletter |
+| `docs/SECURITE_RECAPITULATIF.md` | Récap sécurité |
+| `docs/STRIPE_WEBHOOKS.md` | Configuration webhooks |
+| `docs/ARCHITECTURE.md` | Architecture technique |
 
 ---
 
 ## 📊 Ce Qui Fonctionne Maintenant
 
-✅ Site vitrine responsive
-✅ PWA installable
-✅ Catalogue de services dynamique
-✅ Panier d'achat
-✅ Paiement Stripe + PayPal
-✅ Dashboard admin sécurisé
-✅ Système de rôles (ADMIN/DEVELOPER)
-✅ Rate limiting (anti brute-force)
-✅ Validation Zod complète
-✅ **Newsletter avec consentement RGPD**
-✅ **Statistiques abonnés**
-✅ **Export CSV**
-✅ **Page CGU/RGPD**
+### ✅ 100% Opérationnel
+- [x] Site vitrine responsive
+- [x] PWA installable
+- [x] Catalogue de services dynamique
+- [x] **Réservation sur place + emails**
+- [x] **Paiement Stripe + webhooks + emails**
+- [x] Dashboard admin sécurisé
+- [x] Système de rôles (ADMIN/DEVELOPER)
+- [x] Rate limiting
+- [x] Validation Zod
+- [x] Newsletter RGPD
+- [x] Page CGU/RGPD
+
+### ⚠️ Nécessite Configuration
+- [ ] Webhook URL Stripe (production)
+- [ ] Variables d'environnement (vérification)
 
 ---
 
-## 🔮 Améliorations Futures (Optionnel)
+## 🎯 Améliorations Futures (Optionnel)
 
 ### Court Terme
-- [ ] Emails de confirmation automatiques (Resend)
-- [ ] Email à Sabrina pour nouvelle commande
-- [ ] Lien de désinscription dans les emails
+- [ ] Dashboard réservations dans `/admin`
+- [ ] Statistiques de vente (revenus, services populaires)
+- [ ] Export des réservations (CSV)
 
 ### Moyen Terme
-- [ ] Dashboard des commandes (/admin/orders)
-- [ ] Formulaire d'envoi newsletter depuis l'admin
-- [ ] Templates d'emails pré-conçus
+- [ ] Gestion des créneaux horaires
+- [ ] Rappels automatiques (SMS/email avant RDV)
+- [ ] Programme de fidélité
 
 ### Long Terme
-- [ ] Système de réservation de créneaux
-- [ ] Programme de fidélité
 - [ ] Espace client avec historique
+- [ ] Intégration calendrier
+- [ ] Application mobile native (si besoin)
 
 ---
 
-## 🎉 Récapitulatif de Ce Qui a Été Fait Aujourd'hui
+## 🎉 Récapitulatif de la Session
 
-1. ✅ Sécurisation complète de l'application
-   - Système de rôles
-   - Protection admin
-   - Validation des prix Stripe
-   - Rate limiting
+### Problèmes Résolus
+1. ✅ **Emails ne partaient pas** → Domaine Resend vérifié + `contact@sab-fit.com`
+2. ✅ **Validation formulaire** → `serviceDate` nullable
+3. ✅ **Webhook Stripe** → Runtime Node.js forcé + middleware exempté
+4. ✅ **Dual flow testé** → Sur place + En ligne fonctionnent parfaitement
 
-2. ✅ Création des comptes admin
-   - Sabrina (sabcompan8306@gmail.com) : ADMIN
-   - Johan (johan.dev.pro@gmail.com) : DEVELOPER
-
-3. ✅ Système de newsletter
-   - Checkbox au checkout
-   - Table base de données
-   - Dashboard admin complet
-   - Export et gestion
-
-4. ✅ Page CGU/RGPD
-   - Conforme au droit français
-   - Droits des utilisateurs
-   - Section newsletter
-
-5. ✅ Documentation complète
-   - 5 guides détaillés
-   - Instructions pas à pas
-   - Troubleshooting
+### Tests Réussis
+- Réservation "sur place" (450€) : ✅ Emails reçus
+- Paiement Stripe (850€) : ✅ Webhook OK + Emails reçus
 
 ---
 
-## 📞 Besoin d'Aide ?
+## 🚀 Checklist Mise en Production Finale
 
-1. **D'abord** : Lire `docs/SECURITE_RECAPITULATIF.md` ⭐
-2. **Puis** : `docs/NEWSLETTER_SETUP.md` pour la newsletter
-3. **Ensuite** : `docs/README.md` pour la référence technique
+### Pré-lancement
+- [ ] Webhook Stripe configuré avec bonne URL
+- [ ] Variables d'environnement vérifiées sur Netlify
+- [ ] Test paiement réel effectué
+- [ ] Emails reçus sur `sabcompan8306@gmail.com`
 
----
+### Lancement
+- [ ] Annoncer le site aux clients
+- [ ] Créer premières promotions (Panic Sell)
+- [ ] Préparer première campagne newsletter
 
-## 🚀 Commencer Maintenant
-
-```bash
-# 1. Corriger le mot de passe PostgreSQL dans .env.local
-# 2. Synchroniser Prisma
-npx prisma db push
-
-# 3. Démarrer
-npm run dev
-
-# 4. Tester un achat avec newsletter
-http://localhost:3000
-
-# 5. Vérifier dans l'admin
-http://localhost:3000/admin → Newsletter
-```
+### Post-lancement
+- [ ] Surveiller les logs Netlify (régulièrement)
+- [ ] Collecter feedback clients
+- [ ] Ajuster tarifs/promos selon demande
 
 ---
 
-**🎊 Félicitations ! Votre application est prête pour la production !**
+**🎊 Félicitations ! Votre système de réservation est prêt !**
 
-**Prochaine étape** : Tester le système newsletter et préparer votre première campagne ! 📧
+**Prochaine étape** : Configurer le webhook Stripe et tester un vrai paiement ! 💳
