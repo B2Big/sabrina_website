@@ -5,6 +5,10 @@ import { checkoutSchema } from '@/lib/validations/schemas';
 import { rateLimit, RateLimitConfigs, getClientIp, rateLimitExceededResponse } from '@/lib/rate-limit';
 import { z } from 'zod';
 
+// IMPORTANT: Forcer le runtime Node.js pour Prisma
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: Request) {
   try {
     console.log('🛒 [CHECKOUT] Début de la requête checkout');

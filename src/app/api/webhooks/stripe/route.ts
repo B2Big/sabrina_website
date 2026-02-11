@@ -23,6 +23,12 @@ import {
  * 3. Les emails sont envoyés avec le statut "PAYÉ"
  */
 
+// IMPORTANT: Forcer le runtime Node.js (pas Edge) car Prisma nécessite Node.js
+export const runtime = 'nodejs'
+
+// Désactiver le body parser pour recevoir le raw body nécessaire à la vérification Stripe
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: Request) {
   const body = await req.text()
   const headersList = await headers()
