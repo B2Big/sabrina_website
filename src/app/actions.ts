@@ -43,14 +43,23 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
     newsletter: formData.get("newsletter"),
   };
 
+  console.log("📋 [SUR PLACE] Données reçues:", {
+    name: rawData.name,
+    email: rawData.email,
+    phone: rawData.phone ? `${(rawData.phone as string).length} caractères` : 'vide',
+    message: rawData.message ? `${(rawData.message as string).length} caractères` : 'vide',
+    hasCart: !!rawData.cart,
+  });
+
   // Validation Zod
   const result = ContactSchema.safeParse(rawData);
 
   if (!result.success) {
-    console.error("❌ Validation échouée:", result.error.flatten().fieldErrors);
+    const fieldErrors = result.error.flatten().fieldErrors;
+    console.error("❌ [SUR PLACE] Validation échouée:", fieldErrors);
     return { 
       success: false, 
-      errors: result.error.flatten().fieldErrors,
+      errors: fieldErrors,
       message: "Veuillez corriger les erreurs dans le formulaire."
     };
   }

@@ -260,6 +260,9 @@ function ContactFormContent() {
                   className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold placeholder:text-slate-300 placeholder:font-medium focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
                   placeholder="06 12 34 56 78"
                 />
+                {state.errors?.phone?.[0] && (
+                  <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.phone[0]}</p>
+                )}
               </div>
             </div>
 
