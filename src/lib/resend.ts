@@ -4,8 +4,7 @@ import { Resend } from 'resend';
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Email de Sabrina (destinataire des notifications)
-// TEMP: changé pour test - remettre sabcompan8306@gmail.com après
-export const SABRINA_EMAIL = 'syups4@gmail.com';
+export const SABRINA_EMAIL = 'sabcompan8306@gmail.com';
 
 // Email d'expédition
 // Le domaine sab-fit.com est maintenant vérifié sur Resend
