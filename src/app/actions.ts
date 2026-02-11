@@ -17,7 +17,7 @@ const ContactSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   email: z.string().email("Email invalide"),
   phone: z.string().min(10, "Veuillez entrer un numéro de téléphone valide (10 chiffres)"),
-  message: z.string().min(10, "Le message doit contenir au moins 10 caractères"),
+  message: z.string().min(5, "Le message doit contenir au moins 5 caractères"),
   cart: z.string().optional(), // JSON stringifié du panier
   serviceDate: z.string().optional(), // Date souhaitée pour le rendez-vous
 });
@@ -56,11 +56,14 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
 
   if (!result.success) {
     const fieldErrors = result.error.flatten().fieldErrors;
+    const errorMessages = Object.entries(fieldErrors)
+      .map(([field, errors]) => `${field}: ${errors?.join(', ')}`)
+      .join(' | ');
     console.error("❌ [SUR PLACE] Validation échouée:", fieldErrors);
     return { 
       success: false, 
       errors: fieldErrors,
-      message: "Veuillez corriger les erreurs dans le formulaire."
+      message: `Erreurs: ${errorMessages}`
     };
   }
 
