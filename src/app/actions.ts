@@ -19,7 +19,7 @@ const ContactSchema = z.object({
   phone: z.string().min(10, "Veuillez entrer un numéro de téléphone valide (10 chiffres)"),
   message: z.string().min(5, "Le message doit contenir au moins 5 caractères"),
   cart: z.string().optional(), // JSON stringifié du panier
-  serviceDate: z.string().optional(), // Date souhaitée pour le rendez-vous
+  serviceDate: z.string().optional().nullable(), // Date souhaitée (optionnelle, peut être null)
 });
 
 // ============================================
