@@ -7,10 +7,8 @@ export const resend = new Resend(process.env.RESEND_API_KEY);
 export const SABRINA_EMAIL = 'sabcompan8306@gmail.com';
 
 // Email d'expédition
-// IMPORTANT: Le domaine sab-fit.com doit être vérifié sur Resend pour utiliser contact@sab-fit.com
-// En attendant, on utilise onboarding@resend.dev (limite: 100 emails/jour)
-// Une fois le domaine vérifié, remplacer par: 'contact@sab-fit.com'
-export const FROM_EMAIL = 'onboarding@resend.dev';
+// Le domaine sab-fit.com est maintenant vérifié sur Resend
+export const FROM_EMAIL = 'contact@sab-fit.com';
 
 // ============================================
 // UTILITAIRES
