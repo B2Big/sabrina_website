@@ -124,8 +124,9 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
     console.log("📊 Statut:", reservation.status);
 
     // 2. ENVOYER EMAIL AU CLIENT (Confirmation - Paiement sur place)
+    let clientEmailError = null;
     try {
-      await sendConfirmationToCustomerSurPlace({
+      const emailResult = await sendConfirmationToCustomerSurPlace({
         customerName: name,
         customerEmail: email,
         reservationId: reservation.id,
@@ -133,15 +134,17 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         total: totalAmount,
         requestedDate: serviceDate,
       });
-      console.log("✅ Email CLIENT [SUR PLACE] envoyé");
-    } catch (emailError) {
-      console.error("❌ Erreur email CLIENT:", emailError);
+      console.log("✅ Email CLIENT [SUR PLACE] envoyé:", emailResult);
+    } catch (emailError: any) {
+      clientEmailError = emailError?.message || String(emailError);
+      console.error("❌ Erreur email CLIENT:", clientEmailError);
       // On continue même si l'email échoue (la réservation est créée)
     }
 
     // 3. ENVOYER EMAIL AU PROPRIÉTAIRE (Notification - À percevoir)
+    let sabrinaEmailError = null;
     try {
-      await sendNotificationToSabrinaSurPlace({
+      const emailResult = await sendNotificationToSabrinaSurPlace({
         reservationId: reservation.id,
         customerName: name,
         customerEmail: email,
@@ -151,9 +154,10 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         message: message,
         requestedDate: serviceDate,
       });
-      console.log("✅ Email SABRINA [SUR PLACE] envoyé");
-    } catch (emailError) {
-      console.error("❌ Erreur email SABRINA:", emailError);
+      console.log("✅ Email SABRINA [SUR PLACE] envoyé:", emailResult);
+    } catch (emailError: any) {
+      sabrinaEmailError = emailError?.message || String(emailError);
+      console.error("❌ Erreur email SABRINA:", sabrinaEmailError);
     }
 
     // 4. INSCRIRE À LA NEWSLETTER SI OPT-IN
@@ -193,11 +197,20 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
       }
     }
 
-    // 5. RETOURNER LE SUCCÈS
+    // 5. RETOURNER LE SUCCÈS (avec info si email a échoué)
+    let successMessage = "Réservation confirmée !";
+    if (clientEmailError || sabrinaEmailError) {
+      successMessage += " Note: L'email de confirmation n'a pas pu être envoyé (notre équipe a été notifiée).";
+      console.warn("[SUR PLACE] Réservation créée mais emails échoués:", { clientEmailError, sabrinaEmailError });
+    } else {
+      successMessage += " Un email de confirmation vous a été envoyé.";
+    }
+    
     return {
       success: true,
-      message: "Réservation confirmée ! Un email de confirmation vous a été envoyé.",
+      message: successMessage,
       reservationId: reservation.id,
+      emailErrors: { client: clientEmailError, sabrina: sabrinaEmailError },
     };
 
   } catch (error) {
