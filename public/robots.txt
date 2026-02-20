@@ -1,0 +1,35 @@
+# Robots.txt pour sab-fit.com
+# Optimisé pour les crawlers et les IA
+
+User-agent: *
+Allow: /
+
+# Autoriser tous les bots majeurs
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: Baiduspider
+User-agent: YandexBot
+User-agent: facebookexternalhit
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: Applebot
+User-agent: ClaudeBot
+User-agent: GPTBot
+User-agent: ChatGPT-User
+Allow: /
+
+# Sitemap
+Sitemap: https://sab-fit.com/sitemap.xml
+
+# Interdiction des zones admin
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
+
+# Autoriser les assets statiques
+Allow: /img/
+Allow: /logo.svg
+Allow: /manifest.json
