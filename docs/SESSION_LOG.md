@@ -1,5 +1,80 @@
 # Journal des Sessions - Sabrina PWA
 
+## Session 2026-02-20 - UI Polish & Security Hardening
+
+**Heure** : ~2 heures
+**Agent** : Kimi Code CLI
+**Focus** : Améliorations UI, factorisation code, durcissement sécurité
+
+---
+
+### ✅ Implémenté
+
+#### 1. Hero Section Redesign
+- Remplacement image splitée par `sab.webp`
+- Effet de fondu subtil sur les bords (2%)
+- Border-radius arrondi pour intégration propre
+
+#### 2. Harmonisation Boutons Réservation
+- **Bouton 1** : "Réserver uniquement" + icône CalendarCheck
+- **Bouton 2** : "Réserver + Paiement CB" + icône CreditCard
+- Layout vertical harmonisé
+- Texte responsive avec passage à la ligne
+
+#### 3. Factorisation Code Auth
+- Création `src/lib/auth/session.ts` (helpers requireAuth/requireAdmin)
+- Création `src/lib/auth/api-guard.ts` (guards API)
+- Réduction de ~170 lignes de code dupliqué
+- 4 fichiers refactorés pour utiliser les nouveaux helpers
+
+#### 4. Durcissement Sécurité
+- Suppression fallback email (isAuthorizedEmail)
+- Authentification stricte par rôle uniquement
+- Nettoyage code temporaire de transition
+
+---
+
+### 📝 Fichiers Modifiés
+
+| Fichier | Changement |
+|---------|------------|
+| `src/components/hero.tsx` | Nouvelle image sab.webp + effet fondu |
+| `src/components/contact-form.tsx` | Boutons harmonisés avec nouveaux libellés |
+| `src/lib/auth/session.ts` | Création helpers auth (nouveau) |
+| `src/lib/auth/api-guard.ts` | Création guards API (nouveau) |
+| `src/lib/auth/roles.ts` | Suppression fallback email |
+| `src/app/admin/actions.ts` | Refactor avec requireAdmin() |
+| `src/app/admin/newsletter-actions.ts` | Refactor avec requireAdmin() |
+| `src/app/admin/page.tsx` | Refactor avec getCurrentUser() |
+
+---
+
+### ❌ Erreurs & Résolutions
+
+| Erreur | Cause | Solution |
+|--------|-------|----------|
+| Wallet not found | Icône retirée de l'import mais utilisée ailleurs | Remettre Wallet dans l'import Lucide |
+| TS1005: '}' expected | Accolade manquante après refactoring | Ajouter l'accolade fermante |
+
+---
+
+### 📊 État Actuel
+
+#### ✅ Fonctionne
+- [x] Hero section avec nouvelle image
+- [x] Boutons réservation harmonisés
+- [x] Authentification admin sécurisée
+- [x] Code factorisé et propre
+
+#### 📝 Notes
+- **Session log détaillé** : `docs/sessions/2026-02/SESSION_2026-02-20_UI_POLISH.md`
+
+---
+
+**Voir détails** : `docs/sessions/2026-02/SESSION_2026-02-20_UI_POLISH.md`
+
+---
+
 ## Session 2026-02-11 - Réservation & Emails (Sur Place + Stripe)
 
 **Heure** : 22:00 - 23:55
