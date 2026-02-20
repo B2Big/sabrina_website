@@ -72,7 +72,7 @@ export default async function Home() {
   const massageServices = services.filter((s) => s.category === "Massages" || s.category === "Cures");
 
   return (
-    <main className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 lg:cursor-none" role="main" itemScope itemType="https://schema.org/WebPage">
+    <div className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 lg:cursor-none" role="main" itemScope itemType="https://schema.org/WebPage">
       {/* H1 SEO - caché visuellement mais présent pour les bots */}
       <h1 className="sr-only absolute top-0 left-0 w-px h-px overflow-hidden" itemProp="name">
         Sab-Fit Coaching Fitness & Massage dans le Var (83) - Domicile et Cabinet
@@ -245,6 +245,6 @@ export default async function Home() {
 
         <Footer />
       </div>
-    </main>
+    </div>
   );
 }

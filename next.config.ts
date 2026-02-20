@@ -8,10 +8,23 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  
+  // Optimisation images pour performance mobile
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 31536000, // 1 an de cache
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Tailles optimisées mobile-first
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Tailles d'icônes et thumbnails
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  
+  // Compression pour les assets statiques
+  compress: true,
+  
+  // Optimisation du build
+  poweredByHeader: false, // Masquer header X-Powered-By
+  generateEtags: false, // Désactiver ETags (utiliser Last-Modified à la place)
   // Fix workspace root detection warning
   outputFileTracingRoot: process.cwd(),
   

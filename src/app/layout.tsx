@@ -7,15 +7,28 @@ import { CartProvider } from "@/context/cart-context";
 import { Toaster } from "sonner";
 import { StructuredData } from "@/components/json-ld";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
+const inter = Inter({ 
+  subsets: ["latin"], 
+  variable: "--font-inter",
+  display: 'swap', // Optimisation: chargement asynchrone des polices
+  preload: true,
+});
+
+const playfair = Playfair_Display({ 
+  subsets: ["latin"], 
+  variable: "--font-playfair",
+  display: 'swap',
+  preload: true,
+});
 
 export const viewport: Viewport = {
   themeColor: "#3B82F6",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false, // App-like feel
+  // Note: userScalable=false pour expérience PWA app-like
+  // Les utilisateurs peuvent toujours zoomer avec les paramètres d'accessibilité
+  userScalable: false,
+  viewportFit: 'cover', // Pour les appareils avec encoche
 };
 
 export const metadata: Metadata = {
@@ -25,15 +38,23 @@ export const metadata: Metadata = {
   keywords: ["coaching sportif var", "massage bien-être 83", "coach fitness domicile", "madérothérapie var", "préparation physique", "récupération sportive", "massage drainant", "bien-être toulon"],
   authors: [{ name: "Sabrina" }],
   creator: "Sabrina",
+  publisher: "Sab-Fit",
   manifest: "/manifest.json",
   icons: {
     icon: "/logo.svg",
     apple: "/logo.svg",
+    shortcut: "/logo.svg",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Sabrina",
+    title: "Sab-Fit",
+    startupImage: "/img/sabrina/sab.webp",
+  },
+  formatDetection: {
+    telephone: true,
+    email: true,
+    address: true,
   },
   openGraph: {
     type: "website",
@@ -51,6 +72,12 @@ export const metadata: Metadata = {
       },
     ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sab-Fit | Coaching Fitness & Massage Var (83)",
+    description: "Coaching sportif personnalisé et massages bien-être à domicile dans le Var (83).",
+    images: ["/img/sabrina/sab.webp"],
+  },
   robots: {
     index: true,
     follow: true,
@@ -61,6 +88,9 @@ export const metadata: Metadata = {
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
+  },
+  alternates: {
+    canonical: 'https://sab-fit.com',
   },
 };
 
@@ -73,10 +103,28 @@ export default function RootLayout({
     <html lang="fr" className="scroll-smooth">
       <head>
         <StructuredData />
+        {/* Preconnect pour les ressources externes - optimisation mobile */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://api.stripe.com" />
+        <link rel="dns-prefetch" href="https://js.stripe.com" />
       </head>
-      <body suppressHydrationWarning={true} className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
+      <body 
+        suppressHydrationWarning={true} 
+        className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-stone-50 text-stone-900`}
+      >
+        {/* Skip to main content - Accessibilité clavier */}
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-slate-900 focus:text-white focus:rounded-lg"
+        >
+          Aller au contenu principal
+        </a>
+        
         <CartProvider>
-          {children}
+          <main id="main-content">
+            {children}
+          </main>
           <InstallPrompt />
           <MobileNav />
           <Toaster position="top-center" />

@@ -1,35 +1,146 @@
 # Robots.txt pour sab-fit.com
-# Optimisé pour les crawlers et les IA
+# Optimisé pour les crawlers traditionnels et les IA (LLM/Chatbots)
+# Dernière mise à jour: 2026-02-20
 
+# =====================================================
+# SECTION 1: Règles générales pour tous les bots
+# =====================================================
 User-agent: *
 Allow: /
+Crawl-delay: 1
 
-# Autoriser tous les bots majeurs
-User-agent: Googlebot
-User-agent: Googlebot-Image
-User-agent: Bingbot
-User-agent: Slurp
-User-agent: DuckDuckBot
-User-agent: Baiduspider
-User-agent: YandexBot
-User-agent: facebookexternalhit
-User-agent: Twitterbot
-User-agent: LinkedInBot
-User-agent: Applebot
-User-agent: ClaudeBot
+# =====================================================
+# SECTION 2: Bots d'IA et LLM (autorisation explicite)
+# =====================================================
+
+# OpenAI (ChatGPT, GPTBot)
 User-agent: GPTBot
 User-agent: ChatGPT-User
+User-agent: OpenAI-Image-Search
+Allow: /
+Crawl-delay: 1
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 1
+
+# Perplexity AI
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Allow: /
+Crawl-delay: 1
+
+# Google (Gemini, Bard, Search)
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-Video
+User-agent: Googlebot-News
+User-agent: Google-InspectionTool
+Allow: /
+Crawl-delay: 1
+
+# Bing (Copilot, Chat)
+User-agent: Bingbot
+User-agent: BingPreview
+User-agent: MicrosoftPreview
+Allow: /
+Crawl-delay: 1
+
+# Meta (Facebook, Instagram, WhatsApp)
+User-agent: facebookexternalhit
+User-agent: Facebot
+User-agent: Instagram
 Allow: /
 
-# Sitemap
-Sitemap: https://sab-fit.com/sitemap.xml
+# Twitter/X
+User-agent: Twitterbot
+User-agent: X-Crawler
+Allow: /
 
-# Interdiction des zones admin
+# LinkedIn
+User-agent: LinkedInBot
+Allow: /
+
+# Apple (Siri, Safari)
+User-agent: Applebot
+User-agent: AppleNewsBot
+Allow: /
+
+# Autres moteurs de recherche
+User-agent: DuckDuckBot
+User-agent: DuckDuckGo-Favicons-Bot
+Allow: /
+
+User-agent: Baiduspider
+User-agent: Baiduspider-image
+User-agent: Baiduspider-video
+Allow: /
+
+User-agent: YandexBot
+User-agent: YandexImages
+User-agent: YandexVideo
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+# =====================================================
+# SECTION 3: Sitemaps
+# =====================================================
+Sitemap: https://sab-fit.com/sitemap.xml
+Sitemap: https://sab-fit.com/sitemap-services.xml
+
+# =====================================================
+# SECTION 4: Zones interdites (sécurité et privacité)
+# =====================================================
+
+# Administration
 Disallow: /admin
+Disallow: /admin/*
 Disallow: /login
 Disallow: /api/
+Disallow: /api/*
 
-# Autoriser les assets statiques
+# Données privées
+Disallow: /success?*
+Disallow: /*?canceled=true
+
+# Assets non indexables
+Disallow: /*.json$
+Disallow: /*.js$
+Disallow: /*.css$
+
+# =====================================================
+# SECTION 5: Autorisations spécifiques
+# =====================================================
+
+# Autoriser explicitement les images (important pour le référencement visuel)
 Allow: /img/
+Allow: /img/*
+Allow: /*.webp$
+Allow: /*.jpg$
+Allow: /*.png$
+
+# Autoriser les ressources statiques
 Allow: /logo.svg
 Allow: /manifest.json
+Allow: /favicon.ico
+
+# =====================================================
+# SECTION 6: Directives pour les crawlers agressifs
+# =====================================================
+
+# Limitation de crawl pour éviter la surcharge serveur
+User-agent: SemrushBot
+Crawl-delay: 5
+
+User-agent: AhrefsBot
+Crawl-delay: 5
+
+User-agent: MJ12bot
+Crawl-delay: 10
+
+User-agent: DotBot
+Crawl-delay: 10
