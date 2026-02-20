@@ -57,10 +57,10 @@ export async function POST(req: Request) {
   try {
     // Vérifier la signature du webhook
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
-    console.log(`[WEBHOOK] ✅ Événement reçu: ${event.type}`)
+    console.log(`[WEBHOOK] Événement reçu`)
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
-    console.error('[WEBHOOK] ❌ Erreur de vérification de signature:', errorMessage)
+    console.error('[WEBHOOK] Erreur de vérification de signature')
     return NextResponse.json(
       { error: `Webhook Error: ${errorMessage}` },
       { status: 400 }
@@ -95,12 +95,12 @@ export async function POST(req: Request) {
       }
 
       default:
-        console.log(`[WEBHOOK] ℹ️ Événement non traité: ${event.type}`)
+        console.log(`[WEBHOOK] Événement non traité`)
     }
 
     return NextResponse.json({ received: true })
   } catch (error) {
-    console.error('[WEBHOOK] ❌ Erreur lors du traitement:', error)
+    console.error('[WEBHOOK] Erreur lors du traitement')
     // Toujours retourner 200 pour éviter que Stripe retry indéfiniment
     return NextResponse.json({ received: true })
   }
@@ -111,12 +111,7 @@ export async function POST(req: Request) {
  * Met à jour la réservation et envoie les emails de confirmation "PAYÉ"
  */
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  console.log('💳 [WEBHOOK] Paiement réussi:', {
-    sessionId: session.id,
-    amount: session.amount_total ? session.amount_total / 100 : 0,
-    currency: session.currency,
-    customerEmail: session.customer_details?.email,
-  })
+  console.log('💳 [WEBHOOK] Paiement réussi')
 
   try {
     // 1. RÉCUPÉRER LA RÉSERVATION PAR LE SESSION ID STRIPE
@@ -125,7 +120,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     })
 
     if (!reservation) {
-      console.error('[WEBHOOK] ❌ Réservation non trouvée pour session:', session.id)
+      console.error('[WEBHOOK] Réservation non trouvée')
       // Créer une réservation de secours (cas où le checkout n'a pas créé la réservation)
       await createFallbackReservation(session)
       return
@@ -133,7 +128,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     // 2. VÉRIFIER SI DÉJÀ TRAITÉ (éviter les doublons)
     if (reservation.status === 'paye_confirme') {
-      console.log('[WEBHOOK] ℹ️ Réservation déjà marquée comme payée:', reservation.id)
+      console.log('[WEBHOOK] ℹ️ Réservation déjà marquée comme payée')
       return
     }
 
@@ -186,7 +181,7 @@ async function handleNewsletterSubscription(session: Stripe.Checkout.Session) {
               unsubscribedAt: null
             }
           })
-          console.log('[WEBHOOK] ✅ Client réabonné à la newsletter:', session.customer_details.email)
+          console.log('[WEBHOOK] ✅ Client réabonné à la newsletter')
         }
       } else {
         await prisma.newsletterSubscriber.create({
@@ -198,7 +193,7 @@ async function handleNewsletterSubscription(session: Stripe.Checkout.Session) {
             isSubscribed: true
           }
         })
-        console.log('[WEBHOOK] ✅ Nouvel abonné newsletter:', session.customer_details.email)
+        console.log('[WEBHOOK] ✅ Nouvel abonné newsletter')
       }
     } catch (error) {
       console.error('[WEBHOOK] ❌ Erreur newsletter:', error)
@@ -216,7 +211,7 @@ async function sendPaymentConfirmationEmails(
   session: Stripe.Checkout.Session, 
   reservation: any
 ) {
-  console.log('[WEBHOOK] 📧 Envoi des emails de confirmation payée...')
+  console.log('[WEBHOOK] 📧 Envoi des emails de confirmation payée')
 
   try {
     // Récupérer les détails du reçu Stripe (via l'API si nécessaire)
@@ -258,9 +253,9 @@ async function sendPaymentConfirmationEmails(
         stripeReceiptUrl: receiptUrl,
         paidAt: reservation.paidAt!,
       })
-      console.log('[WEBHOOK] ✅ Email CLIENT [PAYÉ] envoyé à:', reservation.customerEmail)
+      console.log('[WEBHOOK] ✅ Email CLIENT [PAYÉ] envoyé')
     } catch (emailError) {
-      console.error('[WEBHOOK] ❌ Erreur email CLIENT:', emailError)
+      console.error('[WEBHOOK] ❌ Erreur email CLIENT')
     }
 
     // 2. EMAIL AU PROPRIÉTAIRE (Notification "Payé")
@@ -278,11 +273,11 @@ async function sendPaymentConfirmationEmails(
       })
       console.log('[WEBHOOK] ✅ Email SABRINA [PAYÉ] envoyé')
     } catch (emailError) {
-      console.error('[WEBHOOK] ❌ Erreur email SABRINA:', emailError)
+      console.error('[WEBHOOK] ❌ Erreur email SABRINA')
     }
 
   } catch (error) {
-    console.error('[WEBHOOK] ❌ Erreur envoi emails:', error)
+    console.error('[WEBHOOK] ❌ Erreur envoi emails')
   }
 }
 
@@ -291,7 +286,7 @@ async function sendPaymentConfirmationEmails(
  * (Cas extrême où le checkout n'a pas créé la réservation)
  */
 async function createFallbackReservation(session: Stripe.Checkout.Session) {
-  console.log('[WEBHOOK] ⚠️ Création d\'une réservation de secours...')
+  console.log('[WEBHOOK] ⚠️ Création d\'une réservation de secours')
 
   try {
     const reservation = await prisma.reservation.create({
@@ -312,13 +307,13 @@ async function createFallbackReservation(session: Stripe.Checkout.Session) {
       }
     })
 
-    console.log('[WEBHOOK] ✅ Réservation de secours créée:', reservation.id)
+    console.log('[WEBHOOK] ✅ Réservation de secours créée')
 
     // Envoyer les emails quand même
     await sendPaymentConfirmationEmails(session, reservation)
 
   } catch (error) {
-    console.error('[WEBHOOK] ❌ Erreur création réservation de secours:', error)
+    console.error('[WEBHOOK] ❌ Erreur création réservation de secours')
   }
 }
 
@@ -327,7 +322,7 @@ async function createFallbackReservation(session: Stripe.Checkout.Session) {
  * Même traitement que checkout.session.completed
  */
 async function handleAsyncPaymentSucceeded(session: Stripe.Checkout.Session) {
-  console.log('[WEBHOOK] 💳 Paiement asynchrone réussi:', session.id)
+  console.log('[WEBHOOK] 💳 Paiement asynchrone réussi')
   await handleCheckoutCompleted(session)
 }
 
@@ -335,7 +330,7 @@ async function handleAsyncPaymentSucceeded(session: Stripe.Checkout.Session) {
  * Paiement asynchrone échoué
  */
 async function handleAsyncPaymentFailed(session: Stripe.Checkout.Session) {
-  console.log('[WEBHOOK] ❌ Paiement asynchrone échoué:', session.id)
+  console.log('[WEBHOOK] ❌ Paiement asynchrone échoué')
 
   try {
     // Mettre à jour la réservation si elle existe
@@ -348,14 +343,14 @@ async function handleAsyncPaymentFailed(session: Stripe.Checkout.Session) {
         where: { id: reservation.id },
         data: { status: 'annule' }
       })
-      console.log('[WEBHOOK] ✅ Réservation marquée comme annulée:', reservation.id)
+      console.log('[WEBHOOK] ✅ Réservation marquée comme annulée')
     }
 
     // TODO: Envoyer un email au client pour l'informer de l'échec
-    console.log('[WEBHOOK] 📧 Email d\'échec à envoyer à:', session.customer_details?.email)
+    console.log('[WEBHOOK] 📧 Email d\'échec à envoyer')
 
   } catch (error) {
-    console.error('[WEBHOOK] ❌ Erreur handleAsyncPaymentFailed:', error)
+    console.error('[WEBHOOK] ❌ Erreur handleAsyncPaymentFailed')
   }
 }
 

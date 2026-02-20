@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db-services';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { hasAdminAccess } from '@/lib/auth/roles';
+import { requireAdminApi } from '@/lib/auth/api-guard';
 import { serviceSchema } from '@/lib/validations/schemas';
 import { z } from 'zod';
 
@@ -17,7 +15,7 @@ export async function GET() {
     });
     return NextResponse.json(services);
   } catch (error) {
-    console.error('[API] Error fetching services:', error);
+    console.error('[API] Error fetching services');
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des services' },
       { status: 500 }
@@ -32,39 +30,10 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     // 🔒 Vérification de l'authentification et des permissions
-    const cookieStore = await cookies();
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch {
-              // Ignoré si appelé depuis un Server Component
-            }
-          },
-        },
-      }
-    );
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    // Vérifier que l'utilisateur est connecté et a un rôle admin
-    if (!user || !hasAdminAccess(user)) {
-      return NextResponse.json(
-        { error: 'Non autorisé - Rôle admin requis' },
-        { status: 403 }
-      );
+    const { error } = await requireAdminApi();
+    
+    if (error) {
+      return error;
     }
 
     // Créer le service
@@ -92,7 +61,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(service);
   } catch (error) {
-    console.error('[API] Error creating service:', error);
+    console.error('[API] Error creating service');
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

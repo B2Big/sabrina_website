@@ -61,14 +61,14 @@ export async function loginAction(email: string, password: string): Promise<Logi
   })
 
   if (error) {
-    console.warn(`❌ Échec de connexion pour ${email} depuis ${clientIp}`)
+    console.warn(`❌ Échec de connexion`)
     return {
       success: false,
       error: error.message
     }
   }
 
-  console.log(`✅ Connexion réussie pour ${email} depuis ${clientIp}`)
+  console.log(`✅ Connexion réussie`)
   return {
     success: true
   }

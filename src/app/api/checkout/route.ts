@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   try {
-    console.log('🛒 [CHECKOUT] Début de la requête checkout');
+    console.log('🛒 [CHECKOUT] Nouvelle requête');
 
     // 🔒 RATE LIMITING : Protection contre les abus de checkout
     const clientIp = getClientIp(req);
@@ -24,11 +24,11 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    console.log('📦 [CHECKOUT] Body reçu:', JSON.stringify(body));
+    console.log('📦 [CHECKOUT] Données reçues');
 
     // 🔒 Validation Zod
     const { items, customerName, customerEmail, customerPhone, message, newsletter } = checkoutSchema.parse(body);
-    console.log('✅ [CHECKOUT] Validation Zod OK:', items.length, 'items', '- Client:', customerName, customerEmail);
+    console.log('✅ [CHECKOUT] Validation OK -', items.length, 'service(s)');
 
     // 🔒 SÉCURITÉ : Récupérer les prix RÉELS depuis la base de données
     const serviceIds = items.map(item => item.id);
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
     }, 0);
 
     // 💾 ÉTAPE 1: CRÉER LA RÉSERVATION EN BASE DE DONNÉES
-    console.log('💾 [CHECKOUT] Création de la réservation en DB...');
+    console.log('💾 [CHECKOUT] Création réservation...');
     
     const reservation = await prisma.reservation.create({
       data: {
@@ -115,12 +115,11 @@ export async function POST(req: Request) {
       }
     });
 
-    console.log('✅ [CHECKOUT] Réservation créée:', reservation.id);
+    console.log('✅ [CHECKOUT] Réservation créée:', reservation.id.substring(0,8)+'...');
 
     // Créer la session Stripe
     const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
     console.log('💳 [CHECKOUT] Création session Stripe...');
-    console.log('🔑 [CHECKOUT] Stripe key présente:', !!process.env.STRIPE_SECRET_KEY);
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'paypal'],
@@ -171,14 +170,11 @@ export async function POST(req: Request) {
       data: { stripeSessionId: session.id }
     });
 
-    console.log('✅ [CHECKOUT] Session Stripe créée et liée:', session.id);
-    console.log('🔗 [CHECKOUT] URL de paiement:', session.url);
+    console.log('✅ [CHECKOUT] Session Stripe créée');
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
-    console.error('❌ [CHECKOUT] ERREUR GLOBALE:', error);
-    console.error('❌ [CHECKOUT] Type:', error instanceof Error ? error.constructor.name : typeof error);
-    console.error('❌ [CHECKOUT] Message:', error instanceof Error ? error.message : String(error));
+    console.error('❌ [CHECKOUT] Erreur');
 
     // Erreur de validation Zod
     if (error instanceof z.ZodError) {

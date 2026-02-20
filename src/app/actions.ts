@@ -120,8 +120,8 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
       }
     });
 
-    console.log("✅ Réservation créée:", reservation.id);
-    console.log("📊 Statut:", reservation.status);
+    console.log("✅ Réservation créée");
+    console.log("📊 Réservation enregistrée");
 
     // 2. ENVOYER EMAIL AU CLIENT (Confirmation - Paiement sur place)
     let clientEmailError = null;
@@ -134,10 +134,10 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         total: totalAmount,
         requestedDate: serviceDate,
       });
-      console.log("✅ Email CLIENT [SUR PLACE] envoyé:", emailResult);
+      console.log("✅ Email CLIENT [SUR PLACE] envoyé");
     } catch (emailError: any) {
       clientEmailError = emailError?.message || String(emailError);
-      console.error("❌ Erreur email CLIENT:", clientEmailError);
+      console.error("❌ Erreur email CLIENT");
       // On continue même si l'email échoue (la réservation est créée)
     }
 
@@ -154,10 +154,10 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         message: message,
         requestedDate: serviceDate,
       });
-      console.log("✅ Email SABRINA [SUR PLACE] envoyé:", emailResult);
+      console.log("✅ Email SABRINA [SUR PLACE] envoyé");
     } catch (emailError: any) {
       sabrinaEmailError = emailError?.message || String(emailError);
-      console.error("❌ Erreur email SABRINA:", sabrinaEmailError);
+      console.error("❌ Erreur email SABRINA");
     }
 
     // 4. INSCRIRE À LA NEWSLETTER SI OPT-IN
@@ -178,7 +178,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
                 name: name // Mettre à jour le nom au cas où
               }
             });
-            console.log("✅ Client réabonné à la newsletter:", email);
+            console.log("✅ Client réabonné à la newsletter");
           }
         } else {
           await prisma.newsletterSubscriber.create({
@@ -189,7 +189,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
               isSubscribed: true 
             }
           });
-          console.log("✅ Nouvel abonné newsletter:", email);
+          console.log("✅ Nouvel abonné newsletter");
         }
       } catch (nlError) {
         console.error("❌ Erreur inscription newsletter:", nlError);
@@ -201,7 +201,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
     let successMessage = "Réservation confirmée !";
     if (clientEmailError || sabrinaEmailError) {
       successMessage += " Note: L'email de confirmation n'a pas pu être envoyé (notre équipe a été notifiée).";
-      console.warn("[SUR PLACE] Réservation créée mais emails échoués:", { clientEmailError, sabrinaEmailError });
+      console.warn("[SUR PLACE] Réservation créée mais emails échoués");
     } else {
       successMessage += " Un email de confirmation vous a été envoyé.";
     }
@@ -214,7 +214,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
     };
 
   } catch (error) {
-    console.error("❌ Erreur création réservation:", error);
+    console.error("❌ Erreur création réservation");
     return {
       success: false,
       message: "Une erreur est survenue lors de la création de la réservation. Veuillez réessayer."
@@ -231,7 +231,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
  * Cette fonction reste pour compatibilité avec les formulaires simples
  */
 export async function sendContactEmail(prevState: any, formData: FormData) {
-  console.log("📧 [LEGACY] Envoi email de contact simple...");
+  console.log("📧 [LEGACY] Envoi email de contact simple");
 
   const rawData = {
     name: formData.get("name"),
@@ -265,7 +265,7 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
       }
     }
 
-    console.log("📧 Envoi emails legacy pour:", name);
+    console.log("📧 Envoi emails legacy");
 
     // Utiliser les anciennes fonctions pour compatibilité
     // 1. Email à Sabrina
@@ -311,13 +311,13 @@ export async function sendContactEmail(prevState: any, formData: FormData) {
               where: { email },
               data: { isSubscribed: true, subscribedAt: new Date(), unsubscribedAt: null }
             });
-            console.log("✅ Client réabonné à la newsletter:", email);
+            console.log("✅ Client réabonné à la newsletter");
           }
         } else {
           await prisma.newsletterSubscriber.create({
             data: { email, name, source: 'contact_form', isSubscribed: true }
           });
-          console.log("✅ Nouvel abonné newsletter:", email);
+          console.log("✅ Nouvel abonné newsletter");
         }
       } catch (nlError) {
         console.error("❌ Erreur inscription newsletter:", nlError);

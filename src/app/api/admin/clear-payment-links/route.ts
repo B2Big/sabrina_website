@@ -11,7 +11,7 @@ export async function POST() {
       return error || NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
-    console.log('🧹 Nettoyage des liens de paiement TEST...');
+    console.log('🧹 Nettoyage des liens de paiement');
 
     const result = await prisma.service.updateMany({
       where: {
@@ -24,7 +24,7 @@ export async function POST() {
       }
     });
 
-    console.log(`✅ ${result.count} services mis à jour`);
+    console.log('✅ Liens de paiement nettoyés');
 
     return NextResponse.json({
       success: true,
@@ -33,7 +33,7 @@ export async function POST() {
     });
 
   } catch (error) {
-    console.error('❌ Erreur lors du nettoyage:', error);
+    console.error('❌ Erreur lors du nettoyage');
 
     return NextResponse.json({
       success: false,

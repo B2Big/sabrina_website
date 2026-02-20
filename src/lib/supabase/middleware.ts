@@ -59,13 +59,13 @@ export async function updateSession(request: NextRequest) {
 
     // 2. Vérifier si l'utilisateur a un rôle admin (ADMIN ou DEVELOPER)
     if (!hasAdminAccess(user)) {
-      console.warn(`Tentative d'accès non autorisée à /admin par ${user.email}`)
+      console.warn(`Tentative d'accès non autorisée à /admin`)
       return NextResponse.redirect(new URL('/', request.url))
     }
 
     // L'utilisateur a accès, afficher son rôle dans les logs
     const role = getUserRole(user)
-    console.log(`Accès /admin autorisé pour ${user.email} (rôle: ${role})`)
+    console.log(`Accès /admin autorisé`)
   }
 
   // Rediriger les utilisateurs connectés de /login vers /admin
