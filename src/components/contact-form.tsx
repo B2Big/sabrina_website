@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useState, Suspense } from 'react';
 import { createReservationSurPlace } from '@/app/actions';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X, Wallet, CreditCard, Globe } from 'lucide-react';
+import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X, CalendarCheck, CreditCard, Globe, Wallet } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -361,7 +361,7 @@ function ContactFormContent() {
                 </>
                 ) : (
                 <>
-                    <Wallet className="w-5 h-5 shrink-0" />
+                    <CalendarCheck className="w-5 h-5 shrink-0" />
                     <span className="whitespace-normal leading-tight">Réserver uniquement</span>
                 </>
                 )}
