@@ -78,21 +78,9 @@ export function Footer() {
         </div>
 
         <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
-            <p className="text-slate-400 text-xs">
-              © {new Date().getFullYear()} Sabrina Coaching. Tous droits réservés.
-            </p>
-          </div>
-          <a 
-            href="https://www.instagram.com/sab.fit_coaching83" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-white font-bold text-sm hover:scale-105 transition-transform"
-            style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
-          >
-            <Instagram className="w-5 h-5" />
-            <span>@sab.fit_coaching83</span>
-          </a>
+          <p className="text-slate-400 text-xs">
+            © {new Date().getFullYear()} Sabrina Coaching. Tous droits réservés.
+          </p>
         </div>
       </div>
     </footer>
