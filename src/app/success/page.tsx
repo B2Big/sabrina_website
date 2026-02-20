@@ -117,7 +117,7 @@ function SuccessContent() {
                 </div>
                 <div>
                     <p className="text-xs font-black uppercase text-slate-400">Support</p>
-                    <p className="text-sm font-bold text-slate-700">sabcompan8306@gmail.com</p>
+                    <p className="text-sm font-bold text-slate-700">contact@sab-fit.com</p>
                 </div>
             </div>
         </div>

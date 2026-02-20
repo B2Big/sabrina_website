@@ -128,11 +128,12 @@ export function Hero() {
             >
               <Image 
                 src="/img/sabrina/sab.webp" 
-                alt="Sabrina" 
+                alt="Sabrina Coaching & Massage bien-être dans le Var" 
                 fill
                 className="object-cover rounded-2xl"
                 priority={true}
-                sizes="50vw"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                quality={80}
               />
             </div>
             
