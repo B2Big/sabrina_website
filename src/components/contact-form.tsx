@@ -352,15 +352,18 @@ function ContactFormContent() {
             <Button
                 type="submit"
                 disabled={isPending || isCheckoutLoading || !cguAccepted}
-                className="w-full h-auto min-h-[4rem] py-3 text-xs sm:text-sm md:text-base rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none px-3 sm:px-4"
+                className="w-full h-auto min-h-[4rem] py-3 text-sm sm:text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none px-4 flex items-center justify-center gap-2"
             >
                 {isPending ? (
                 <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Envoi...
+                    <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                    <span className="whitespace-normal leading-tight">Envoi...</span>
                 </>
                 ) : (
-                <span className="whitespace-normal leading-tight">Réserver + Paiement cash</span>
+                <>
+                    <span className="text-lg sm:text-xl">💵</span>
+                    <span className="whitespace-normal leading-tight">Réserver + Paiement cash</span>
+                </>
                 )}
             </Button>
 
@@ -444,12 +447,12 @@ function ContactFormContent() {
                             setIsCheckoutLoading(false);
                         }
                     }}
-                    className="w-full h-16 text-base md:text-lg rounded-2xl bg-[#3B82F6] text-white hover:bg-blue-600 shadow-xl shadow-blue-500/20 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 px-4 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full h-auto min-h-[4rem] py-3 text-sm sm:text-base md:text-lg rounded-2xl bg-[#3B82F6] text-white hover:bg-blue-600 shadow-xl shadow-blue-500/20 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 px-4 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                 >
                     {isCheckoutLoading ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin shrink-0" />
-                            <span className="truncate">Chargement...</span>
+                            <span className="whitespace-normal leading-tight">Chargement...</span>
                         </>
                     ) : (
                         <>
