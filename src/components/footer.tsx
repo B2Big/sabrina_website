@@ -48,11 +48,11 @@ export function Footer() {
           <div className="space-y-4">
             <h4 className="text-slate-900 font-bold uppercase tracking-wider text-xs">Contact</h4>
             <div className="space-y-3">
-              <a href="mailto:sabcompan8306@gmail.com" className="flex items-center gap-3 text-slate-500 hover:text-training transition-colors group">
+              <a href="mailto:contact@sab-fit.com" className="flex items-center gap-3 text-slate-500 hover:text-training transition-colors group">
                 <div className="p-2 bg-white border border-slate-200 rounded-full group-hover:border-training group-hover:text-training transition-colors">
                   <Mail className="w-4 h-4" />
                 </div>
-                <span className="text-sm">sabcompan8306@gmail.com</span>
+                <span className="text-sm">contact@sab-fit.com</span>
               </a>
             </div>
           </div>
