@@ -12,6 +12,7 @@ import { Testimonials } from "@/components/testimonials";
 import { Faq } from "@/components/faq";
 import { ValuesSection } from "@/components/values-section";
 import { PhotoMarquee } from "@/components/photo-marquee";
+import { AboutSection } from "@/components/about-section";
 import { Service } from "@/data/content";
 import { FloatingCart } from "@/components/ui/floating-cart";
 import { getAllServices, getActivePromotions } from "@/lib/db-services";
@@ -103,6 +104,9 @@ export default async function Home() {
 
         {/* NEW: WHY ME SECTION (Authority) */}
         <ValuesSection />
+
+        {/* ABOUT SECTION - E-E-A-T Signal */}
+        <AboutSection />
 
         {/* Services Section - Coaching */}
         <section id="coaching" className="py-20 relative" itemScope itemType="https://schema.org/Service">
