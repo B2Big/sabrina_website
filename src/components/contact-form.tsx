@@ -362,7 +362,7 @@ function ContactFormContent() {
                 ) : (
                 <>
                     <span className="text-lg sm:text-xl">💵</span>
-                    <span className="whitespace-normal leading-tight">Réserver + Paiement cash</span>
+                    <span className="whitespace-normal leading-tight">Réserver uniquement</span>
                 </>
                 )}
             </Button>
