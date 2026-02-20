@@ -13,7 +13,7 @@ export function Hero() {
   const y2 = useTransform(scrollY, [0, 500], [0, -150]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-noise">
+    <header className="relative min-h-screen flex items-center justify-center overflow-hidden bg-noise" itemScope itemType="https://schema.org/WPHeader">
       {/* Animated Floating Orbs - HIDDEN ON MOBILE */}
       <div className="hidden md:block absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <motion.div 
@@ -69,15 +69,16 @@ export function Hero() {
               </span>
             </motion.div>
 
-            {/* Main Title */}
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 leading-[0.9]">
+            {/* Main Title - Visuel H1 mais sémantiquement H2 car H1 unique dans page.tsx */}
+            <h2 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 leading-[0.9]" itemProp="headline">
               <span className="block hover:text-training transition-colors duration-500 cursor-default">BOOST</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 italic font-serif">
                 & Balance
               </span>
-            </h1>
+            </h2>
 
-            <p className="text-xl md:text-2xl text-slate-600 font-medium leading-relaxed max-w-2xl">
+            <p className="text-xl md:text-2xl text-slate-600 font-medium leading-relaxed max-w-2xl" itemProp="description">
+              Coaching fitness personnalisé et massages bien-être dans le Var (83). 
               L&apos;alliance parfaite entre l&apos;intensité du <span className="text-training font-bold">sport</span> et la douceur du <span className="text-care font-bold">soin</span>.
             </p>
 
@@ -153,7 +154,7 @@ export function Hero() {
       >
         <ArrowRight className="rotate-90 w-6 h-6" />
       </motion.div>
-    </section>
+    </header>
   );
 }
 

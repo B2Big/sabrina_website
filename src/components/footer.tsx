@@ -3,32 +3,34 @@ import { Mail, Instagram } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-24 md:pb-8">
+    <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-24 md:pb-8" itemScope itemType="https://schema.org/WPFooter">
       <div className="container mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
-          <div className="space-y-4">
+          <aside className="space-y-4" itemScope itemType="https://schema.org/Organization">
+            <meta itemProp="name" content="Sab-Fit Coaching & Massage" />
+            <meta itemProp="url" content="https://sabrina-coaching-massage.fr" />
             <h3 className="text-2xl font-black text-slate-900 tracking-tight">
               SABRINA<span className="text-care">.</span>
             </h3>
-            <p className="text-slate-500 text-sm leading-relaxed max-w-xs">
-              Coach sportive & Praticienne bien-être.
-              Allier le corps et l&apos;esprit pour une santé durable.
+            <p className="text-slate-500 text-sm leading-relaxed max-w-xs" itemProp="description">
+              Coach sportive & Praticienne bien-être dans le Var (83).
+              Coaching fitness et massages à domicile.
             </p>
-          </div>
+          </aside>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <nav className="space-y-4" aria-label="Navigation secondaire">
             <h4 className="text-slate-900 font-bold uppercase tracking-wider text-xs">Navigation</h4>
             <ul className="space-y-2">
               <li>
                 <Link href="#coaching" className="text-slate-500 hover:text-training transition-colors text-sm">
-                  Coaching Sportif
+                  Coaching Fitness
                 </Link>
               </li>
               <li>
                 <Link href="#massage" className="text-slate-500 hover:text-care transition-colors text-sm">
-                  Massages
+                  Massages Bien-être
                 </Link>
               </li>
               <li>
@@ -42,20 +44,23 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
-          <div className="space-y-4">
+          <address className="space-y-4 not-italic" itemScope itemType="https://schema.org/ContactPoint">
+            <meta itemProp="contactType" content="customer service" />
+            <meta itemProp="areaServed" content="FR-83" />
+            <meta itemProp="availableLanguage" content="French" />
             <h4 className="text-slate-900 font-bold uppercase tracking-wider text-xs">Contact</h4>
             <div className="space-y-3">
-              <a href="mailto:contact@sab-fit.com" className="flex items-center gap-3 text-slate-500 hover:text-training transition-colors group">
+              <a href="mailto:contact@sab-fit.com" className="flex items-center gap-3 text-slate-500 hover:text-training transition-colors group" itemProp="email">
                 <div className="p-2 bg-white border border-slate-200 rounded-full group-hover:border-training group-hover:text-training transition-colors">
                   <Mail className="w-4 h-4" />
                 </div>
                 <span className="text-sm">contact@sab-fit.com</span>
               </a>
             </div>
-          </div>
+          </address>
 
           {/* Réseaux Sociaux */}
           <div className="space-y-4">

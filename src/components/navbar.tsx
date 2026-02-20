@@ -36,26 +36,39 @@ export function Navbar() {
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.35, ease: "easeInOut" }}
         className="hidden md:flex fixed top-4 left-0 right-0 z-40 justify-center px-4 pointer-events-none"
+        role="navigation"
+        aria-label="Navigation principale"
+        itemScope
+        itemType="https://schema.org/SiteNavigationElement"
       >
         <div className="pointer-events-auto bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl shadow-slate-200/50 rounded-full px-2 py-2 flex items-center gap-2 md:gap-4 max-w-2xl w-full justify-between">
           
           {/* Logo Pill */}
-          <Link href="/" className="bg-slate-900 text-white px-5 py-2.5 rounded-full font-black tracking-tight hover:bg-slate-800 transition-colors flex items-center">
-            S<span className="text-training">.</span>
+          <Link 
+            href="/" 
+            className="bg-slate-900 text-white px-5 py-2.5 rounded-full font-black tracking-tight hover:bg-slate-800 transition-colors flex items-center"
+            itemProp="url"
+            aria-label="Sab-Fit Coaching Fitness et Massage - Accueil"
+          >
+            <span itemProp="name">Sab-Fit</span>
+            <span className="text-training">.</span>
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center bg-slate-100/50 rounded-full px-2">
+          <ul className="hidden md:flex items-center bg-slate-100/50 rounded-full px-2" role="menubar">
             {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded-full transition-all"
-              >
-                {link.name}
-              </Link>
+              <li key={link.name} role="none" itemProp="name">
+                <Link
+                  href={link.href}
+                  className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-white rounded-full transition-all"
+                  role="menuitem"
+                  itemProp="url"
+                >
+                  {link.name}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
 
           {/* CTA & Mobile Toggle */}
           <div className="flex items-center gap-2">
@@ -79,30 +92,36 @@ export function Navbar() {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <motion.nav
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="fixed inset-x-4 top-20 z-40 bg-white/95 backdrop-blur-2xl border border-slate-200 shadow-2xl rounded-[2rem] p-6 md:hidden overflow-hidden"
+            role="navigation"
+            aria-label="Navigation mobile"
           >
-            <div className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-2" role="menu">
               {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className="p-4 text-xl font-bold text-slate-800 hover:bg-slate-50 rounded-xl transition-colors flex justify-between items-center"
-                >
-                  {link.name}
-                  <ArrowUpRight className="w-5 h-5 text-slate-400" />
-                </Link>
+                <li key={link.name} role="none">
+                  <Link
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className="p-4 text-xl font-bold text-slate-800 hover:bg-slate-50 rounded-xl transition-colors flex justify-between items-center"
+                    role="menuitem"
+                  >
+                    {link.name}
+                    <ArrowUpRight className="w-5 h-5 text-slate-400" />
+                  </Link>
+                </li>
               ))}
-              <div className="h-px bg-slate-100 my-2" />
-              <Button className="w-full h-14 text-lg rounded-xl" onClick={() => setIsOpen(false)} asChild>
-                <Link href="#contact">Prendre RDV maintenant</Link>
-              </Button>
-            </div>
-          </motion.div>
+              <li className="h-px bg-slate-100 my-2" role="separator" />
+              <li role="none">
+                <Button className="w-full h-14 text-lg rounded-xl" onClick={() => setIsOpen(false)} asChild>
+                  <Link href="#contact" role="menuitem">Prendre RDV maintenant</Link>
+                </Button>
+              </li>
+            </ul>
+          </motion.nav>
         )}
       </AnimatePresence>
     </>

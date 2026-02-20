@@ -20,9 +20,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sabrina-coaching-massage.fr'),
-  title: "Sabrina Coaching & Massage | Bien-être dans le Var (83)",
-  description: "Coaching sportif personnalisé et massages bien-être (Madérothérapie, Californien, Sportif) dans le Var. Retrouvez votre équilibre corps et esprit.",
-  keywords: ["coaching sportif", "massage var", "madérothérapie", "bien-être 83", "coach sportif domicile", "massage drainage lymphatique"],
+  title: "Sab-Fit | Coaching Fitness & Massage Var (83) - Domicile",
+  description: "Coaching sportif personnalisé et massages bien-être à domicile dans le Var (83). Sab-Fit : programmes fitness sur mesure, madérothérapie, récupération sportive.",
+  keywords: ["coaching sportif var", "massage bien-être 83", "coach fitness domicile", "madérothérapie var", "préparation physique", "récupération sportive", "massage drainant", "bien-être toulon"],
   authors: [{ name: "Sabrina" }],
   creator: "Sabrina",
   manifest: "/manifest.json",
@@ -71,19 +71,65 @@ export default function RootLayout({
 }>) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Sabrina Coaching & Massage",
-    "image": "https://sabrina-coaching-massage.fr/logo.svg",
+    "@type": ["LocalBusiness", "SportsActivityLocation"],
+    "name": "Sab-Fit Coaching & Massage",
+    "alternateName": "Sabrina Coaching Sportif Var",
+    "image": ["https://sabrina-coaching-massage.fr/img/sabrina/sab.webp", "https://sabrina-coaching-massage.fr/logo.svg"],
     "telephone": CONTACT_INFO.phone,
     "email": CONTACT_INFO.email,
     "address": {
       "@type": "PostalAddress",
-      "addressRegion": "Var",
+      "streetAddress": "Domicile ou Cabinet sur le Var",
+      "addressLocality": "Toulon",
+      "addressRegion": "Provence-Alpes-Côte d'Azur",
+      "postalCode": "83000",
       "addressCountry": "FR"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 43.1242,
+      "longitude": 5.9280
     },
     "url": "https://sabrina-coaching-massage.fr",
     "priceRange": "€€",
-    "description": "Services de coaching sportif et massages bien-être dans le Var."
+    "description": "Coaching sportif personnalisé et massages bien-être à domicile dans le Var (83). Programmes fitness, perte de poids, récupération sportive.",
+    "areaServed": {
+      "@type": "GeoCircle",
+      "geoMidpoint": {
+        "@type": "GeoCoordinates",
+        "latitude": 43.1242,
+        "longitude": 5.9280
+      },
+      "geoRadius": 50000
+    },
+    "serviceType": ["Coaching Sportif", "Massage Bien-être", "Préparation Physique", "Récupération Sportive"],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Services Sab-Fit",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Coaching Sportif Personnalisé"
+          }
+        },
+        {
+          "@type": "Offer", 
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Massage Madérothérapie"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service", 
+            "name": "Massage Sportif"
+          }
+        }
+      ]
+    }
   };
 
   return (

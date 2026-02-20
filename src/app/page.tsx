@@ -72,7 +72,11 @@ export default async function Home() {
   const massageServices = services.filter((s) => s.category === "Massages" || s.category === "Cures");
 
   return (
-    <div className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 lg:cursor-none">
+    <main className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 lg:cursor-none" role="main" itemScope itemType="https://schema.org/WebPage">
+      {/* H1 SEO - caché visuellement mais présent pour les bots */}
+      <h1 className="sr-only absolute top-0 left-0 w-px h-px overflow-hidden" itemProp="name">
+        Sab-Fit Coaching Fitness & Massage dans le Var (83) - Domicile et Cabinet
+      </h1>
       
       {/* 0. PANIC SELL BANNER */}
       <PromoBanner promotions={promotions} />
@@ -101,25 +105,26 @@ export default async function Home() {
         <ValuesSection />
 
         {/* Services Section - Coaching */}
-        <section id="coaching" className="py-20 relative">
+        <section id="coaching" className="py-20 relative" itemScope itemType="https://schema.org/Service">
+          <meta itemProp="serviceType" content="Coaching Sportif" />
           <div className="container relative mx-auto px-4 md:px-8">
             
             {/* Header avec Forme Abstraite 3D */}
-            <div className="flex flex-col lg:flex-row items-center justify-between mb-20 gap-12">
+            <header className="flex flex-col lg:flex-row items-center justify-between mb-20 gap-12">
               <div className="space-y-6 lg:w-1/2 relative">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-training text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-training/30">
                   Performance
                 </span>
-                <h2 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]">
+                <h2 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]" itemProp="name">
                   Coaching <br/>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-accent-mint">
-                    Sur Mesure
+                    Fitness Sur Mesure
                   </span>
                 </h2>
-                <p className="text-slate-600 text-lg font-medium leading-relaxed max-w-md backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
-                  Ne perdez plus de temps avec des programmes génériques.
+                <p className="text-slate-600 text-lg font-medium leading-relaxed max-w-md backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40" itemProp="description">
+                  Programmes de coaching sportif personnalisés dans le Var. 
                   <span className="block mt-2 font-bold text-slate-900">
-                    Choisissez l&apos;excellence.
+                    Perte de poids, remise en forme, préparation physique.
                   </span>
                 </p>
               </div>
@@ -128,13 +133,13 @@ export default async function Home() {
               <div className="lg:w-1/2 w-full flex justify-center">
                 <AbstractShape type="training" />
               </div>
-            </div>
+            </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 relative z-10">
+            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 relative z-10">
               {coachingServices.map((service, index) => (
                 <ServiceCard key={service.id} service={service} index={index} />
               ))}
-            </div>
+            </article>
           </div>
         </section>
 
@@ -142,25 +147,26 @@ export default async function Home() {
         <PhotoMarquee />
 
         {/* Services Section - Massage */}
-        <section id="massage" className="py-20 relative">
+        <section id="massage" className="py-20 relative" itemScope itemType="https://schema.org/Service">
+          <meta itemProp="serviceType" content="Massage Bien-être" />
           <div className="container relative mx-auto px-4 md:px-8">
             
             {/* Header avec Forme Abstraite Care */}
-            <div className="flex flex-col lg:flex-row-reverse items-center justify-between mb-20 gap-12">
+            <header className="flex flex-col lg:flex-row-reverse items-center justify-between mb-20 gap-12">
                <div className="space-y-6 lg:w-1/2 text-center lg:text-right relative">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-care text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-care/30">
                   Self Care
                 </span>
-                <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]">
-                  Soins & <br/>
+                <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]" itemProp="name">
+                  Massage & <br/>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-care to-accent-peach">
-                    Récupération
+                    Récupération Sportive
                   </span>
                 </h2>
-                <p className="text-slate-600 text-base md:text-lg font-medium leading-relaxed max-w-md mx-auto lg:ml-auto lg:mr-0 backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
-                  Votre corps est votre moteur, entretenez-le.
+                <p className="text-slate-600 text-base md:text-lg font-medium leading-relaxed max-w-md mx-auto lg:ml-auto lg:mr-0 backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40" itemProp="description">
+                  Massages bien-être à domicile dans le Var (83). 
                   <span className="block mt-2 font-bold text-slate-900">
-                    Drainage, relâchement musculaire ou pure détente : faites un &quot;Reset&quot; complet.
+                    Madérothérapie, drainage lymphatique, massage sportif.
                   </span>
                 </p>
               </div>
@@ -169,13 +175,13 @@ export default async function Home() {
               <div className="lg:w-1/2 w-full flex justify-center">
                 <AbstractShape type="care" />
               </div>
-            </div>
+            </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 relative z-10">
+            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 relative z-10">
               {massageServices.map((service, index) => (
                 <ServiceCard key={service.id} service={service} index={index} />
               ))}
-            </div>
+            </article>
           </div>
         </section>
 
@@ -186,7 +192,10 @@ export default async function Home() {
         <Faq />
 
         {/* Contact Section - WITH SCARCITY */}
-        <section id="contact" className="py-24 relative overflow-hidden">
+        <section id="contact" className="py-24 relative overflow-hidden" itemScope itemType="https://schema.org/ContactPoint">
+          <meta itemProp="contactType" content="Réservation Coaching et Massage" />
+          <meta itemProp="areaServed" content="Var, Provence-Alpes-Côte d'Azur" />
+          <meta itemProp="availableLanguage" content="French" />
           <div className="container relative mx-auto px-4 md:px-8">
             <div className="bg-slate-900/90 backdrop-blur-2xl rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-white">
               
@@ -236,6 +245,6 @@ export default async function Home() {
 
         <Footer />
       </div>
-    </div>
+    </main>
   );
 }
