@@ -129,16 +129,18 @@ function ContactFormContent() {
                 </div>
                 <div className="space-y-3">
                     {items.map((item) => (
-                        <div key={item.id} className="flex items-center justify-between bg-white p-3 rounded-xl shadow-sm">
+                        <div key={item.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded-xl shadow-sm gap-2 sm:gap-3">
+                            {/* Ligne 1: Quantité + Titre (toute la largeur sur mobile) */}
                             <div className="flex items-center gap-3">
-                                <span className="bg-slate-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">
+                                <span className="bg-slate-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                                     {item.quantity}
                                 </span>
-                                <span className="font-bold text-slate-700 text-sm">{item.title} :</span>
+                                <span className="font-bold text-slate-700 text-sm">{item.title}</span>
                             </div>
-                            <div className="flex items-center gap-3">
+                            {/* Ligne 2: Prix + Bouton (aligné à droite sur desktop, même ligne sur mobile) */}
+                            <div className="flex items-center justify-between sm:justify-end gap-3 pl-9 sm:pl-0">
                                 <span className="font-black text-slate-900">{item.price}</span>
-                                <button type="button" onClick={() => removeFromCart(item.id)} className="text-slate-400 hover:text-red-500">
+                                <button type="button" onClick={() => removeFromCart(item.id)} className="text-slate-400 hover:text-red-500 p-1">
                                     <X className="w-4 h-4" />
                                 </button>
                             </div>

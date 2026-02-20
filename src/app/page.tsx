@@ -72,7 +72,7 @@ export default async function Home() {
   const massageServices = services.filter((s) => s.category === "Massages" || s.category === "Cures");
 
   return (
-    <div className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 cursor-none">
+    <div className="relative min-h-screen font-sans overflow-x-hidden text-slate-900 selection:bg-training/30 lg:cursor-none">
       
       {/* 0. PANIC SELL BANNER */}
       <PromoBanner promotions={promotions} />
@@ -147,17 +147,17 @@ export default async function Home() {
             
             {/* Header avec Forme Abstraite Care */}
             <div className="flex flex-col lg:flex-row-reverse items-center justify-between mb-20 gap-12">
-               <div className="space-y-6 lg:w-1/2 text-right relative">
+               <div className="space-y-6 lg:w-1/2 text-center lg:text-right relative">
                 <span className="inline-block px-4 py-1.5 rounded-full bg-care text-white font-bold text-xs uppercase tracking-widest shadow-lg shadow-care/30">
                   Self Care
                 </span>
-                <h2 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]">
+                <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]">
                   Soins & <br/>
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-care to-accent-peach">
                     Récupération
                   </span>
                 </h2>
-                <p className="text-slate-600 text-lg font-medium leading-relaxed max-w-md ml-auto backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
+                <p className="text-slate-600 text-base md:text-lg font-medium leading-relaxed max-w-md mx-auto lg:ml-auto lg:mr-0 backdrop-blur-sm bg-white/30 p-4 rounded-xl border border-white/40">
                   Votre corps est votre moteur, entretenez-le.
                   <span className="block mt-2 font-bold text-slate-900">
                     Drainage, relâchement musculaire ou pure détente : faites un &quot;Reset&quot; complet.

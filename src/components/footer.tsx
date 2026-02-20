@@ -36,6 +36,11 @@ export function Footer() {
                   Tarifs
                 </Link>
               </li>
+              <li className="pt-2 border-t border-slate-100">
+                <Link href="/admin" className="text-slate-300 hover:text-slate-500 transition-colors text-xs font-medium uppercase tracking-widest">
+                  Dashboard
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -58,9 +63,6 @@ export function Footer() {
             <p className="text-slate-400 text-xs">
               © {new Date().getFullYear()} Sabrina Coaching. Tous droits réservés.
             </p>
-            <Link href="/admin" className="text-slate-300 hover:text-slate-500 transition-colors text-[10px] font-medium uppercase tracking-widest">
-              Dashboard
-            </Link>
           </div>
           <div className="flex items-center gap-4">
             <a href="https://www.instagram.com/sab.fit_coaching83" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-care transition-colors">

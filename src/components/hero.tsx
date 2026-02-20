@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, Activity } from 'lucide-react';
 import { ParallaxImage } from './ui/parallax-image';
+import Image from 'next/image';
 
 export function Hero() {
   const { scrollY } = useScroll();
@@ -97,19 +98,32 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Image Content */}
+          {/* Image Content - Fusion avec dégradé */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 1, delay: 0.4 }}
             className="lg:w-2/5 w-full max-w-md lg:max-w-none relative"
           >
-            <ParallaxImage 
-              src="/img/sabrina/sabrina-1.jpg" 
-              alt="Sabrina Coaching & Wellness" 
-              className="aspect-[4/5] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] border-[12px] border-white"
-              priority={true}
-            />
+            <div 
+              className="relative aspect-[4/5] rounded-2xl"
+              style={{
+                maskImage: 'linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 2%, black 98%, transparent 100%)',
+                WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 2%, black 98%, transparent 100%)',
+                maskComposite: 'intersect',
+                WebkitMaskComposite: 'source-in',
+              }}
+            >
+              <Image 
+                src="/img/sabrina/sab.webp" 
+                alt="Sabrina" 
+                fill
+                className="object-cover rounded-2xl"
+                priority={true}
+                sizes="50vw"
+              />
+            </div>
+            
             {/* Floating decoration */}
             <div className="absolute -bottom-6 -right-6 bg-training text-white p-6 rounded-3xl shadow-2xl z-20 hidden md:block animate-bounce">
               <span className="text-3xl font-black italic">Var (83)</span>

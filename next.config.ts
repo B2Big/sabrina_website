@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
   },
+  // Fix workspace root detection warning
+  outputFileTracingRoot: process.cwd(),
 };
 
 export default withPWA(nextConfig);

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, ArrowUpRight, Wallet, CreditCard, Globe } from 'lucide-react';
+import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Button } from './ui/button';
 
@@ -28,18 +28,6 @@ export function Navbar() {
 
   return (
     <>
-      {/* Top Bar - Payment Info */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-slate-900 text-white py-2 flex justify-center items-center gap-4 animate-in slide-in-from-top-2">
-         <span className="font-bold text-xs uppercase tracking-widest opacity-90 hidden sm:inline">Règlement sur place ou en ligne</span>
-         <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5"><Wallet className="w-4 h-4 text-emerald-400" /> <span className="font-black text-[10px] uppercase tracking-wide">Espèces</span></div>
-            <div className="w-1 h-1 bg-slate-600 rounded-full" />
-            <div className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-blue-400" /> <span className="font-black text-[10px] uppercase tracking-wide">CB</span></div>
-            <div className="w-1 h-1 bg-slate-600 rounded-full" />
-            <div className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-[#003087]" /> <span className="font-black text-[10px] uppercase tracking-wide">PayPal</span></div>
-         </div>
-      </div>
-
       <motion.nav
         variants={{
           visible: { y: 0, opacity: 1 },
@@ -47,7 +35,7 @@ export function Navbar() {
         }}
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="hidden md:flex fixed top-10 left-0 right-0 z-40 justify-center px-4 pointer-events-none"
+        className="hidden md:flex fixed top-4 left-0 right-0 z-40 justify-center px-4 pointer-events-none"
       >
         <div className="pointer-events-auto bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl shadow-slate-200/50 rounded-full px-2 py-2 flex items-center gap-2 md:gap-4 max-w-2xl w-full justify-between">
           
@@ -95,7 +83,7 @@ export function Navbar() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed inset-x-4 top-24 z-40 bg-white/95 backdrop-blur-2xl border border-slate-200 shadow-2xl rounded-[2rem] p-6 md:hidden overflow-hidden"
+            className="fixed inset-x-4 top-20 z-40 bg-white/95 backdrop-blur-2xl border border-slate-200 shadow-2xl rounded-[2rem] p-6 md:hidden overflow-hidden"
           >
             <div className="flex flex-col gap-2">
               {navLinks.map((link) => (
