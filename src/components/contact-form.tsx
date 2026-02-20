@@ -361,7 +361,7 @@ function ContactFormContent() {
                 </>
                 ) : (
                 <>
-                    <span className="text-lg sm:text-xl">💵</span>
+                    <Wallet className="w-5 h-5 shrink-0" />
                     <span className="whitespace-normal leading-tight">Réserver uniquement</span>
                 </>
                 )}
