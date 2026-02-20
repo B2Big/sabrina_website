@@ -360,7 +360,7 @@ function ContactFormContent() {
                     Envoi...
                 </>
                 ) : (
-                <span className="whitespace-normal leading-tight">Réserver et régler sur place</span>
+                <span className="whitespace-normal leading-tight">Réserver + Paiement cash</span>
                 )}
             </Button>
 
@@ -454,7 +454,7 @@ function ContactFormContent() {
                     ) : (
                         <>
                             <CreditCard className="w-5 h-5 shrink-0" />
-                            <span className="truncate">Réserver & Payer en ligne</span>
+                            <span className="whitespace-normal leading-tight">Réserver + Paiement CB</span>
                         </>
                     )}
                 </Button>
