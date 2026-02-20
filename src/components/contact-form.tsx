@@ -352,7 +352,7 @@ function ContactFormContent() {
             <Button
                 type="submit"
                 disabled={isPending || isCheckoutLoading || !cguAccepted}
-                className="w-full h-16 text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full h-16 text-sm sm:text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none px-4"
             >
                 {isPending ? (
                 <>
@@ -360,7 +360,7 @@ function ContactFormContent() {
                     Envoi...
                 </>
                 ) : (
-                "Réserver et régler sur place"
+                <span className="truncate">Réserver et régler sur place</span>
                 )}
             </Button>
 
