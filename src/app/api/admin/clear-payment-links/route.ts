@@ -1,41 +1,14 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db-services';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { hasAdminAccess } from '@/lib/auth/roles';
+import { requireAdminApi } from '@/lib/auth/api-guard';
 
 export async function POST() {
   try {
-    // 🔒 Vérification de l'authentification
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              );
-            } catch {
-              // Ignoré si appelé depuis un Server Component
-            }
-          },
-        },
-      }
-    );
-
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user || !hasAdminAccess(user)) {
-      return NextResponse.json(
-        { error: 'Non autorisé' },
-        { status: 403 }
-      );
+    // 🔒 Vérification de l'authentification admin
+    const { user, error } = await requireAdminApi();
+    
+    if (error || !user) {
+      return error || NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
     console.log('🧹 Nettoyage des liens de paiement TEST...');

@@ -2,95 +2,13 @@
 
 import { prisma, getAllServices } from '@/lib/db-services'
 import { revalidatePath } from 'next/cache'
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
-import { hasAdminAccess, getUserRole } from '@/lib/auth/roles'
+import { requireAdmin } from '@/lib/auth/session'
 import { serviceSchema, promotionSchema } from '@/lib/validations/schemas'
-import { rateLimit, RateLimitConfigs } from '@/lib/rate-limit'
 import { z } from 'zod'
 
-/**
- * Vérifie l'authentification, les permissions admin et le rate limiting
- * Lève une erreur si l'utilisateur n'est pas connecté ou n'a pas de rôle admin
- */
-async function checkAuth() {
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
-          }
-        },
-      },
-    }
-  )
-
-  const { data: { user } } = await supabase.auth.getUser()
-
-  // Vérifier que l'utilisateur est connecté
-  if (!user) {
-    throw new Error('Non authentifié - Connexion requise')
-  }
-
-  // Vérifier que l'utilisateur a un rôle admin (ADMIN ou DEVELOPER)
-  if (!hasAdminAccess(user)) {
-    const role = getUserRole(user)
-    console.warn(`Tentative d'action admin non autorisée par ${user.email} (rôle: ${role})`)
-    throw new Error('Non autorisé - Rôle admin requis')
-  }
-
-  // Rate limiting par utilisateur (email)
-  const rateLimitKey = `admin-action:${user.email}`
-  const rateLimitResult = rateLimit(rateLimitKey, RateLimitConfigs.ADMIN_ACTIONS)
-
-  if (!rateLimitResult.success) {
-    console.warn(`🚫 Rate limit dépassé pour actions admin par ${user.email}`)
-    throw new Error('Trop de modifications rapides. Veuillez patienter quelques instants.')
-  }
-
-  return user
-}
-
 export async function signOut() {
-  console.log('Server Action: signOut called');
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {
-          }
-        },
-      },
-    }
-  )
-  const { error } = await supabase.auth.signOut()
-  if (error) console.error('SignOut Error:', error)
-  else console.log('SignOut Success')
-  
+  const { signOut: serverSignOut } = await import('@/lib/auth/session')
+  await serverSignOut()
   revalidatePath('/', 'layout')
   return { success: true }
 }
@@ -140,7 +58,7 @@ export async function getPromotions() {
 
 export async function upsertPromotion(data: PromotionFormData) {
   try {
-    await checkAuth() // Security Check
+    await requireAdmin()
 
     // 🔒 Validation Zod
     const validatedData = promotionSchema.parse(data)
@@ -190,7 +108,7 @@ export async function upsertPromotion(data: PromotionFormData) {
 
 export async function deletePromotion(id: string) {
   try {
-    await checkAuth()
+    await requireAdmin()
     await prisma.promotion.delete({ where: { id } })
     revalidatePath('/admin')
     revalidatePath('/')
@@ -202,7 +120,7 @@ export async function deletePromotion(id: string) {
 
 export async function togglePromotion(id: string, isActive: boolean) {
   try {
-    await checkAuth()
+    await requireAdmin()
     await prisma.promotion.update({
       where: { id },
       data: { isActive }
@@ -217,7 +135,7 @@ export async function togglePromotion(id: string, isActive: boolean) {
 
 export async function upsertService(data: ServiceFormData) {
   try {
-    await checkAuth()
+    await requireAdmin()
 
     // 🔒 Validation Zod
     const validatedData = serviceSchema.parse(data)
@@ -272,7 +190,7 @@ export async function upsertService(data: ServiceFormData) {
 
 export async function deleteService(id: string) {
   try {
-    await checkAuth()
+    await requireAdmin()
     await prisma.service.delete({
       where: { id }
     })

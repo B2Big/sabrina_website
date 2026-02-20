@@ -1,63 +1,14 @@
 'use server'
 
 import { prisma } from '@/lib/db-services'
-import { cookies } from 'next/headers'
-import { createServerClient } from '@supabase/ssr'
-import { hasAdminAccess } from '@/lib/auth/roles'
-import { rateLimit, RateLimitConfigs } from '@/lib/rate-limit'
-
-/**
- * Vérifie l'authentification admin (même que dans actions.ts)
- */
-async function checkAuth() {
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {}
-        },
-      },
-    }
-  )
-
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error('Non authentifié - Connexion requise')
-  }
-
-  if (!hasAdminAccess(user)) {
-    throw new Error('Non autorisé - Rôle admin requis')
-  }
-
-  // Rate limiting
-  const rateLimitKey = `admin-action:${user.email}`
-  const rateLimitResult = rateLimit(rateLimitKey, RateLimitConfigs.ADMIN_ACTIONS)
-
-  if (!rateLimitResult.success) {
-    throw new Error('Trop de modifications rapides. Veuillez patienter quelques instants.')
-  }
-
-  return user
-}
+import { requireAdmin } from '@/lib/auth/session'
 
 /**
  * Récupérer tous les abonnés newsletter
  */
 export async function getNewsletterSubscribers() {
   try {
-    await checkAuth()
+    await requireAdmin()
 
     const subscribers = await prisma.newsletterSubscriber.findMany({
       orderBy: { subscribedAt: 'desc' }
@@ -75,7 +26,7 @@ export async function getNewsletterSubscribers() {
  */
 export async function getNewsletterStats() {
   try {
-    await checkAuth()
+    await requireAdmin()
 
     const total = await prisma.newsletterSubscriber.count()
     const active = await prisma.newsletterSubscriber.count({
@@ -118,7 +69,7 @@ export async function getNewsletterStats() {
  */
 export async function unsubscribeUser(email: string) {
   try {
-    await checkAuth()
+    await requireAdmin()
 
     await prisma.newsletterSubscriber.update({
       where: { email },
@@ -140,7 +91,7 @@ export async function unsubscribeUser(email: string) {
  */
 export async function resubscribeUser(email: string) {
   try {
-    await checkAuth()
+    await requireAdmin()
 
     await prisma.newsletterSubscriber.update({
       where: { email },
@@ -163,7 +114,7 @@ export async function resubscribeUser(email: string) {
  */
 export async function deleteSubscriber(email: string) {
   try {
-    await checkAuth()
+    await requireAdmin()
 
     await prisma.newsletterSubscriber.delete({
       where: { email }
