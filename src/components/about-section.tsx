@@ -174,6 +174,61 @@ export function AboutSection() {
                 Avis Vérifiés
               </span>
             </div>
+
+            {/* Diplômes & Certifications */}
+            <div className="pt-6 border-t border-slate-200 space-y-4">
+              <h4 className="font-bold text-slate-900 text-sm uppercase tracking-wide">Diplômes & Certifications</h4>
+              
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <Award className="w-5 h-5 text-training flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">BPJEPS AF</p>
+                    <p className="text-xs text-slate-500">Brevet Professionnel de la Jeunesse, de l&apos;Éducation Populaire et du Sport — Activités de la Forme (Diplôme d&apos;État)</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Award className="w-5 h-5 text-care flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Massage lymphatique — Méthode brésilienne</p>
+                    <p className="text-xs text-slate-500">Certification spécialisée</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Award className="w-5 h-5 text-care flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Madero thérapie</p>
+                    <p className="text-xs text-slate-500">Certification spécialisée</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Award className="w-5 h-5 text-care flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Massage sportif & Deep Tissue</p>
+                    <p className="text-xs text-slate-500">École Dubarry Formation</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Award className="w-5 h-5 text-care flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Massage californien</p>
+                    <p className="text-xs text-slate-500">Certification bien-être</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-3">
+                  <Award className="w-5 h-5 text-care flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Réflexologie plantaire</p>
+                    <p className="text-xs text-slate-500">Certification bien-être</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
