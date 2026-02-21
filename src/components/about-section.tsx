@@ -111,15 +111,30 @@ export function AboutSection() {
             </div>
 
             {/* Bio Text */}
-            <div className="prose prose-slate max-w-none">
+            <div className="prose prose-slate max-w-none space-y-4">
               <p className="text-slate-600 leading-relaxed">
-                <strong className="text-slate-900">Sabrina, coach sportive et praticienne bien-être basée dans le Var (83).</strong> Mon parcours a débuté par une passion pour le sport et une volonté d&apos;aider les autres à se sentir mieux dans leur corps.
+                <strong className="text-slate-900">Sabrina — Coach sportive & praticienne bien-être dans le Var (83)</strong>
               </p>
               <p className="text-slate-600 leading-relaxed">
-                Après avoir obtenu mon <strong>diplôme d&apos;État de coach sportif</strong>, j&apos;ai complété ma formation par des spécialisations en <strong>massage bien-être et récupération sportive</strong>, incluant la madérothérapie et le drainage lymphatique.
+                Le sport est bien plus qu&apos;un métier pour moi : c&apos;est une passion profonde et un mode de vie. Depuis toujours, j&apos;aime me challenger, repousser mes limites et me fixer de nouveaux objectifs, notamment à travers la course à pied, les runs et les défis sportifs qui rythment mon parcours.
               </p>
               <p className="text-slate-600 leading-relaxed">
-                Aujourd&apos;hui, je propose un accompagnement complet qui combine <strong>coaching fitness personnalisé</strong> et <strong>soins de récupération</strong>, à domicile ou en cabinet, sur Toulon, Hyères et les alentours.
+                Depuis plus de 15 ans, j&apos;accompagne femmes et hommes vers leurs objectifs avec la même énergie et la même détermination qui m&apos;animent au quotidien.
+              </p>
+              <p className="text-slate-600 leading-relaxed">
+                Perte de poids, remise en forme, préparation physique, reprise après une pause ou envie de se sentir plus fort dans son corps : chaque accompagnement est unique et construit sur mesure.
+              </p>
+              <p className="text-slate-600 leading-relaxed">
+                Diplômée d&apos;État en coaching sportif, j&apos;ai développé une approche complète qui va au-delà du fitness classique. Parce qu&apos;un corps performant est aussi un corps qui récupère, j&apos;ai complété mon expertise avec des spécialisations en massage bien-être et récupération sportive : drainage lymphatique, madérothérapie et techniques ciblées pour les sportifs comme pour les personnes en remise en forme.
+              </p>
+              <p className="text-slate-600 leading-relaxed">
+                Aujourd&apos;hui, je propose un accompagnement global qui combine coaching personnalisé et soins de récupération, à domicile ou en cabinet, sur <strong>Hyères, La Valette-du-Var, La Moutonne et les alentours</strong>.
+              </p>
+              <p className="text-slate-600 leading-relaxed">
+                Mon objectif est simple : vous aider à vous dépasser, retrouver confiance et vous sentir bien dans votre corps, durablement.
+              </p>
+              <p className="text-slate-900 font-bold leading-relaxed">
+                Sab Fit Coaching & Massages, c&apos;est l&apos;alliance entre passion du sport, performance et bien-être.
               </p>
             </div>
 
