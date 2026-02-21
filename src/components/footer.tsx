@@ -107,9 +107,7 @@ export function Footer() {
                 @sab.fit_coaching83
               </span>
             </a>
-            <p className="text-xs text-slate-400">
-              +3000 abonnés • Conseils quotidiens
-            </p>
+
           </div>
         </div>
 
@@ -134,26 +132,9 @@ export function Footer() {
             </div>
           </div>
           
-          {/* Informations Légales Détaillées */}
-          <div className="bg-slate-100 rounded-xl p-4 text-xs text-slate-500 space-y-2">
-            <p>
-              <strong>Éditeur du site :</strong> Sabrina [Nom complet], Auto-entrepreneur immatriculée au Registre du Commerce et des Sociétés de Toulon
-            </p>
-            <p>
-              <strong>Siège social :</strong> Var (83), Provence-Alpes-Côte d&apos;Azur, France
-            </p>
-            <p>
-              <strong>Contact :</strong> contact@sab-fit.com • {CONTACT_INFO.phone}
-            </p>
-            <p>
-              <strong>Hébergement :</strong> Netlify, Inc. - 2325 3rd Street, Suite 215, San Francisco, CA 94107, USA
-            </p>
-            <p>
-              <strong>Assurance :</strong> Responsabilité Civile Professionnelle souscrite auprès de [Nom assureur]
-            </p>
-            <p>
-              <strong>Diplômes :</strong> Coach Sportif Diplôme d&apos;État (BPJEPS AGFF ou équivalent) • Certifications Massage Bien-être
-            </p>
+          {/* Contact rapide */}
+          <div className="text-center text-xs text-slate-400">
+            Contact : contact@sab-fit.com • {CONTACT_INFO.phone}
           </div>
         </div>
       </div>

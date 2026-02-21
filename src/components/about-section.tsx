@@ -30,7 +30,7 @@ export function AboutSection() {
             Qui est <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">Sabrina</span> ?
           </h2>
           <p className="text-xl text-slate-600 font-medium max-w-2xl mx-auto">
-            Passionnée par le bien-être et le sport, je vous accompagne dans votre transformation physique et mentale depuis plus de 5 ans.
+            Passionnée par le bien-être et le sport, je vous accompagne dans votre transformation physique et mentale depuis plus de 15 ans.
           </p>
         </div>
 
