@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus } from 'lucide-react';
 
 const FAQS = [
-  { question: "Où se déroulent les séances ?", answer: "Je me déplace à votre domicile dans le Var (83) ou je vous reçois dans mon cabinet privé entièrement équipé." },
+  { question: "Où se déroulent les séances ?", answer: "À SFC (Hyères, La Valette-du-Var, La Moutonne) ou à domicile dans le Var (83)." },
   { question: "Faut-il être sportif pour commencer ?", answer: "Absolument pas ! Le coaching est 100% sur-mesure. On commence à votre niveau et on progresse ensemble." },
   { question: "Quels sont les tarifs ?", answer: "Les tarifs varient selon la prestation (Coaching solo, duo, massage). Comptez environ 50€ pour un coaching et 70€ pour un massage d'1h. Forfaits disponibles." },
   { question: "Quels sont les moyens de paiement ?", answer: "Vous pouvez régler sur place ou en ligne. J'accepte les espèces, la Carte Bancaire (via terminal sécurisé) et PayPal." },

@@ -211,7 +211,7 @@ export function StructuredData() {
         name: 'Où se déroulent les séances de coaching et massage ?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Les séances se déroulent à domicile sur tout le Var (83), principalement autour de Toulon, Hyères et La Seyne-sur-Mer. Je me déplace avec mon matériel professionnel. Possibilité également en cabinet sur rendez-vous.'
+          text: 'À SFC (Hyères, La Valette-du-Var, La Moutonne) ou à domicile dans le Var (83).'
         }
       },
       {
