@@ -64,8 +64,8 @@ export function AboutSection() {
             <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-xl p-6 hidden md:block">
               <div className="flex items-center gap-4">
                 <div className="text-center">
-                  <p className="text-3xl font-black text-training">5+</p>
-                  <p className="text-xs text-slate-500 uppercase tracking-wide">Années d&apos;expérience</p>
+                  <p className="text-3xl font-black text-training">15</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wide">ans d&apos;expérience</p>
                 </div>
                 <div className="w-px h-12 bg-slate-200" />
                 <div className="text-center">
@@ -139,7 +139,6 @@ export function AboutSection() {
                   <span>@sab.fit_coaching83</span>
                 </a>
                 <div className="hidden sm:block text-sm text-slate-500">
-                  <p className="font-bold text-slate-900">+3000 abonnés</p>
                   <p>Conseils, motivation et behind the scenes</p>
                 </div>
               </div>
