@@ -14,7 +14,7 @@ export function StructuredData() {
     logo: 'https://sab-fit.com/logo.svg',
     image: [
       'https://sab-fit.com/img/sabrina/sab.webp',
-      'https://sab-fit.com/img/sabrina/sabrina-1.jpg'
+      'https://sab-fit.com/img/sabrina/sabrina-1.webp'
     ],
     telephone: CONTACT_INFO.phone,
     email: 'contact@sab-fit.com',

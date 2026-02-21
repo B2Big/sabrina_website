@@ -39,7 +39,7 @@ export function AboutSection() {
           <div className="relative">
             <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
               <Image
-                src="/img/sabrina/sabrina-1.jpg"
+                src="/img/sabrina/sabrina-1.webp"
                 alt="Sabrina - Coach sportif diplômée et praticienne massage bien-être dans le Var (83)"
                 fill
                 className="object-cover"

@@ -4,17 +4,17 @@ import { motion } from 'framer-motion';
 import { ParallaxImage } from './ui/parallax-image';
 
 const IMAGES = [
-  { src: '/img/sabrina/sabrina-1.jpg', alt: 'Sabrina coach sportif en séance de coaching fitness personnalisé dans le Var' },
-  { src: '/img/sabrina/sabrina-2.jpg', alt: 'Séance de massage bien-être et récupération sportive à domicile' },
-  { src: '/img/sabrina/sabrina-3.jpg', alt: 'Coaching sportif pour remise en forme et perte de poids dans le 83' },
-  { src: '/img/sabrina/sabrina-4.jpg', alt: 'Massage madérothérapie sculptant aux bois de rose' },
-  { src: '/img/sabrina/sabrina-5.jpg', alt: 'Séance de préparation physique et coaching personnalisé' },
-  { src: '/img/sabrina/sabrina-6.jpg', alt: 'Massage sportif pour récupération musculaire dans le Var' },
-  { src: '/img/sabrina/sabrina-7.jpg', alt: 'Coaching fitness à domicile - exercices personnalisés' },
-  { src: '/img/sabrina/sabrina-8.jpg', alt: 'Séance de massage californien relaxation profonde' },
-  { src: '/img/sabrina/sabrina-9.jpg', alt: 'Entraînement sportif avec coach professionnel Sabrina' },
-  { src: '/img/sabrina/sabrina-10.jpg', alt: 'Drainage lymphatique et massage détoxifiant' },
-  { src: '/img/sabrina/sabrina-11.jpg', alt: 'Cabinet de coaching et massage bien-être Sab-Fit' },
+  { src: '/img/sabrina/sabrina-1.webp', alt: 'Sabrina coach sportif en séance de coaching fitness personnalisé dans le Var' },
+  { src: '/img/sabrina/sabrina-2.webp', alt: 'Séance de massage bien-être et récupération sportive à domicile' },
+  { src: '/img/sabrina/sabrina-3.webp', alt: 'Coaching sportif pour remise en forme et perte de poids dans le 83' },
+  { src: '/img/sabrina/sabrina-4.webp', alt: 'Massage madérothérapie sculptant aux bois de rose' },
+  { src: '/img/sabrina/sabrina-5.webp', alt: 'Séance de préparation physique et coaching personnalisé' },
+  { src: '/img/sabrina/sabrina-6.webp', alt: 'Massage sportif pour récupération musculaire dans le Var' },
+  { src: '/img/sabrina/sabrina-7.webp', alt: 'Coaching fitness à domicile - exercices personnalisés' },
+  { src: '/img/sabrina/sabrina-8.webp', alt: 'Séance de massage californien relaxation profonde' },
+  { src: '/img/sabrina/sabrina-9.webp', alt: 'Entraînement sportif avec coach professionnel Sabrina' },
+  { src: '/img/sabrina/sabrina-10.webp', alt: 'Drainage lymphatique et massage détoxifiant' },
+  { src: '/img/sabrina/sabrina-11.webp', alt: 'Cabinet de coaching et massage bien-être Sab-Fit' },
 ];
 
 export function PhotoMarquee() {
