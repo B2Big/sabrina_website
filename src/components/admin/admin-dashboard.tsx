@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Plus, Pencil, Trash2, ArrowLeft, LogOut } from 'lucide-react'
+import { Plus, Pencil, Trash2, ArrowLeft, LogOut, Shield, History } from 'lucide-react'
 import Link from 'next/link'
 import { ServiceFormData, upsertService, deleteService, signOut } from '@/app/admin/actions'
+import { logoutAction } from '@/app/login/actions'
 import { ServiceForm } from '@/components/admin/service-form'
 import { PromoList } from '@/components/admin/promo-list'
 import { NewsletterList } from '@/components/admin/newsletter-list'
+import { AuditLogPanel } from '@/components/admin/audit-log'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -20,7 +22,7 @@ interface AdminDashboardProps {
 }
 
 export function AdminDashboard({ services, promotions, newsletterSubscribers, newsletterStats }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'services' | 'promotions' | 'newsletter'>('services')
+  const [activeTab, setActiveTab] = useState<'services' | 'promotions' | 'newsletter' | 'audit'>('services')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingService, setEditingService] = useState<ServiceFormData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -29,9 +31,10 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
 
   const handleSignOut = async () => {
     console.log('Client: handleSignOut clicked');
-    await signOut()
+    // Utiliser logoutAction qui logue l'audit
+    await logoutAction()
     console.log('Client: signOut action completed, redirecting...');
-    window.location.href = '/' // Force full reload
+    window.location.href = '/login?reason=logout' // Force full reload
   }
 
   const handleCreate = () => {
@@ -63,28 +66,39 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
 
   return (
     <div className="min-h-screen bg-slate-50 p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
+      <div className="max-w-7xl mx-auto">
+        {/* Header amélioré avec badge sécurité */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="flex items-center gap-4 mb-2">
                 <Link href="/" className="text-slate-400 hover:text-slate-600 flex items-center gap-2 font-medium transition-colors">
                 <ArrowLeft size={16} /> Retour au site
                 </Link>
-                <button onClick={handleSignOut} className="text-red-400 hover:text-red-600 flex items-center gap-2 font-medium text-sm transition-colors">
-                    <LogOut size={14} /> Déconnexion
-                </button>
             </div>
-            <h1 className="text-3xl font-black text-slate-900">Dashboard Sabrina</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-black text-slate-900">Dashboard Admin</h1>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+                <Shield className="w-3 h-3" />
+                SECURE
+              </span>
+            </div>
           </div>
+          
+          {/* Bouton déconnexion plus visible */}
+          <button 
+            onClick={handleSignOut} 
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50 rounded-xl font-medium text-sm transition-all shadow-sm"
+          >
+            <LogOut size={16} /> Déconnexion
+          </button>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs avec onglet Audit */}
         <div className="flex gap-2 mb-8 bg-white p-1.5 rounded-2xl w-fit border border-slate-200 shadow-sm backdrop-blur-xl">
             <button
                 onClick={() => setActiveTab('services')}
                 className={cn(
-                    "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
+                    "px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
                     activeTab === 'services' ? "bg-blue-500 text-white shadow-lg shadow-blue-200" : "text-slate-500 hover:text-blue-500 hover:bg-blue-50"
                 )}
             >
@@ -93,7 +107,7 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
             <button
                 onClick={() => setActiveTab('promotions')}
                 className={cn(
-                    "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
+                    "px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
                     activeTab === 'promotions' ? "bg-rose-400 text-white shadow-lg shadow-rose-200" : "text-slate-500 hover:text-rose-400 hover:bg-rose-50"
                 )}
             >
@@ -102,16 +116,56 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
             <button
                 onClick={() => setActiveTab('newsletter')}
                 className={cn(
-                    "px-8 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
+                    "px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300",
                     activeTab === 'newsletter' ? "bg-purple-500 text-white shadow-lg shadow-purple-200" : "text-slate-500 hover:text-purple-500 hover:bg-purple-50"
                 )}
             >
-                📧 Newsletter
+                Newsletter
+            </button>
+            <button
+                onClick={() => setActiveTab('audit')}
+                className={cn(
+                    "px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2",
+                    activeTab === 'audit' ? "bg-slate-800 text-white shadow-lg shadow-slate-200" : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
+                )}
+            >
+                <History className="w-4 h-4" />
+                Audit
             </button>
         </div>
 
         {/* Content */}
-        {activeTab === 'promotions' ? (
+        {activeTab === 'audit' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <AuditLogPanel />
+              <div className="bg-white rounded-2xl border border-slate-200 p-6">
+                <h3 className="font-bold text-slate-900 mb-4">Sécurité</h3>
+                <div className="space-y-4 text-sm text-slate-600">
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                    <Shield className="w-5 h-5 text-green-500" />
+                    <div>
+                      <p className="font-medium text-slate-900">Authentification sécurisée</p>
+                      <p className="text-xs">Connexion via Supabase Auth avec chiffrement</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                    <History className="w-5 h-5 text-blue-500" />
+                    <div>
+                      <p className="font-medium text-slate-900">Audit trail activé</p>
+                      <p className="text-xs">Toutes les actions sont enregistrées et tracées</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
+                    <LogOut className="w-5 h-5 text-amber-500" />
+                    <div>
+                      <p className="font-medium text-slate-900">Timeout de session</p>
+                      <p className="text-xs">Déconnexion automatique après 30min d&apos;inactivité</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        ) : activeTab === 'promotions' ? (
             <PromoList promotions={promotions} services={services} />
         ) : activeTab === 'newsletter' ? (
             <NewsletterList
