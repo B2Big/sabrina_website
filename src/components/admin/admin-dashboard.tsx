@@ -4,13 +4,12 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Plus, Pencil, Trash2, ArrowLeft, LogOut, Shield, History } from 'lucide-react'
 import Link from 'next/link'
-import { ServiceFormData, upsertService, deleteService, signOut } from '@/app/admin/actions'
+import { ServiceFormData, upsertService, deleteService } from '@/app/admin/actions'
 import { logoutAction } from '@/app/login/actions'
 import { ServiceForm } from '@/components/admin/service-form'
 import { PromoList } from '@/components/admin/promo-list'
 import { NewsletterList } from '@/components/admin/newsletter-list'
 import { AuditLogPanel } from '@/components/admin/audit-log'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -27,7 +26,6 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
   const [editingService, setEditingService] = useState<ServiceFormData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSignOut = async () => {
     console.log('Client: handleSignOut clicked');

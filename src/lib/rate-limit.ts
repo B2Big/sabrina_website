@@ -18,7 +18,9 @@ type RateLimitRecord = {
 // Stockage en mémoire des tentatives par IP
 const rateLimitMap = new Map<string, RateLimitRecord>()
 
-// Nettoyage périodique de la mémoire (toutes les 5 minutes)
+import { SESSION_CHECK_INTERVAL } from './constants'
+
+// Nettoyage périodique de la mémoire
 setInterval(() => {
   const now = Date.now()
   for (const [key, record] of rateLimitMap.entries()) {
@@ -26,7 +28,7 @@ setInterval(() => {
       rateLimitMap.delete(key)
     }
   }
-}, 5 * 60 * 1000)
+}, SESSION_CHECK_INTERVAL)
 
 /**
  * Vérifie si une requête dépasse la limite
@@ -77,29 +79,40 @@ export function rateLimit(identifier: string, config: RateLimitConfig) {
 /**
  * Configurations prédéfinies pour différents cas d'usage
  */
+import {
+  RATE_LIMIT_LOGIN_WINDOW,
+  RATE_LIMIT_LOGIN_ATTEMPTS,
+  RATE_LIMIT_CHECKOUT_WINDOW,
+  RATE_LIMIT_CHECKOUT_ATTEMPTS,
+  RATE_LIMIT_ADMIN_WINDOW,
+  RATE_LIMIT_ADMIN_ATTEMPTS,
+  RATE_LIMIT_API_WINDOW,
+  RATE_LIMIT_API_ATTEMPTS,
+} from './constants'
+
 export const RateLimitConfigs = {
-  // Anti brute-force sur login : 5 tentatives par 15 minutes
+  // Anti brute-force sur login
   LOGIN: {
-    interval: 15 * 60 * 1000, // 15 minutes
-    uniqueTokenPerInterval: 5
+    interval: RATE_LIMIT_LOGIN_WINDOW,
+    uniqueTokenPerInterval: RATE_LIMIT_LOGIN_ATTEMPTS
   },
 
-  // Protection checkout : 10 paiements par heure
+  // Protection checkout
   CHECKOUT: {
-    interval: 60 * 60 * 1000, // 1 heure
-    uniqueTokenPerInterval: 10
+    interval: RATE_LIMIT_CHECKOUT_WINDOW,
+    uniqueTokenPerInterval: RATE_LIMIT_CHECKOUT_ATTEMPTS
   },
 
-  // Protection server actions admin : 100 par 10 minutes
+  // Protection server actions admin
   ADMIN_ACTIONS: {
-    interval: 10 * 60 * 1000, // 10 minutes
-    uniqueTokenPerInterval: 100
+    interval: RATE_LIMIT_ADMIN_WINDOW,
+    uniqueTokenPerInterval: RATE_LIMIT_ADMIN_ATTEMPTS
   },
 
-  // Protection API publique : 60 requêtes par minute
+  // Protection API publique
   API_PUBLIC: {
-    interval: 60 * 1000, // 1 minute
-    uniqueTokenPerInterval: 60
+    interval: RATE_LIMIT_API_WINDOW,
+    uniqueTokenPerInterval: RATE_LIMIT_API_ATTEMPTS
   }
 } as const
 

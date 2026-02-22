@@ -5,6 +5,7 @@ import { cookies, headers } from 'next/headers'
 import { rateLimit, RateLimitConfigs, getClientIp } from '@/lib/rate-limit'
 import { logAdminAction } from '@/lib/audit'
 import { hasAdminAccess } from '@/lib/auth/roles'
+import { REMEMBER_ME_DURATION, REDIRECT_COOKIE_MAX_AGE } from '@/lib/constants'
 
 type LoginResult = {
   success: boolean
@@ -55,8 +56,8 @@ export async function loginAction(
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, {
                 ...options,
-                // 🔒 Remember me : étendre la durée de session à 30 jours
-                maxAge: rememberMe ? 30 * 24 * 60 * 60 : undefined,
+                // 🔒 Remember me : étendre la durée de session
+                maxAge: rememberMe ? REMEMBER_ME_DURATION : undefined,
               })
             )
           } catch {
@@ -84,10 +85,10 @@ export async function loginAction(
   const isAdmin = hasAdminAccess(user)
 
   // 📝 LOG DE CONNEXION (audit trail)
-  if (isAdmin) {
+  if (isAdmin && user.email) {
     await logAdminAction(
       user.id,
-      user.email!,
+      user.email,
       'LOGIN',
       'Session',
       undefined,
@@ -128,14 +129,14 @@ export async function logoutAction(): Promise<{ success: boolean }> {
 
   const { data: { user } } = await supabase.auth.getUser()
   
-  if (user && hasAdminAccess(user)) {
+  if (user && hasAdminAccess(user) && user.email) {
     const headersList = await headers()
     const request = new Request('http://localhost', { headers: headersList })
     const clientIp = getClientIp(request)
     
     await logAdminAction(
       user.id,
-      user.email!,
+      user.email,
       'LOGOUT',
       'Session',
       undefined,
@@ -163,7 +164,7 @@ export async function getRedirectUrl(): Promise<string | null> {
 export async function setRedirectUrl(url: string) {
   const cookieStore = await cookies()
   cookieStore.set('redirect_after_login', url, {
-    maxAge: 60 * 5, // 5 minutes
+    maxAge: REDIRECT_COOKIE_MAX_AGE
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax'

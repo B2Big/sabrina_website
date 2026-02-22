@@ -3,8 +3,13 @@
 import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { 
+  ADMIN_INACTIVITY_TIMEOUT, 
+  ADMIN_WARNING_BEFORE_TIMEOUT,
+  SESSION_CHECK_INTERVAL 
+} from '@/lib/constants'
 
-const INACTIVITY_TIMEOUT = 60 * 60 * 1000 // 60 minutes (1 heure)
+const INACTIVITY_TIMEOUT = ADMIN_INACTIVITY_TIMEOUT
 
 export default function AdminLayout({
   children,
@@ -32,7 +37,7 @@ export default function AdminLayout({
         if (confirm('Votre session va expirer dans 2 minutes pour des raisons de sécurité. Voulez-vous rester connecté ?')) {
           resetTimer()
         }
-      }, INACTIVITY_TIMEOUT - 2 * 60 * 1000)
+      }, INACTIVITY_TIMEOUT - ADMIN_WARNING_BEFORE_TIMEOUT)
       
       // Déconnexion après inactivité
       timeoutId = setTimeout(logout, INACTIVITY_TIMEOUT)
@@ -62,7 +67,7 @@ export default function AdminLayout({
       if (!session) {
         router.push('/login?reason=expired')
       }
-    }, 5 * 60 * 1000)
+    }, SESSION_CHECK_INTERVAL)
 
     return () => {
       clearTimeout(timeoutId)

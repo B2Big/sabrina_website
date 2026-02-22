@@ -107,7 +107,7 @@ export function AuditLogPanel() {
 
   useEffect(() => {
     fetchLogs()
-    // Rafraîchir toutes les 30 secondes
+    // Rafraîchir auto
     const interval = setInterval(fetchLogs, 30000)
     return () => clearInterval(interval)
   }, [])
@@ -236,7 +236,13 @@ export function AuditLogPanel() {
                         {log.details && (
                           <div className="text-xs text-slate-500 bg-slate-100 rounded p-2 font-mono">
                             <pre className="whitespace-pre-wrap break-all">
-                              {JSON.stringify(JSON.parse(log.details), null, 2)}
+                              {(() => {
+                                try {
+                                  return JSON.stringify(JSON.parse(log.details), null, 2)
+                                } catch {
+                                  return log.details
+                                }
+                              })()}
                             </pre>
                           </div>
                         )}

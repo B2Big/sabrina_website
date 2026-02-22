@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/db-services'
 import { headers } from 'next/headers'
+import { DEFAULT_AUDIT_LOG_LIMIT, ONE_DAY } from './constants'
 
 export type AdminAction = 
   | 'CREATE_SERVICE'
@@ -56,7 +57,7 @@ export async function logAdminAction(
  * Récupère les logs d'audit (pour la page audit admin)
  */
 export async function getAdminLogs(
-  limit: number = 100,
+  limit: number = DEFAULT_AUDIT_LOG_LIMIT,
   offset: number = 0,
   filters?: {
     userId?: string
@@ -104,7 +105,7 @@ export async function getAuditStats() {
     prisma.adminLog.count({
       where: {
         createdAt: {
-          gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+          gte: new Date(Date.now() - ONE_DAY)
         }
       }
     }),
