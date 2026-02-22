@@ -151,7 +151,7 @@ export function AboutSection() {
                           </div>
                           <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
                             <Star className="w-4 h-4 text-care flex-shrink-0" />
-                            <span className="text-xs font-medium text-slate-700">5 ans dans le Var</span>
+                            <span className="text-xs font-medium text-slate-700">Accompagnement sur-mesure</span>
                           </div>
                           <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
                             <MapPin className="w-4 h-4 text-training flex-shrink-0" />
