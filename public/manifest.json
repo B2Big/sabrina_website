@@ -1,6 +1,6 @@
 {
-  "name": "Sabrina",
-  "short_name": "Sabrina",
+  "name": "sab-fit",
+  "short_name": "sab-fit",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
