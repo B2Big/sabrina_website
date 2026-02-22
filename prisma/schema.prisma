@@ -153,3 +153,35 @@ model Reservation {
   @@index([createdAt])
   @@map("reservations")
 }
+
+// ============================================
+// AUDIT TRAIL - LOGS DES ACTIONS ADMIN
+// ============================================
+
+model AdminLog {
+  id          String   @id @default(cuid())
+  
+  // Utilisateur qui a fait l'action
+  userId      String   @map("user_id")
+  userEmail   String   @map("user_email")
+  
+  // Action effectuée
+  action      String   // Ex: CREATE_SERVICE, DELETE_PROMOTION, etc.
+  entityType  String   @map("entity_type") // Ex: Service, Promotion, etc.
+  entityId    String?  @map("entity_id")   // ID de l'entité concernée
+  
+  // Détails (JSON)
+  details     String?  // JSON stringifié avec les détails
+  
+  // Métadonnées requête
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  
+  // Timestamp
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("admin_logs")
+}

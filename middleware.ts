@@ -2,6 +2,8 @@ import { type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
+  // La protection de /admin est déjà gérée dans updateSession
+  // qui vérifie le rôle et redirige si nécessaire
   return await updateSession(request)
 }
 

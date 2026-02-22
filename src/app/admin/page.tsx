@@ -16,9 +16,9 @@ export default async function AdminPage() {
     redirect('/login')
   }
 
-  // Rediriger vers / si pas de rôle admin
+  // Rediriger vers /forbidden si pas de rôle admin
   if (!hasAdminAccess(user.raw)) {
-    redirect('/')
+    redirect('/forbidden')
   }
 
   // Utilisateur authentifié et autorisé - Charger les données

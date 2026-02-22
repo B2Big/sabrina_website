@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { requireAdmin } from '@/lib/auth/session'
 import { serviceSchema, promotionSchema } from '@/lib/validations/schemas'
 import { z } from 'zod'
+import { logAdminAction } from '@/lib/audit'
 
 export async function signOut() {
   const { signOut: serverSignOut } = await import('@/lib/auth/session')
@@ -58,13 +59,13 @@ export async function getPromotions() {
 
 export async function upsertPromotion(data: PromotionFormData) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
 
     // 🔒 Validation Zod
     const validatedData = promotionSchema.parse(data)
 
     if (validatedData.id) {
-      await prisma.promotion.update({
+      const updated = await prisma.promotion.update({
         where: { id: validatedData.id },
         data: {
           text: validatedData.text,
@@ -79,8 +80,18 @@ export async function upsertPromotion(data: PromotionFormData) {
           }
         }
       })
+      
+      // 📝 Audit trail
+      await logAdminAction(
+        user.id,
+        user.email,
+        'UPDATE_PROMOTION',
+        'Promotion',
+        updated.id,
+        { text: validatedData.text, isActive: validatedData.isActive }
+      )
     } else {
-      await prisma.promotion.create({
+      const created = await prisma.promotion.create({
         data: {
           text: validatedData.text,
           link: validatedData.link,
@@ -93,7 +104,18 @@ export async function upsertPromotion(data: PromotionFormData) {
           }
         }
       })
+      
+      // 📝 Audit trail
+      await logAdminAction(
+        user.id,
+        user.email,
+        'CREATE_PROMOTION',
+        'Promotion',
+        created.id,
+        { text: validatedData.text }
+      )
     }
+    
     revalidatePath('/admin')
     revalidatePath('/')
     return { success: true }
@@ -108,8 +130,20 @@ export async function upsertPromotion(data: PromotionFormData) {
 
 export async function deletePromotion(id: string) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
+    
     await prisma.promotion.delete({ where: { id } })
+    
+    // 📝 Audit trail
+    await logAdminAction(
+      user.id,
+      user.email,
+      'DELETE_PROMOTION',
+      'Promotion',
+      id,
+      { deletedAt: new Date().toISOString() }
+    )
+    
     revalidatePath('/admin')
     revalidatePath('/')
     return { success: true }
@@ -120,11 +154,23 @@ export async function deletePromotion(id: string) {
 
 export async function togglePromotion(id: string, isActive: boolean) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
+    
     await prisma.promotion.update({
       where: { id },
       data: { isActive }
     })
+    
+    // 📝 Audit trail
+    await logAdminAction(
+      user.id,
+      user.email,
+      'TOGGLE_PROMOTION',
+      'Promotion',
+      id,
+      { isActive }
+    )
+    
     revalidatePath('/admin')
     revalidatePath('/')
     return { success: true }
@@ -135,13 +181,13 @@ export async function togglePromotion(id: string, isActive: boolean) {
 
 export async function upsertService(data: ServiceFormData) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
 
     // 🔒 Validation Zod
     const validatedData = serviceSchema.parse(data)
 
     if (validatedData.id) {
-      await prisma.service.update({
+      const updated = await prisma.service.update({
         where: { id: validatedData.id },
         data: {
           title: validatedData.title,
@@ -158,8 +204,18 @@ export async function upsertService(data: ServiceFormData) {
           paymentLink: validatedData.paymentLink
         }
       })
+      
+      // 📝 Audit trail
+      await logAdminAction(
+        user.id,
+        user.email,
+        'UPDATE_SERVICE',
+        'Service',
+        updated.id,
+        { title: validatedData.title, category: validatedData.category }
+      )
     } else {
-      await prisma.service.create({
+      const created = await prisma.service.create({
         data: {
           title: validatedData.title,
           category: validatedData.category,
@@ -175,7 +231,18 @@ export async function upsertService(data: ServiceFormData) {
           paymentLink: validatedData.paymentLink
         }
       })
+      
+      // 📝 Audit trail
+      await logAdminAction(
+        user.id,
+        user.email,
+        'CREATE_SERVICE',
+        'Service',
+        created.id,
+        { title: validatedData.title, category: validatedData.category }
+      )
     }
+    
     revalidatePath('/admin')
     revalidatePath('/') // Update public site too
     return { success: true }
@@ -190,10 +257,22 @@ export async function upsertService(data: ServiceFormData) {
 
 export async function deleteService(id: string) {
   try {
-    await requireAdmin()
+    const user = await requireAdmin()
+    
     await prisma.service.delete({
       where: { id }
     })
+    
+    // 📝 Audit trail
+    await logAdminAction(
+      user.id,
+      user.email,
+      'DELETE_SERVICE',
+      'Service',
+      id,
+      { deletedAt: new Date().toISOString() }
+    )
+    
     revalidatePath('/admin')
     revalidatePath('/')
     return { success: true }
