@@ -164,7 +164,7 @@ export async function getRedirectUrl(): Promise<string | null> {
 export async function setRedirectUrl(url: string) {
   const cookieStore = await cookies()
   cookieStore.set('redirect_after_login', url, {
-    maxAge: REDIRECT_COOKIE_MAX_AGE
+    maxAge: REDIRECT_COOKIE_MAX_AGE,
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax'
