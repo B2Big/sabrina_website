@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Activity, Instagram } from 'lucide-react';
+import { ArrowRight, Sparkles, Activity } from 'lucide-react';
 import { ParallaxImage } from './ui/parallax-image';
 import Image from 'next/image';
 
@@ -97,17 +97,7 @@ export function Hero() {
                 </Link>
               </Button>
 
-              {/* Instagram */}
-              <a 
-                href="https://www.instagram.com/sab.fit_coaching83" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 h-16 px-8 text-lg rounded-2xl w-full sm:w-auto hover:scale-105 transition-all shadow-xl text-white"
-                style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
-              >
-                <Instagram className="w-6 h-6" />
-                <span className="font-bold">@sab.fit_coaching83</span>
-              </a>
+
             </div>
           </motion.div>
 
