@@ -159,7 +159,7 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
                     <LogOut className="w-5 h-5 text-amber-500" />
                     <div>
                       <p className="font-medium text-slate-900">Timeout de session</p>
-                      <p className="text-xs">Déconnexion automatique après 30min d&apos;inactivité</p>
+                      <p className="text-xs">Déconnexion automatique après 1h d&apos;inactivité</p>
                     </div>
                   </div>
                 </div>

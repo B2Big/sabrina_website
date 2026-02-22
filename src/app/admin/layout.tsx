@@ -4,7 +4,7 @@ import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-const INACTIVITY_TIMEOUT = 30 * 60 * 1000 // 30 minutes
+const INACTIVITY_TIMEOUT = 60 * 60 * 1000 // 60 minutes (1 heure)
 
 export default function AdminLayout({
   children,
@@ -80,7 +80,7 @@ export default function AdminLayout({
       <div className="bg-slate-900 text-white text-xs py-2 px-4 text-center">
         <span className="font-bold">🔒 Zone Administrateur</span>
         {' • '}
-        Session sécurisée avec déconnexion automatique après 30min d&apos;inactivité
+        Session sécurisée avec déconnexion automatique après 1h d&apos;inactivité
       </div>
       
       {children}
