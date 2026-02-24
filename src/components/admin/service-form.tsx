@@ -156,7 +156,7 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
                     value={formData.originalPrice || ''}
                     onChange={handleChange}
                     className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900/10 outline-none pr-8"
-                    placeholder="70"
+                    placeholder="montant barré"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">€</span>
                 </div>
@@ -211,7 +211,7 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Caractéristiques (Liste)</label>
+            <label className="text-sm font-medium text-slate-700">Caractéristiques (Liste ✅)</label>
             <div className="flex gap-2">
               <input
                 value={newFeature}
@@ -241,7 +241,7 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
           </div>
           
            <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">Note Spéciale</label>
+              <label className="text-sm font-medium text-slate-700">Note Spéciale (bulle jaune)</label>
               <input
                 name="note"
                 value={formData.note || ''}
