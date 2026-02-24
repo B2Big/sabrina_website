@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 export async function getAllServices() {
   try {
     return await prisma.service.findMany({
-      orderBy: { createdAt: 'asc' } // Keep original order if possible, or use a specific order field
+      orderBy: { order: 'asc' }
     })
   } catch (error) {
     console.error("Failed to fetch services from DB", error)

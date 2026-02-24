@@ -45,7 +45,7 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
     return {
       ...data,
       price: cleanPrice(data.price || ''),
-      originalPrice: hasOriginalPrice ? cleanPrice(data.originalPrice) : ''
+      originalPrice: hasOriginalPrice ? cleanPrice(data.originalPrice || '') : ''
     }
   }
 

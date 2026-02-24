@@ -24,6 +24,7 @@ model Service {
   note          String?
   features      String[]
   paymentLink   String?  @map("paymentlink")
+  order         Int      @default(0) @map("service_order")
 
   promotions    Promotion[]
 

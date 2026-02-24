@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Plus, Pencil, Trash2, ArrowLeft, LogOut, Shield, History } from 'lucide-react'
+import { Plus, Pencil, Trash2, ArrowLeft, LogOut, Shield, History, ArrowUp, ArrowDown, Save } from 'lucide-react'
 import Link from 'next/link'
-import { ServiceFormData, upsertService, deleteService } from '@/app/admin/actions'
+import { ServiceFormData, upsertService, deleteService, reorderServices } from '@/app/admin/actions'
 import { logoutAction } from '@/app/login/actions'
 import { ServiceForm } from '@/components/admin/service-form'
 import { PromoList } from '@/components/admin/promo-list'
@@ -25,7 +25,14 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingService, setEditingService] = useState<ServiceFormData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [localServices, setLocalServices] = useState(services)
+  const [hasOrderChanged, setHasOrderChanged] = useState(false)
   const router = useRouter()
+
+  // Synchroniser localServices quand services change
+  useEffect(() => {
+    setLocalServices(services)
+  }, [services])
 
   const handleSignOut = async () => {
     console.log('Client: handleSignOut clicked');
@@ -73,6 +80,32 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
     setIsLoading(false)
     if (res.success) {
       setIsFormOpen(false)
+    } else {
+      alert(res.error)
+    }
+  }
+
+  // Réordonner les services
+  const moveService = (index: number, direction: 'up' | 'down') => {
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+    if (newIndex < 0 || newIndex >= localServices.length) return
+
+    const newServices = [...localServices]
+    const [movedService] = newServices.splice(index, 1)
+    newServices.splice(newIndex, 0, movedService)
+    
+    setLocalServices(newServices)
+    setHasOrderChanged(true)
+  }
+
+  const saveOrder = async () => {
+    setIsLoading(true)
+    const orderedIds = localServices.map(s => s.id)
+    const res = await reorderServices(orderedIds)
+    setIsLoading(false)
+    
+    if (res.success) {
+      setHasOrderChanged(false)
     } else {
       alert(res.error)
     }
@@ -188,7 +221,21 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
             />
         ) : (
             <>
-                <div className="flex justify-end mb-6">
+                <div className="flex justify-between items-center mb-6">
+                    {hasOrderChanged ? (
+                        <Button 
+                            onClick={saveOrder} 
+                            disabled={isLoading}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl px-6 py-6 font-bold shadow-xl shadow-emerald-200 transition-all active:scale-95"
+                        >
+                            <Save size={20} className="mr-2" /> 
+                            {isLoading ? 'Sauvegarde...' : 'Sauvegarder l\'ordre'}
+                        </Button>
+                    ) : (
+                        <div className="text-sm text-slate-500">
+                            💡 Utilisez les flèches ↑↓ pour réorganiser les services
+                        </div>
+                    )}
                     <Button onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl px-6 py-6 font-bold shadow-xl shadow-blue-200 transition-all active:scale-95">
                         <Plus size={20} className="mr-2" /> Ajouter un Service
                     </Button>
@@ -206,13 +253,35 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                        {services.map((s) => (
+                        {localServices.map((s, index) => (
                         <tr key={s.id} className="group hover:bg-blue-50/30 transition-all">
                             <td className="p-6 pl-10">
-                                <div className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{s.title}</div>
-                                <div className="flex gap-2 mt-1">
-                                    {s.popular && <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">POPULAIRE</span>}
-                                    {s.bestValue && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">OFFRE SPÉCIALE</span>}
+                                <div className="flex items-center gap-3">
+                                    <div className="flex flex-col gap-1">
+                                        <button
+                                            onClick={() => moveService(index, 'up')}
+                                            disabled={index === 0}
+                                            className="p-1 text-slate-300 hover:text-blue-500 hover:bg-blue-50 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                            title="Monter"
+                                        >
+                                            <ArrowUp size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => moveService(index, 'down')}
+                                            disabled={index === localServices.length - 1}
+                                            className="p-1 text-slate-300 hover:text-blue-500 hover:bg-blue-50 rounded transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                            title="Descendre"
+                                        >
+                                            <ArrowDown size={16} />
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-slate-900 text-lg group-hover:text-blue-600 transition-colors">{s.title}</div>
+                                        <div className="flex gap-2 mt-1">
+                                            {s.popular && <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">POPULAIRE</span>}
+                                            {s.bestValue && <span className="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">OFFRE SPÉCIALE</span>}
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                             <td className="p-6">
@@ -246,7 +315,7 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
                             </td>
                         </tr>
                         ))}
-                        {services.length === 0 && (
+                        {localServices.length === 0 && (
                         <tr>
                             <td colSpan={5} className="p-12 text-center text-slate-400 font-medium">
                             Aucun service pour le moment. Commencez par en ajouter un !

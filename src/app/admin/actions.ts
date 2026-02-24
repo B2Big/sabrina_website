@@ -28,6 +28,7 @@ export type ServiceFormData = {
   note?: string
   features: string[]
   paymentLink?: string
+  order?: number
 }
 
 export type PromotionFormData = {
@@ -279,5 +280,38 @@ export async function deleteService(id: string) {
   } catch (error) {
     console.error("Failed to delete service:", error)
     return { success: false, error: 'Failed to delete service' }
+  }
+}
+
+
+export async function reorderServices(orderedIds: string[]) {
+  try {
+    const user = await requireAdmin()
+    
+    // Mettre à jour l'ordre de chaque service
+    const updates = orderedIds.map((id, index) => 
+      prisma.service.update({
+        where: { id },
+        data: { order: index }
+      })
+    )
+    await Promise.all(updates)
+    
+    // 📝 Audit trail
+    await logAdminAction(
+      user.id,
+      user.email,
+      'REORDER_SERVICES',
+      'Service',
+      undefined,
+      { count: orderedIds.length }
+    )
+    
+    revalidatePath('/admin')
+    revalidatePath('/')
+    return { success: true }
+  } catch (error) {
+    console.error("Failed to reorder services:", error)
+    return { success: false, error: 'Failed to reorder services' }
   }
 }
