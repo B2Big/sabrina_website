@@ -41,7 +41,23 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
   }
 
   const handleEdit = (service: any) => {
-    setEditingService(service)
+    // Transformer les données Prisma en ServiceFormData
+    const formData: ServiceFormData = {
+      id: service.id,
+      title: service.title,
+      category: service.category,
+      price: service.price,
+      originalPrice: service.originalPrice || '',
+      description: service.description,
+      duration: service.duration || '',
+      objective: service.objective || '',
+      popular: service.popular,
+      bestValue: service.bestValue,
+      note: service.note || '',
+      features: service.features || [],
+      paymentLink: service.paymentLink || ''
+    }
+    setEditingService(formData)
     setIsFormOpen(true)
   }
 

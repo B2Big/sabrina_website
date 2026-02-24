@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ServiceFormData } from '@/app/admin/actions'
 import { Plus, X, Trash2 } from 'lucide-react'
@@ -21,26 +21,41 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
   // Helper to strip " €" for the form display
   const cleanPrice = (price: string) => price.replace(/[^0-9.]/g, '');
 
-  const [formData, setFormData] = useState<ServiceFormData>(initialData ? {
-    ...initialData,
-    price: cleanPrice(initialData.price),
-    originalPrice: initialData.originalPrice ? cleanPrice(initialData.originalPrice) : ''
-  } : {
-    title: '',
-    category: 'Coaching',
-    price: '',
-    description: '',
-    features: [],
-    popular: false,
-    bestValue: false,
-    originalPrice: '',
-    duration: '',
-    objective: '',
-    note: '',
-    paymentLink: ''
-  })
+  // Fonction pour créer le state initial
+  const createInitialState = (data?: ServiceFormData | null): ServiceFormData => {
+    if (!data) {
+      return {
+        title: '',
+        category: 'Coaching',
+        price: '',
+        description: '',
+        features: [],
+        popular: false,
+        bestValue: false,
+        originalPrice: '',
+        duration: '',
+        objective: '',
+        note: '',
+        paymentLink: ''
+      }
+    }
+    
+    const hasOriginalPrice = data.originalPrice && data.originalPrice.trim() !== '' && data.originalPrice !== 'null' && data.originalPrice !== 'undefined'
+    
+    return {
+      ...data,
+      price: cleanPrice(data.price || ''),
+      originalPrice: hasOriginalPrice ? cleanPrice(data.originalPrice) : ''
+    }
+  }
 
+  const [formData, setFormData] = useState<ServiceFormData>(() => createInitialState(initialData))
   const [newFeature, setNewFeature] = useState('')
+
+  // Synchroniser le state quand initialData change
+  useEffect(() => {
+    setFormData(createInitialState(initialData))
+  }, [initialData?.id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -133,17 +148,31 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">Prix Barré (Optionnel)</label>
-              <div className="relative">
-                <input
-                  name="originalPrice"
-                  type="number"
-                  value={formData.originalPrice || ''}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900/10 outline-none pr-8"
-                  placeholder="70"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">€</span>
+              <div className="relative flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    name="originalPrice"
+                    type="number"
+                    value={formData.originalPrice || ''}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-900/10 outline-none pr-8"
+                    placeholder="70"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">€</span>
+                </div>
+                {formData.originalPrice ? (
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, originalPrice: '' }))}
+                    className="px-3 py-2 bg-rose-500 text-white hover:bg-rose-600 border border-rose-500 hover:border-rose-600 rounded-lg transition-all flex items-center justify-center shadow-md font-bold"
+                    title="Supprimer le prix barré"
+                    style={{ minWidth: '44px' }}
+                  >
+                    <X size={18} strokeWidth={3} />
+                  </button>
+                ) : null}
               </div>
+              <p className="text-xs text-slate-400">Laissez vide ou cliquez sur ✕ pour supprimer le prix barré</p>
             </div>
           </div>
           
@@ -255,8 +284,12 @@ export function ServiceForm({ initialData, onSubmit, onCancel, isLoading }: Serv
                 if (finalData.price && !finalData.price.includes('€')) {
                     finalData.price = `${finalData.price.trim()} €`;
                 }
+                // Si le prix barré est vide, on envoie null pour le supprimer
+                // Sinon on ajoute le symbole € si nécessaire
                 if (finalData.originalPrice && !finalData.originalPrice.includes('€')) {
                     finalData.originalPrice = `${finalData.originalPrice.trim()} €`;
+                } else if (!finalData.originalPrice) {
+                    finalData.originalPrice = null as any;
                 }
                 onSubmit(finalData);
             }} 
