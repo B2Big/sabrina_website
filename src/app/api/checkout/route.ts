@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/db-services';
 import { checkoutSchema } from '@/lib/validations/schemas';
 import { rateLimit, RateLimitConfigs, getClientIp, rateLimitExceededResponse } from '@/lib/rate-limit';
+import { sendNotificationToSabrinaSurPlace } from '@/lib/resend';
 import { z } from 'zod';
 
 // IMPORTANT: Forcer le runtime Node.js pour Prisma
@@ -116,6 +117,29 @@ export async function POST(req: Request) {
     });
 
     console.log('✅ [CHECKOUT] Réservation créée:', reservation.id.substring(0,8)+'...');
+
+    // 📧 EMAIL INSTANTANÉ - Notifier Sabrina immédiatement (avant paiement)
+    // C'est le "Double Déclencheur" - l'email de confirmation paiement viendra après via webhook
+    try {
+      await sendNotificationToSabrinaSurPlace({
+        reservationId: reservation.id,
+        customerName: customerName,
+        customerEmail: customerEmail,
+        customerPhone: customerPhone,
+        services: servicesFromDb.map(s => ({
+          title: s.title,
+          price: s.price.replace(/[^0-9.]/g, ''),
+          quantity: items.find(i => i.id === s.id)?.quantity || 1
+        })),
+        total: (totalAmount / 100).toFixed(2),
+        message: message || null,
+        requestedDate: body.serviceDate ? new Date(body.serviceDate) : null,
+      });
+      console.log('📧 [CHECKOUT] Email instantané envoyé à Sabrina');
+    } catch (emailError) {
+      console.error('❌ [CHECKOUT] Erreur envoi email instantané:', emailError);
+      // Non bloquant - on continue même si l'email échoue
+    }
 
     // Créer la session Stripe
     const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';

@@ -3,6 +3,57 @@
 import { CONTACT_INFO } from '@/data/content';
 
 export function StructuredData() {
+  // 0. Person - Sabrina Perez (Propriétaire/Founder)
+  const personOwner = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': 'https://sab-fit.com/#sabrina-perez',
+    name: 'Sabrina Perez',
+    givenName: 'Sabrina',
+    familyName: 'Perez',
+    jobTitle: 'Coach Sportif & Masseuse Professionnelle',
+    description: 'Fondatrice de Sab-Fit, coach sportif certifiée et praticienne en massages bien-être avec 15 ans d\'expérience dans le Var (83).',
+    url: 'https://sab-fit.com',
+    image: 'https://sab-fit.com/img/sabrina/sab.webp',
+    email: 'contact@sab-fit.com',
+    telephone: CONTACT_INFO.phone,
+    sameAs: [
+      'https://www.instagram.com/sab.fit_coaching83'
+    ],
+    worksFor: {
+      '@type': 'ProfessionalService',
+      '@id': 'https://sab-fit.com/#business'
+    },
+    alumniOf: [
+      {
+        '@type': 'EducationalOrganization',
+        name: 'Coach Référent - Diplôme d\'État'
+      },
+      {
+        '@type': 'EducationalOrganization',
+        name: 'BP JEPS AGFF (Activités Gymniques de la Forme et de Force)'
+      },
+      {
+        '@type': 'EducationalOrganization',
+        name: 'Préparation physique - Diplôme fédéral'
+      }
+    ],
+    knowsAbout: [
+      'Coaching sportif personnalisé',
+      'Perte de poids et remodelage corporel',
+      'Préparation physique',
+      'Rééducation post-natale',
+      'Madérothérapie',
+      'Massage sportif',
+      'Massage californien',
+      'Drainage lymphatique'
+    ],
+    areaServed: {
+      '@type': 'City',
+      name: 'Var (83)'
+    }
+  };
+
   // 1. ProfessionalService - Sabrina comme professionnelle
   const professionalService = {
     '@context': 'https://schema.org',
@@ -18,6 +69,14 @@ export function StructuredData() {
     ],
     telephone: CONTACT_INFO.phone,
     email: 'contact@sab-fit.com',
+    founder: {
+      '@type': 'Person',
+      '@id': 'https://sab-fit.com/#sabrina-perez'
+    },
+    owner: {
+      '@type': 'Person',
+      '@id': 'https://sab-fit.com/#sabrina-perez'
+    },
     priceRange: '€€',
     currenciesAccepted: 'EUR',
     paymentAccepted: ['Cash', 'Credit Card', 'PayPal', 'Stripe'],
@@ -341,6 +400,7 @@ export function StructuredData() {
 
   // Combiner tous les schémas
   const structuredData = [
+    personOwner,
     professionalService,
     webSite,
     webPage,
