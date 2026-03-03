@@ -457,7 +457,7 @@ function ContactFormContent() {
                     ) : (
                         <>
                             <CreditCard className="w-5 h-5 shrink-0" />
-                            <span className="whitespace-normal leading-tight">Réserver + Paiement CB</span>
+                            <span className="whitespace-normal leading-tight">Réserver et payer en ligne</span>
                         </>
                     )}
                 </Button>
