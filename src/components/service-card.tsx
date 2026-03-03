@@ -157,9 +157,9 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
         <div className="relative z-10 mt-auto pt-6 border-t border-slate-100 flex flex-col gap-4">
           <div className="flex items-center justify-between">
              <div className="text-left">
-                {(service.originalPrice || isBestValue) && (
+                {service.originalPrice && (
                     <span className="block text-xs text-slate-400 line-through decoration-red-400 decoration-2">
-                        {service.originalPrice || (isBestValue ? '500 €' : '')}
+                        {service.originalPrice}
                     </span>
                 )}
                 <span className={cn("text-2xl font-black tracking-tight", isBestValue ? "text-teal-600" : "text-slate-900")}>
