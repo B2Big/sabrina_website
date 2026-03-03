@@ -206,7 +206,7 @@ await sendNotificationToSabrinaSurPlace({
 
 ## 3. 🔍 OPTIMISATION GEO (Generative Engine Optimization)
 
-### 3.1 JSON-LD Ajouté - Person (Sabrina Perez)
+### 3.1 JSON-LD Ajouté - Person (Sabrina Compan)
 
 **Fichier** : `src/components/json-ld.tsx`
 
@@ -215,7 +215,7 @@ await sendNotificationToSabrinaSurPlace({
   "@context": "https://schema.org",
   "@type": "Person",
   "@id": "https://sab-fit.com/#sabrina-perez",
-  "name": "Sabrina Perez",
+  "name": "Sabrina Compan",
   "jobTitle": "Coach Sportif & Masseuse Professionnelle",
   "description": "Fondatrice de Sab-Fit, coach sportif certifiée...",
   "url": "https://sab-fit.com",
@@ -267,7 +267,7 @@ Exemples de questions :
 
 | Schéma | Type | Objectif |
 |--------|------|----------|
-| Person | Sabrina Perez | Identité du propriétaire (E-E-A-T) |
+| Person | Sabrina Compan | Identité du propriétaire (E-E-A-T) |
 | ProfessionalService | Sab-Fit | Entité principale |
 | WebSite | sab-fit.com | Structure site |
 | WebPage | Page d'accueil | Contenu spécifique |
@@ -342,7 +342,7 @@ curl -X POST https://sab-fit.com/api/webhooks/stripe \
 ### 5.3 SEO/GEO
 - [ ] Valider le JSON-LD sur https://validator.schema.org/
 - [ ] Tester Rich Results : https://search.google.com/test/rich-results
-- [ ] Vérifier que Sabrina Perez apparaît dans les données structurées
+- [ ] Vérifier que Sabrina Compan apparaît dans les données structurées
 
 ### 5.4 Webhook Stripe
 - [ ] Vérifier l'URL dans Stripe Dashboard (sans www)

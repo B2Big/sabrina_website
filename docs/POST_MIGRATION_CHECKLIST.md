@@ -78,7 +78,7 @@ stripe trigger checkout.session.completed
 1. Aller sur https://validator.schema.org/
 2. Entrer : `https://sab-fit.com` (ou localhost en copiant le HTML)
 3. **Vérifier** :
-   - ✅ `Person` - Sabrina Perez présent
+   - ✅ `Person` - Sabrina Compan présent
    - ✅ `ProfessionalService` - Sab-Fit présent
    - ✅ `FAQPage` - Questions présentes
    - ✅ Pas d'erreur de structure
@@ -193,7 +193,7 @@ WITH CHECK (true);
 |-----------|------------|--------|
 | RLS Reservations | 5 politiques créées | ✅ Actif |
 | Email Double Déclencheur | Instant + Payment | ✅ Implémenté |
-| JSON-LD Person | Sabrina Perez ajoutée | ✅ Implémenté |
+| JSON-LD Person | Sabrina Compan ajoutée | ✅ Implémenté |
 | Webhook URL | Vérification www | ⚠️ À vérifier |
 
 ---
