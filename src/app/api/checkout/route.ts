@@ -3,7 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { prisma } from '@/lib/db-services';
 import { checkoutSchema } from '@/lib/validations/schemas';
 import { rateLimit, RateLimitConfigs, getClientIp, rateLimitExceededResponse } from '@/lib/rate-limit';
-import { sendNotificationToSabrinaSurPlace, sendConfirmationToCustomerSurPlace } from '@/lib/resend';
+import { sendNotificationToSabrinaStripePending, sendConfirmationToCustomerStripePending } from '@/lib/resend';
 import { z } from 'zod';
 
 // IMPORTANT: Forcer le runtime Node.js pour Prisma
@@ -118,11 +118,11 @@ export async function POST(req: Request) {
 
     console.log('✅ [CHECKOUT] Réservation créée:', reservation.id.substring(0,8)+'...');
 
-    // 📧 EMAILS INSTANTANÉS (Double Déclencheur - Étape 1)
-    // Envoyés avant redirection Stripe, confirmation finale viendra après paiement via webhook
+    // 📧 EMAILS INSTANTANÉS - Thème BLEU Stripe (Double Déclencheur - Étape 1)
+    // Différencié du thème Orange "Sur Place" pour identification rapide
     try {
-      // Email à Sabrina (notification admin)
-      await sendNotificationToSabrinaSurPlace({
+      // Email à Sabrina (notification admin - BLEU Stripe)
+      await sendNotificationToSabrinaStripePending({
         reservationId: reservation.id,
         customerName: customerName,
         customerEmail: customerEmail,
@@ -136,10 +136,10 @@ export async function POST(req: Request) {
         message: message || null,
         requestedDate: body.serviceDate ? new Date(body.serviceDate) : null,
       });
-      console.log('📧 [CHECKOUT] Email instantané envoyé à Sabrina');
+      console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé à Sabrina');
 
-      // Email au client (confirmation demande en attente de paiement)
-      await sendConfirmationToCustomerSurPlace({
+      // Email au client (confirmation demande - BLEU Stripe)
+      await sendConfirmationToCustomerStripePending({
         customerName: customerName,
         customerEmail: customerEmail,
         reservationId: reservation.id,
@@ -151,9 +151,9 @@ export async function POST(req: Request) {
         total: (totalAmount / 100).toFixed(2),
         requestedDate: body.serviceDate ? new Date(body.serviceDate) : null,
       });
-      console.log('📧 [CHECKOUT] Email instantané envoyé au client');
+      console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé au client');
     } catch (emailError) {
-      console.error('❌ [CHECKOUT] Erreur envoi email instantané:', emailError);
+      console.error('❌ [CHECKOUT] Erreur envoi email BLEU Stripe:', emailError);
       // Non bloquant - on continue même si l'email échoue
     }
 
