@@ -3,14 +3,14 @@
 import { CONTACT_INFO } from '@/data/content';
 
 export function StructuredData() {
-  // 0. Person - Sabrina Perez (Propriétaire/Founder)
+  // 0. Person - Sabrina Compan (Propriétaire/Founder)
   const personOwner = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    '@id': 'https://sab-fit.com/#sabrina-perez',
-    name: 'Sabrina Perez',
+    '@id': 'https://sab-fit.com/#sabrina-compan',
+    name: 'Sabrina Compan',
     givenName: 'Sabrina',
-    familyName: 'Perez',
+    familyName: 'Compan',
     jobTitle: 'Coach Sportif & Masseuse Professionnelle',
     description: 'Fondatrice de Sab-Fit, coach sportif certifiée et praticienne en massages bien-être avec 15 ans d\'expérience dans le Var (83).',
     url: 'https://sab-fit.com',
@@ -47,11 +47,7 @@ export function StructuredData() {
       'Massage sportif',
       'Massage californien',
       'Drainage lymphatique'
-    ],
-    areaServed: {
-      '@type': 'City',
-      name: 'Var (83)'
-    }
+    ]
   };
 
   // 1. ProfessionalService - Sabrina comme professionnelle
@@ -71,11 +67,11 @@ export function StructuredData() {
     email: 'contact@sab-fit.com',
     founder: {
       '@type': 'Person',
-      '@id': 'https://sab-fit.com/#sabrina-perez'
+      '@id': 'https://sab-fit.com/#sabrina-compan'
     },
     owner: {
       '@type': 'Person',
-      '@id': 'https://sab-fit.com/#sabrina-perez'
+      '@id': 'https://sab-fit.com/#sabrina-compan'
     },
     priceRange: '€€',
     currenciesAccepted: 'EUR',
