@@ -5,6 +5,7 @@ import { checkoutSchema } from '@/lib/validations/schemas';
 import { rateLimit, RateLimitConfigs, getClientIp, rateLimitExceededResponse } from '@/lib/rate-limit';
 import { sendNotificationToSabrinaStripePending, sendConfirmationToCustomerStripePending } from '@/lib/resend';
 import { z } from 'zod';
+import Stripe from 'stripe';
 
 // IMPORTANT: Forcer le runtime Node.js pour Prisma
 export const runtime = 'nodejs'
@@ -161,8 +162,22 @@ export async function POST(req: Request) {
     const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
     console.log('💳 [CHECKOUT] Création session Stripe...');
 
+    // Déterminer les méthodes de paiement selon la préférence
+    const preferredMethod = body.preferredMethod;
+    let paymentMethodTypes: Stripe.Checkout.SessionCreateParams.PaymentMethodType[];
+    
+    if (preferredMethod === 'klarna') {
+      // Uniquement Klarna pour le bouton "Payer en 3x"
+      paymentMethodTypes = ['klarna'];
+      console.log('💳 [CHECKOUT] Mode paiement: KLANRA 3x uniquement');
+    } else {
+      // Toutes les méthodes disponibles
+      paymentMethodTypes = ['card', 'paypal', 'klarna'];
+      console.log('💳 [CHECKOUT] Mode paiement: Toutes méthodes');
+    }
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'paypal'],
+      payment_method_types: paymentMethodTypes,
       line_items: lineItems,
       mode: 'payment',
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,

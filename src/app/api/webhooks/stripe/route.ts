@@ -111,7 +111,9 @@ export async function POST(req: Request) {
  * Met à jour la réservation et envoie les emails de confirmation "PAYÉ"
  */
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  console.log('💳 [WEBHOOK] Paiement réussi')
+  // Détecter le mode de paiement utilisé
+  const paymentMethod = session.payment_method_types?.[0] || 'unknown';
+  console.log(`💳 [WEBHOOK] Paiement réussi via ${paymentMethod.toUpperCase()}`)
 
   try {
     // 1. RÉCUPÉRER LA RÉSERVATION PAR LE SESSION ID STRIPE

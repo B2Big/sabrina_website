@@ -120,7 +120,7 @@ export async function sendConfirmationToCustomerSurPlace({
                 Le règlement de <strong>${safeTotal} €</strong> se fera <strong>directement lors de votre rendez-vous</strong>.
               </p>
               <p style="margin: 10px 0 0 0; color: #92400e; font-size: 14px;">
-                ✅ Moyens acceptés : Espèces, Carte bancaire, PayPal
+                ✅ Moyens acceptés : Espèces, Carte bancaire, PayPal, Klarna 3x
               </p>
             </div>
 
@@ -725,7 +725,7 @@ export async function sendConfirmationToCustomerStripePending({
                 Vous allez être redirigé vers <strong>Stripe</strong> pour effectuer le paiement sécurisé de <strong>${safeTotal} €</strong>.
               </p>
               <p style="margin: 10px 0 0 0; color: #1E40AF; font-size: 14px;">
-                ✅ Paiement sécurisé par carte bancaire ou PayPal
+                ✅ Paiement sécurisé : CB, PayPal, ou Klarna 3x sans frais
               </p>
             </div>
 

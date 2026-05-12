@@ -156,7 +156,7 @@ function ContactFormContent() {
                     {/* Payment Info */}
                     <div className="bg-white/50 border border-slate-100 rounded-xl p-3 flex flex-col gap-2">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Options de règlement</p>
-                        <div className="flex items-center justify-center gap-4 text-slate-600">
+                        <div className="flex items-center justify-center gap-3 text-slate-600 flex-wrap">
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[10px] font-bold">Espèces</span>
                             </div>
@@ -167,6 +167,10 @@ function ContactFormContent() {
                             <div className="w-1 h-1 rounded-full bg-slate-200" />
                             <div className="flex items-center gap-1.5">
                                 <span className="text-[10px] font-bold">PayPal</span>
+                            </div>
+                            <div className="w-1 h-1 rounded-full bg-slate-200" />
+                            <div className="flex items-center gap-1.5 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+                                <span className="text-[10px] font-bold text-pink-600">✓ Klarna 3x</span>
                             </div>
                         </div>
                         <p className="text-[10px] text-slate-400 text-center italic">Sur place ou en ligne</p>
@@ -302,6 +306,13 @@ function ContactFormContent() {
                   <Globe className="w-4 h-4 text-[#003087]" />
                   <span className="text-xs font-bold text-slate-700">PayPal</span>
                </div>
+               <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-pink-50 to-pink-100 border-2 border-pink-300 rounded-lg shadow-sm whitespace-nowrap">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                    <rect width="24" height="24" rx="4" fill="#0A0B09"/>
+                    <path d="M12 6c-2.5 0-4 1.5-4 3.5 0 1.5.8 2.3 2 3l-1.5 4h3l.8-2.5h1.4l-.8 2.5h3l1.5-4.5c.5-1.5-.5-3-2.5-3H12z" fill="#FFB3C7"/>
+                  </svg>
+                  <span className="text-xs font-bold text-pink-700">Klarna 3x sans frais</span>
+               </div>
             </div>
           </div>
 
@@ -370,11 +381,12 @@ function ContactFormContent() {
             {items.length > 0 && (
                 <div className="relative flex items-center justify-center my-2">
                     <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200"></span></div>
-                    <span className="relative bg-white px-2 text-[10px] text-slate-400 uppercase font-bold">OU</span>
+                    <span className="relative bg-white px-2 text-[10px] text-slate-400 uppercase font-bold">OU payer en ligne</span>
                 </div>
             )}
 
             {items.length > 0 && (
+                <>
                 <Button
                     type="button"
                     disabled={isPending || isCheckoutLoading}
@@ -426,6 +438,7 @@ function ContactFormContent() {
                                     customerPhone: phoneInput.value.trim(),
                                     message: messageText,
                                     newsletter: newsletterOptIn,
+                                    preferredMethod: 'all'
                                 }),
                             });
 
@@ -457,10 +470,115 @@ function ContactFormContent() {
                     ) : (
                         <>
                             <CreditCard className="w-5 h-5 shrink-0" />
-                            <span className="whitespace-normal leading-tight">Réserver et payer en ligne</span>
+                            <span className="whitespace-normal leading-tight">Payer par CB ou PayPal</span>
                         </>
                     )}
                 </Button>
+
+                {/* Bouton Klarna 3x - Visible uniquement si total >= 35€ */}
+                {Number(total) >= 35 && (
+                    <Button
+                        type="button"
+                        disabled={isPending || isCheckoutLoading}
+                        onClick={async () => {
+                            try {
+                                setIsCheckoutLoading(true);
+                                setCheckoutError(null);
+
+                                // Valider les champs obligatoires avant checkout
+                                const nameInput = document.getElementById('name') as HTMLInputElement;
+                                const emailInput = document.getElementById('email') as HTMLInputElement;
+                                const phoneInput = document.getElementById('phone') as HTMLInputElement;
+
+                                if (!cguAccepted) {
+                                    setCheckoutError('Veuillez accepter les Conditions Générales d\'Utilisation pour continuer.');
+                                    setIsCheckoutLoading(false);
+                                    return;
+                                }
+
+                                if (!nameInput?.value?.trim() || !emailInput?.value?.trim() || !phoneInput?.value?.trim()) {
+                                    setCheckoutError('Veuillez remplir tous les champs obligatoires (nom, email, téléphone) avant de procéder au paiement.');
+                                    setIsCheckoutLoading(false);
+                                    if (!nameInput?.value?.trim()) nameInput?.focus();
+                                    else if (!emailInput?.value?.trim()) emailInput?.focus();
+                                    else phoneInput?.focus();
+                                    return;
+                                }
+
+                                if (!emailInput.checkValidity()) {
+                                    setCheckoutError('Veuillez entrer une adresse email valide.');
+                                    emailInput?.focus();
+                                    setIsCheckoutLoading(false);
+                                    return;
+                                }
+
+                                // 🔒 Envoyer id, quantity + infos client avec preference Klarna
+                                const checkoutItems = items.map(item => ({
+                                    id: item.id,
+                                    quantity: item.quantity
+                                }));
+
+                                const res = await fetch('/api/checkout', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        items: checkoutItems,
+                                        customerName: nameInput.value.trim(),
+                                        customerEmail: emailInput.value.trim(),
+                                        customerPhone: phoneInput.value.trim(),
+                                        message: messageText,
+                                        newsletter: newsletterOptIn,
+                                        preferredMethod: 'klarna'
+                                    }),
+                                });
+
+                                const data = await res.json();
+
+                                if (!res.ok) {
+                                    throw new Error(data.error || 'Erreur lors du paiement');
+                                }
+
+                                if (data.url) {
+                                    window.location.href = data.url;
+                                } else {
+                                    throw new Error('URL de paiement manquante');
+                                }
+                            } catch (error) {
+                                console.error('❌ Erreur checkout Klarna:', error);
+                                setCheckoutError(error instanceof Error ? error.message : 'Erreur lors du paiement. Veuillez réessayer.');
+                            } finally {
+                                setIsCheckoutLoading(false);
+                            }
+                        }}
+                        className="w-full h-auto min-h-[4rem] py-3 text-sm sm:text-base md:text-lg rounded-2xl bg-[#FFB3C7] text-[#0A0B09] hover:bg-[#FF9BB5] shadow-xl shadow-pink-500/20 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 px-4 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none border-2 border-pink-300"
+                    >
+                        {isCheckoutLoading ? (
+                            <>
+                                <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                                <span className="whitespace-normal leading-tight">Chargement...</span>
+                            </>
+                        ) : (
+                            <>
+                                {/* Icône Klarna style */}
+                                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none">
+                                    <rect width="24" height="24" rx="4" fill="#0A0B09"/>
+                                    <path d="M12 6c-2.5 0-4 1.5-4 3.5 0 1.5.8 2.3 2 3l-1.5 4h3l.8-2.5h1.4l-.8 2.5h3l1.5-4.5c.5-1.5-.5-3-2.5-3H12z" fill="#FFB3C7"/>
+                                </svg>
+                                <span className="whitespace-normal leading-tight">Payer en 3x sans frais</span>
+                            </>
+                        )}
+                    </Button>
+                )}
+                
+                {/* Info Klarna si montant insuffisant */}
+                {Number(total) < 35 && Number(total) > 0 && (
+                    <div className="text-center py-2 px-4 bg-pink-50 border border-pink-200 rounded-xl">
+                        <p className="text-xs text-pink-700">
+                            💡 Ajoutez des services pour atteindre <strong>35€</strong> et accéder au paiement en 3x
+                        </p>
+                    </div>
+                )}
+                </>
             )}
           </div>
         </>
