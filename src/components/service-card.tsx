@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Clock, TrendingUp, Sparkles, Dumbbell, Star, Zap, Check, Plus, Minus } from 'lucide-react';
+import { Clock, TrendingUp, Sparkles, Dumbbell, Star, Zap, Check, Plus, Minus, CreditCard } from 'lucide-react';
 import { type Service } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -44,6 +44,10 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
   // Marketing Badges
   const isPopular = service.popular;
   const isBestValue = service.bestValue;
+
+  // 💳 Klarna 3x — visible si prix >= 35€
+  const numericPrice = parseInt(service.price.replace(/\s/g, '').replace(/[^0-9]/g, '')) || 0;
+  const showKlarna = numericPrice >= 35;
 
   return (
     <motion.div
@@ -165,6 +169,12 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
                 <span className={cn("text-2xl font-black tracking-tight", isBestValue ? "text-teal-600" : "text-slate-900")}>
                     {service.price}
                 </span>
+                {showKlarna && (
+                    <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-black text-pink-600 bg-pink-50 border border-pink-200 px-2.5 py-1 rounded-full">
+                        <CreditCard className="w-3 h-3" />
+                        3x sans frais
+                    </span>
+                )}
              </div>
           </div>
 
