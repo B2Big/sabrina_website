@@ -378,19 +378,48 @@ const SERVICES = [
       "Travail de la nuque et des trapèzes",
       "Sérum & crème hydratante glow"
     ]
+  },
+
+  {
+    id: "massage-cible",
+    category: "Massages",
+    title: "Massage ciblé",
+    duration: "30 min",
+    price: "45 €",
+    description: "Massage ciblé sur une zone spécifique : dos ou jambes, selon vos besoins du moment. Cette séance courte mais efficace permet de soulager les tensions musculaires, favoriser la récupération et apporter une sensation immédiate de détente et de légèreté.",
+    objective: "Soulagement rapide & récupération ciblée.",
+    features: [
+      "Dos : relâche les tensions, le stress et les douleurs musculaires",
+      "Jambes : parfait après le sport ou en cas de jambes lourdes",
+      "Détend les muscles en profondeur",
+      "Favorise la récupération sportive",
+      "Améliore la circulation",
+      "Pause récupération idéale au quotidien"
+    ]
   }
 ]
 
 async function main() {
-  console.log('🧹 Nettoyage des anciennes offres...')
-  await prisma.service.deleteMany()
-  console.log('✅ Anciennes offres supprimées')
-
-  console.log('🌱 Création des nouvelles offres...')
+  console.log('🌱 Mise à jour des offres (mode sécurisé — upsert, pas de suppression)...')
 
   for (const service of SERVICES as any[]) {
-    const result = await prisma.service.create({
-      data: {
+    const result = await prisma.service.upsert({
+      where: { id: service.id },
+      update: {
+        title: service.title,
+        category: service.category,
+        price: service.price,
+        originalPrice: service.originalPrice || null,
+        description: service.description,
+        duration: service.duration || null,
+        objective: service.objective || null,
+        popular: service.popular || false,
+        bestValue: service.bestValue || false,
+        note: service.note || null,
+        features: service.features || [],
+        paymentLink: service.paymentLink || null
+      },
+      create: {
         id: service.id,
         title: service.title,
         category: service.category,
@@ -409,8 +438,9 @@ async function main() {
     console.log(`✅ ${result.title} — ${result.price}`)
   }
 
-  console.log('\n🎉 Refonte terminée !')
-  console.log(`📊 ${SERVICES.length} offres créées avec succès`)
+  console.log('\n🎉 Mise à jour terminée !')
+  console.log(`📊 ${SERVICES.length} offres synchronisées avec succès`)
+  console.log('⚠️  Les services ajoutés via le dashboard ne sont PAS supprimés.')
 }
 
 main()
