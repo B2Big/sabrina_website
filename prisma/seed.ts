@@ -328,11 +328,13 @@ const SERVICES = [
   {
     id: "maderotherapie-1h30",
     category: "Massages",
-    title: "Madérothérapie",
+    title: "Madérothérapie Intense",
     duration: "1h30",
     price: "90 €",
     description: "Soin remodelant et drainant réalisé à l'aide d'outils en bois spécialement conçus pour stimuler la circulation, lisser la peau et relancer le système lymphatique. En 1h30, profitez d'une séance complète pour cibler en profondeur les zones de rétention d'eau, les tensions musculaires et l'aspect cellulite.",
     objective: "Silhouette, drainage & récupération intense.",
+    popular: false,
+    bestValue: false,
     features: [
       "Séance longue pour un travail en profondeur",
       "Active la circulation sanguine et lymphatique",
