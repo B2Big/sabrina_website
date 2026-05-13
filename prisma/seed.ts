@@ -306,6 +306,76 @@ const SERVICES = [
       "Travail en profondeur complet",
       "Transformation corps & esprit"
     ]
+  },
+
+  {
+    id: "maderotherapie-1h",
+    category: "Massages",
+    title: "Madérothérapie",
+    duration: "1h",
+    price: "70 €",
+    description: "Soin remodelant et drainant réalisé à l'aide d'outils en bois spécialement conçus pour stimuler la circulation, lisser la peau et relancer le système lymphatique. Cette séance permet de cibler les zones de rétention d'eau, les tensions musculaires et l'aspect cellulite tout en offrant un vrai moment de récupération et de bien-être.",
+    objective: "Silhouette, drainage & récupération.",
+    features: [
+      "Active la circulation sanguine et lymphatique",
+      "Réduit la sensation de jambes lourdes",
+      "Favorise le déstockage des tensions et toxines",
+      "Améliore l'aspect de la peau et la tonicité",
+      "Idéal en complément d'une routine sportive"
+    ]
+  },
+
+  {
+    id: "maderotherapie-1h30",
+    category: "Massages",
+    title: "Madérothérapie",
+    duration: "1h30",
+    price: "90 €",
+    description: "Soin remodelant et drainant réalisé à l'aide d'outils en bois spécialement conçus pour stimuler la circulation, lisser la peau et relancer le système lymphatique. En 1h30, profitez d'une séance complète pour cibler en profondeur les zones de rétention d'eau, les tensions musculaires et l'aspect cellulite.",
+    objective: "Silhouette, drainage & récupération intense.",
+    features: [
+      "Séance longue pour un travail en profondeur",
+      "Active la circulation sanguine et lymphatique",
+      "Réduit la sensation de jambes lourdes",
+      "Améliore l'aspect de la peau et la tonicité",
+      "Idéal en complément d'une routine sportive"
+    ]
+  },
+
+  {
+    id: "massage-lymphatique",
+    category: "Massages",
+    title: "Massage lymphatique",
+    duration: "1h",
+    price: "70 €",
+    description: "Massage doux et drainant visant à stimuler la circulation lymphatique et aider le corps à éliminer les toxines naturellement. Ce soin apporte une profonde sensation de légèreté tout en favorisant la récupération et le bien-être général.",
+    objective: "Légèreté, drainage & élimination des toxines.",
+    features: [
+      "Réduit la sensation de jambes lourdes",
+      "Aide à diminuer la rétention d'eau",
+      "Favorise l'élimination des toxines",
+      "Apaise les tensions et la fatigue",
+      "Améliore la récupération sportive"
+    ]
+  },
+
+  {
+    id: "glow-recovery",
+    category: "Massages",
+    title: "Glow Recovery",
+    duration: "1h",
+    price: "60 €",
+    description: "Soin Signature Visage & Relaxation. Une véritable parenthèse de détente et de lâcher-prise. À travers des gestes doux et enveloppants, ce soin associe relaxation profonde, massage visage et relâchement des tensions au niveau de la nuque et des trapèzes.",
+    objective: "Détente, éclat du visage & lâcher-prise.",
+    note: "🔥 Offre découverte jusqu'à fin mai",
+    popular: true,
+    features: [
+      "Démaquillage, nettoyage & exfoliation",
+      "Masque hydratant + massage mains/pieds",
+      "Massage relaxant du visage",
+      "Travail de la nuque et des trapèzes",
+      "Sérum & crème hydratante glow"
+    ]
   }
 ]
 
