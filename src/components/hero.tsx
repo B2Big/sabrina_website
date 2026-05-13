@@ -3,9 +3,92 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from './ui/button';
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Activity } from 'lucide-react';
-import { ParallaxImage } from './ui/parallax-image';
+import { ArrowRight, Sparkles, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import { useState, useEffect, useCallback } from 'react';
+
+const HERO_IMAGES = [
+  { src: '/img/sabrina/hero/webp/11.webp', alt: 'Sabrina en séance de coaching fitness personnalisé' },
+  { src: '/img/sabrina/hero/webp/7.webp', alt: 'Massage bien-être relaxant et récupération' },
+  { src: '/img/sabrina/hero/webp/IMG_0439.webp', alt: 'Coaching sportif personnalisé dans le Var' },
+  { src: '/img/sabrina/hero/webp/IMG_0732.webp', alt: 'Séance de sport intense et bien-être' },
+  { src: '/img/sabrina/hero/webp/IMG_9611.webp', alt: 'Moment de détente et soin du corps' },
+];
+
+const SLIDE_INTERVAL = 5000;
+
+function HeroCarousel() {
+  const [current, setCurrent] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const nextSlide = useCallback(() => {
+    setCurrent((prev) => (prev + 1) % HERO_IMAGES.length);
+  }, []);
+
+  const prevSlide = useCallback(() => {
+    setCurrent((prev) => (prev - 1 + HERO_IMAGES.length) % HERO_IMAGES.length);
+  }, []);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(nextSlide, SLIDE_INTERVAL);
+    return () => clearInterval(interval);
+  }, [isPaused, nextSlide]);
+
+  return (
+    <div
+      className="relative aspect-[4/5] rounded-2xl overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {HERO_IMAGES.map((img, i) => (
+        <Image
+          key={img.src}
+          src={img.src}
+          alt={img.alt}
+          fill
+          className={`object-cover transition-opacity duration-700 ease-in-out will-change-[opacity] ${
+            i === current ? 'opacity-100 z-[1]' : 'opacity-0 z-0'
+          }`}
+          priority={i === 0}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          sizes="(max-width: 768px) 100vw, 40vw"
+          quality={80}
+        />
+      ))}
+
+      {/* Navigation flèches — desktop uniquement */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm flex items-center justify-center text-white transition-all opacity-0 md:opacity-100 focus:opacity-100"
+        aria-label="Image précédente"
+      >
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-sm flex items-center justify-center text-white transition-all opacity-0 md:opacity-100 focus:opacity-100"
+        aria-label="Image suivante"
+      >
+        <ChevronRight className="w-5 h-5" />
+      </button>
+
+      {/* Indicateurs */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        {HERO_IMAGES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === current ? 'bg-white w-6' : 'bg-white/50 w-2 hover:bg-white/70'
+            }`}
+            aria-label={`Aller à l'image ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function Hero() {
   const { scrollY } = useScroll();
@@ -101,15 +184,15 @@ export function Hero() {
             </div>
           </motion.div>
 
-          {/* Image Content - Fusion avec dégradé */}
+          {/* Image Content - Carrousel moderne */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 1, delay: 0.4 }}
             className="lg:w-2/5 w-full max-w-md lg:max-w-none relative"
           >
-            <div 
-              className="relative aspect-[4/5] rounded-2xl"
+            <div
+              className="relative rounded-2xl"
               style={{
                 maskImage: 'linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 2%, black 98%, transparent 100%)',
                 WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 2%, black 98%, transparent 100%)',
@@ -117,17 +200,9 @@ export function Hero() {
                 WebkitMaskComposite: 'source-in',
               }}
             >
-              <Image 
-                src="/img/sabrina/sab.webp" 
-                alt="Sabrina Coaching & Massage bien-être dans le Var" 
-                fill
-                className="object-cover rounded-2xl"
-                priority={true}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                quality={80}
-              />
+              <HeroCarousel />
             </div>
-            
+
             {/* Floating decoration */}
             <div className="absolute -bottom-6 -right-6 bg-training text-white p-6 rounded-3xl shadow-2xl z-20 hidden md:block animate-bounce">
               <span className="text-3xl font-black italic">Var (83)</span>

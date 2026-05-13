@@ -8,6 +8,7 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  turbopack: {},
   
   // Optimisation images pour performance mobile
   images: {
