@@ -14,8 +14,8 @@
 | **Hébergement** | ✅ Déployé | Netlify |
 | **Base de Données** | ✅ Opérationnelle | Supabase PostgreSQL |
 | **Authentification** | ✅ Active | Supabase Auth (2 users) |
-| **Paiements** | ✅ LIVE | Stripe (LIVE keys) |
-| **Emails** | ✅ Actif | Resend (domaine en vérification) |
+| **Paiements** | ✅ LIVE | Stripe (LIVE keys) + Klarna 3x |
+| **Emails** | ✅ Actif | Resend (domaine sab-fit.com vérifié) |
 | **SSL/HTTPS** | ✅ Actif | Certificat Netlify |
 | **RLS Database** | ✅ Activé | Toutes les tables protégées |
 
@@ -62,13 +62,24 @@
 - [x] CREDENTIAL_ROTATION.md - Nettoyage secrets exposés
 - [x] enable-rls.sql - Script SQL pour activer RLS
 
+#### ✅ Phase 5: Marketing & Conversion (Mai 2026)
+- [x] Refonte complète des 20 services avec copywriting marketing
+- [x] Carrousel hero moderne (5 images WebP, autoplay, navigation)
+- [x] Photo marquee double rangée (87 images optimisées)
+- [x] Scarcity badge avec compteur de disponibilité live
+- [x] Badges économies et prix barrés sur toutes les cards
+- [x] Badge Klarna "3x sans frais" conditionnel (≥35€)
+- [x] CTA "AJOUTER AU PANIER" redesigné
+- [x] 4 nouveaux services massage (Madérothérapie, Lymphatique, Glow Recovery)
+- [x] Paiement Klarna 3x intégré (bouton + checkout + emails)
+- [x] Seed Prisma sécurisé (upsert, pas de suppression)
+- [x] Service "Massage ciblé 30min/45€" ajouté en base
+
 #### ⏳ Tâches en Attente
-- [ ] **PRIORITÉ HAUTE**: Vérifier domaine Resend (attendre 24-48h DNS)
-- [ ] **PRIORITÉ HAUTE**: Créer email contact@sab-fit.com
-- [ ] **PRIORITÉ HAUTE**: Mettre à jour FROM_EMAIL dans src/lib/resend.ts
-- [ ] **PRIORITÉ HAUTE**: Test paiement réel avec petit montant (5€)
+- [x] **PRIORITÉ HAUTE**: Domaine Resend vérifié ✅
+- [x] **PRIORITÉ HAUTE**: Email contact@sab-fit.com configuré ✅
+- [x] **PRIORITÉ HAUTE**: FROM_EMAIL mis à jour dans src/lib/resend.ts ✅
 - [ ] **PRIORITÉ MOYENNE**: Google Business Profile pour SEO local
-- [ ] **PRIORITÉ MOYENNE**: Ajouter services réels via dashboard admin
 - [ ] **PRIORITÉ MOYENNE**: Tester intégration PayPal en production
 - [ ] **PRIORITÉ BASSE**: Analytics (Google Analytics / Plausible)
 - [ ] **PRIORITÉ BASSE**: Monitoring erreurs (Sentry)
@@ -1703,6 +1714,58 @@ b357b64 refactor: clean code - constantes, imports, sécurité
 079db7e seo: add E-E-A-T signals
 7eb0fa6 seo: add comprehensive JSON-LD structured data
 ```
+
+---
+
+## [Released] - 2026-05-12 — Marketing Release
+
+### 🚀 Major Features (Fonctionnalités Majeures)
+- **Carrousel Hero** : Remplacement de l'image statique par un carrousel moderne
+  - 5 images WebP optimisées (~0.77MB total, 1200px qualité 80)
+  - Autoplay 5s avec pause au hover (desktop)
+  - Navigation flèches + indicateurs pagination
+  - Transition CSS opacity GPU-accelerée (`will-change`)
+  - Première image `priority`+`eager` (LCP préservé)
+  - Aucune lib externe, 100% performant sur mobile
+
+- **Refonte Marketing Complète des 20 Services**
+  - Copywriting orienté bénéfices et transformation
+  - Psychologie des prix : prix barrés, économies calculées, prix/séance
+  - 4 nouveaux services massage :
+    - Madérothérapie (1h • 70€)
+    - Madérothérapie Intense (1h30 • 90€)
+    - Massage lymphatique (1h • 70€)
+    - Glow Recovery (1h • 60€ 🔥)
+  - Service "Massage ciblé" réintégré (30min • 45€)
+
+- **Scarcity Badge (Urgence)** : Nouveau composant sur chaque card
+  - Compteur de disponibilité pseudo-aléatoire (1-6 places)
+  - Décrémentation live toutes les 12-20 secondes
+  - 3 niveaux d'urgence : 🔴 Rouge pulse (1-2), 🟠 Orange (3), 🟢 Vert (4-6)
+
+- **Photo Marquee** : Carrousel d'images animé entre Coaching et Massage
+  - Double rangée (Row 1 gauche, Row 2 droite)
+  - 87 images WebP optimisées : ~73MB → ~1.6MB (-98%)
+
+- **Paiement Klarna 3x sans frais**
+  - Bouton rose dédié conditionnel (visible si total ≥ 35€)
+  - Paramètre `preferredMethod: 'klarna'` dans l'API checkout
+  - Mention dans les emails de confirmation
+
+- **Seed Prisma Sécurisé**
+  - `deleteMany()` remplacé par `upsert()`
+  - Les services ajoutés via le dashboard ne sont plus jamais supprimés
+  - 20 services synchronisés en production sans perte de données
+
+### 🛠 Fixes & Improvements
+- **Fix Turbopack** : Ajout `turbopack: {}` dans `next.config.ts` pour Next.js 16
+- **Fix Service Worker** : Désactivation temporaire du SW en dev pour éviter le cache agressif
+- **Optimisation images** : Script Sharp batch pour convertir JPEG → WebP
+
+### 📊 Métriques
+- Images optimisées : 87 fichiers, -98% de taille
+- Services en base : 20 (15 coaching/massage + 5 cures/packs)
+- Temps de build : ~20s (Turbopack)
 
 ---
 

@@ -1,8 +1,8 @@
 # Contexte du Projet Sabrina Coaching
 
-**Dernière mise à jour** : 2026-03-03
-**Version** : Admin Pro Release
-**Session** : 2026-02-20 à 2026-03-03
+**Dernière mise à jour** : 2026-05-12
+**Version** : Marketing Release
+**Session** : 2026-05-12
 
 ---
 
@@ -30,7 +30,7 @@ Le projet est désormais consolidé autour d'une **application web unique** (Nex
 | **Styling** | Tailwind CSS 4 + Framer Motion |
 | **Backend (BaaS)** | Supabase (PostgreSQL + Auth) |
 | **ORM** | Prisma v5 |
-| **Paiement** | Stripe Checkout |
+| **Paiement** | Stripe Checkout + Klarna 3x |
 | **Emails** | Resend API (domaine sab-fit.com vérifié) |
 | **Déploiement** | Netlify |
 
@@ -40,14 +40,15 @@ Le projet est désormais consolidé autour d'une **application web unique** (Nex
 
 ### Modèles Principaux :
 
-1. **services** : Prestations (Titre, Prix, Catégorie, etc.)
+1. **services** : Prestations (20 services — Coaching, Massages, Cures)
 2. **promotions** : Offres temporaires ("Panic Sell")
 3. **users** : Administrateurs (Sabrina)
-4. **reservations** : Réservations clients (NOUVEAU)
+4. **reservations** : Réservations clients
    - `status` : `attente_paiement_sur_place` | `paye_confirme` | `annule` | `termine`
    - `paymentMethod` : `sur_place` | `stripe`
    - `stripeSessionId`, `stripePaymentId`, `paidAt`
 5. **newsletter_subscribers** : Abonnés newsletter (RGPD)
+6. **admin_logs** : Audit trail des actions admin
 
 ---
 
@@ -56,9 +57,12 @@ Le projet est désormais consolidé autour d'une **application web unique** (Nex
 ### A. Partie Publique (Front-Office)
 
 #### Catalogue & Panier
-- **Catalogue Dynamique** : Services récupérés en temps réel depuis la BDD
+- **Catalogue Dynamique** : 20 services récupérés en temps réel depuis la BDD
 - **Panic Sell (Vente Flash)** : Bandeau d'alerte avec calcul auto des prix barrés
 - **Panier Flottant** : Affiche le total et permet la réservation
+- **Scarcity Badge** : Compteur de disponibilité live (1-6 places) avec urgence colorée
+- **Photo Marquee** : Double rangée d'images sport/massage animées
+- **Carrousel Hero** : 5 images optimisées WebP avec autoplay et navigation
 
 #### Réservation (DUAL FLOW)
 
@@ -103,6 +107,8 @@ Accessible via `/admin`
 - [x] URL webhook Stripe configurée (`www.sab-fit.com`)
 - [x] Variables d'environnement Netlify OK
 - [x] Paiement Stripe testé en production
+- [x] Klarna 3x configuré et fonctionnel
+- [x] Seed Prisma sécurisé (upsert, pas de suppression)
 - [ ] Analytics (Google Analytics / Plausible) - optionnel
 - [ ] Monitoring erreurs (Sentry) - optionnel
 
@@ -131,14 +137,18 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 |---------|------|
 | `src/app/actions.ts` | Server action réservation sur place |
 | `src/lib/resend.ts` | Templates emails (4 variants) |
-| `src/lib/audit.ts` | **Système d'audit trail (NOUVEAU)** |
+| `src/lib/audit.ts` | Système d'audit trail |
 | `src/app/api/webhooks/stripe/route.ts` | Handler webhook Stripe |
-| `src/app/api/admin/audit-logs/route.ts` | **API audit logs (NOUVEAU)** |
+| `src/app/api/admin/audit-logs/route.ts` | API audit logs |
 | `src/components/contact-form.tsx` | Formulaire réservation |
-| `src/components/admin/audit-log.tsx` | **Panel audit admin (NOUVEAU)** |
-| `src/app/admin/layout.tsx` | **Layout avec timeout 1h (NOUVEAU)** |
-| `src/lib/constants.ts` | **Constantes centralisées (NOUVEAU)** |
-| `prisma/schema.prisma` | Modèles Reservation, AdminLog |
+| `src/components/admin/audit-log.tsx` | Panel audit admin |
+| `src/app/admin/layout.tsx` | Layout avec timeout 1h |
+| `src/lib/constants.ts` | Constantes centralisées |
+| `prisma/schema.prisma` | Modèles Reservation, AdminLog, Service |
+| `src/components/hero.tsx` | **Carrousel hero 5 images (NOUVEAU)** |
+| `src/components/service-card.tsx` | **Cards marketing + scarcity (NOUVEAU)** |
+| `src/components/scarcity-badge.tsx` | **Badge urgence disponibilité (NOUVEAU)** |
+| `src/components/photo-marquee.tsx` | **Marquee images sport/massage (NOUVEAU)** |
 
 ---
 
@@ -160,6 +170,9 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 ## 9. Roadmap
 
 ### Court Terme
+- [x] **Refonte marketing des offres** — 20 services avec badges économies + scarcity
+- [x] **Carrousel hero** — 5 images WebP avec autoplay
+- [x] **Klarna 3x** — Paiement fractionné sans frais
 - [ ] **Dashboard réservations** - Vue liste des réservations clients dans /admin
 - [ ] **Export CSV** - Export des données audit et réservations
 - [ ] **Filtres audit avancés** - Par date, par action, par admin

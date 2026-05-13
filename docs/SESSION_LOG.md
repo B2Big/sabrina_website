@@ -1,5 +1,45 @@
 # Journal des Sessions - Sabrina PWA
 
+## Session 2026-05-12 — Marketing Aggréssif, Carrousel Hero & Seed Sécurisé
+
+**Agent** : Kimi Code CLI  
+**Focus** : Refonte marketing complète des 20 offres, carrousel hero moderne avec 5 images, paiement Klarna 3x, sécurisation du seed Prisma  
+**Commits** : 4 commits (`f4b7b59` à `ce0d3a7`)  
+
+---
+
+### ✅ Implémenté
+
+#### 1. Carrousel Hero Performant
+- Remplacement image statique par carrousel 5 images WebP optimisées
+- Autoplay 5s, pause hover, flèches desktop, indicateurs pagination
+- Transition CSS opacity GPU-accelerée, pas de lib externe
+- Première image `priority`+`eager` (LCP préservé)
+
+#### 2. Refonte Marketing 20 Services
+- Copywriting orienté bénéfices avec psychologie des prix
+- 4 nouveaux services massage : Madérothérapie, Madérothérapie Intense, Massage lymphatique, Glow Recovery
+- Scarcity badge : compteur disponibilité live (1-6 places) avec 3 niveaux d'urgence
+- Redesign cards : bordures visibles, badges économie rouge, CTA "AJOUTER AU PANIER"
+- Badge Klarna "3x sans frais" conditionnel (prix ≥ 35€)
+
+#### 3. Photo Marquee
+- Double rangée d'images animées entre Coaching et Massage
+- 87 images optimisées WebP : ~73MB → ~1.6MB (-98%)
+
+#### 4. Klarna 3x
+- Bouton rose dédié, paramètre `preferredMethod` checkout, mention emails
+
+#### 5. Seed Sécurisé
+- `deleteMany()` → `upsert()` : les services dashboard ne sont plus supprimés
+- Service "Massage ciblé 30min/45€" réintégré
+
+---
+
+**Voir détails complets** : `docs/sessions/2026-05/SESSION_2026-05-12.md`
+
+---
+
 ## Session 2026-02-20 à 2026-03-03 - Admin Pro, Audit Trail & SEO
 
 **Agent** : Kimi Code CLI  
