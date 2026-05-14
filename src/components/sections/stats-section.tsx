@@ -6,7 +6,7 @@ import { Users, Clock, Sparkles, Heart } from 'lucide-react';
 
 const STATS = [
   { icon: Users, value: 500, suffix: '+', label: 'Clients accompagnés' },
-  { icon: Clock, value: 5, suffix: '+', label: 'Années d\'expérience' },
+  { icon: Clock, value: 15, suffix: '+', label: 'Années d\'expérience' },
   { icon: Sparkles, value: 20, suffix: '', label: 'Prestations proposées' },
   { icon: Heart, value: 100, suffix: '%', label: 'Satisfaction client' },
 ];

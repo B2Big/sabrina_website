@@ -209,7 +209,7 @@ Font mono : Geist Mono
 **Contenu (placeholder — facilement modifiable)** :
 ```
 500+    Clients accompagnés
-5+      Années d'expérience
+15+      Années d'expérience
 20      Prestations proposées
 100%    Satisfaction client
 ```
