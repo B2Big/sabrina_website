@@ -17,6 +17,12 @@ import { Service } from "@/data/content";
 import { FloatingCart } from "@/components/ui/floating-cart";
 import { getAllServices, getActivePromotions } from "@/lib/db-services";
 import { PromoBanner } from "@/components/promo-banner";
+import { WhyChoose } from "@/components/sections/why-choose";
+import { StatsSection } from "@/components/sections/stats-section";
+import { CoachingProcess } from "@/components/sections/coaching-process";
+import { MassageAmbiance } from "@/components/sections/massage-ambiance";
+import { TestimonialsV2 } from "@/components/sections/testimonials-v2";
+import { FaqVisual } from "@/components/sections/faq-visual";
 
 export default async function Home() {
   const [dbServices, promotions] = await Promise.all([
@@ -102,8 +108,11 @@ export default async function Home() {
           className="border-y-4 border-white shadow-2xl"
         />
 
-        {/* NEW: WHY ME SECTION (Authority) */}
-        <ValuesSection />
+        {/* WHY CHOOSE SECTION */}
+        <WhyChoose />
+
+        {/* STATS SECTION */}
+        <StatsSection />
 
         {/* ABOUT SECTION - E-E-A-T Signal */}
         <AboutSection />
@@ -138,6 +147,9 @@ export default async function Home() {
                 <AbstractShape type="training" />
               </div>
             </header>
+
+            {/* COACHING PROCESS */}
+            <CoachingProcess />
 
             <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-12 relative z-10">
               {coachingServices.map((service, index) => (
@@ -181,6 +193,9 @@ export default async function Home() {
               </div>
             </header>
 
+            {/* MASSAGE AMBIANCE */}
+            <MassageAmbiance />
+
             <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-12 relative z-10">
               {massageServices.map((service, index) => (
                 <ServiceCard key={service.id} service={service} index={index} />
@@ -189,11 +204,11 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* SOCIAL PROOF (Testimonials) */}
-        <Testimonials />
+        {/* SOCIAL PROOF (TestimonialsV2) */}
+        <TestimonialsV2 />
 
-        {/* FAQ SECTION */}
-        <Faq />
+        {/* FAQ VISUAL SECTION */}
+        <FaqVisual />
 
         {/* Contact Section - WITH SCARCITY */}
         <section id="contact" className="py-24 relative overflow-hidden" itemScope itemType="https://schema.org/ContactPoint">
