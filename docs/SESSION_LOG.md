@@ -1,5 +1,41 @@
 # Journal des Sessions - Sabrina PWA
 
+## Session 2026-05-22 — Cleanup Pipeline, Audit Sécurité & Isolation Git B2Big/Kossmonot
+
+**Agent** : Kimi Code CLI  
+**Focus** : Nettoyage du repo après intrusion de fichiers projet Aethelgard, commit des corrections sécurité en attente, configuration Git automatique par dossier  
+**Commits** : 2 commits + merge (`622fdd4`, `b69136b`)
+
+---
+
+### ✅ Implémenté
+
+#### 1. Corrections de Sécurité Commitées/Pushées (Audit 21/05)
+- CSP global dans `next.config.ts`
+- Validation stricte des dates dans `checkout/route.ts` (1900-2030)
+- Rate limiting + validation regex `session_id` dans `checkout/details/route.ts`
+- Suppression fichier debug exposé (`page.tsx.debug`)
+- `npm audit fix` appliqué
+
+#### 2. Suppression Fichiers Aethelgard (Projet Étranger)
+- Suppression `docs/PROMPT_AGENT_DROPSHIPPING.md` (560 lignes)
+- Suppression 17 images produits dans `public/images/`
+- `.gitignore` renforcé pour bloquer futures intrusions
+
+#### 3. Configuration Git Automatique par Dossier
+- `~/.gitconfig` avec `includeIf` pour associer automatiquement :
+  - `~/projets/sabrina/` → `B2Big <ufcmjohan@gmail.com>`
+  - `~/projets/Kossmonot_Web/` → `kossmonot-founder <ops@kossmonot.com>`
+
+#### 4. Validation Pipeline
+- `git status` : propre
+- `main` = `origin/main`
+- `npm run build` : OK (6.5s)
+
+**Voir détails complets** : `docs/sessions/2026-05/SESSION_2026-05-22.md`
+
+---
+
 ## Session 2026-05-12 — Marketing Aggréssif, Carrousel Hero & Seed Sécurisé
 
 **Agent** : Kimi Code CLI  
