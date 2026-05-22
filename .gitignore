@@ -41,3 +41,20 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# --- Fichiers du projet Aethelgard (autre repo) ---
+/public/images/
+docs/PROMPT_AGENT_DROPSHIPPING.md
+
+# --- Fichiers locaux lourds à ne pas commiter ---
+*.zip
+WSL chemin.txt
+/src/img/
+
+# --- Images originales non optimisées (les WebP sont dans les sous-dossiers webp/) ---
+/public/img/sabrina/hero/*.jpeg
+/public/img/sabrina/hero/*.jpg
+/public/img/sabrina/massage/*.jpeg
+/public/img/sabrina/massage/*.jpg
+/public/img/sabrina/sport/*.jpeg
+/public/img/sabrina/sport/*.jpg
