@@ -32,6 +32,28 @@ export async function POST(req: Request) {
     const { items, customerName, customerEmail, customerPhone, message, newsletter } = checkoutSchema.parse(body);
     console.log('✅ [CHECKOUT] Validation OK -', items.length, 'service(s)');
 
+    // 🔒 Validation de la date si fournie
+    let validatedServiceDate: Date | null = null;
+    if (body.serviceDate) {
+      const dateStr = String(body.serviceDate).trim();
+      const parsedDate = new Date(dateStr);
+      if (isNaN(parsedDate.getTime())) {
+        return NextResponse.json(
+          { error: 'Date de rendez-vous invalide' },
+          { status: 400 }
+        );
+      }
+      // Vérifier que la date n'est pas dans le passé lointain (< 1900) ni trop loin (> 2030)
+      const year = parsedDate.getFullYear();
+      if (year < 1900 || year > 2030) {
+        return NextResponse.json(
+          { error: 'Date de rendez-vous hors limites' },
+          { status: 400 }
+        );
+      }
+      validatedServiceDate = parsedDate;
+    }
+
     // 🔒 SÉCURITÉ : Récupérer les prix RÉELS depuis la base de données
     const serviceIds = items.map(item => item.id);
     console.log('🔍 [CHECKOUT] Recherche services DB:', serviceIds);
@@ -113,7 +135,7 @@ export async function POST(req: Request) {
         quantity: items.reduce((acc, item) => acc + item.quantity, 0),
         totalAmount: totalAmount / 100, // Convertir centimes -> euros
         paymentMethod: 'stripe',
-        requestedDate: body.serviceDate ? new Date(body.serviceDate) : null,
+        requestedDate: validatedServiceDate,
       }
     });
 
@@ -135,7 +157,7 @@ export async function POST(req: Request) {
         })),
         total: (totalAmount / 100).toFixed(2),
         message: message || null,
-        requestedDate: body.serviceDate ? new Date(body.serviceDate) : null,
+        requestedDate: validatedServiceDate,
       });
       console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé à Sabrina');
 
@@ -150,7 +172,7 @@ export async function POST(req: Request) {
           quantity: items.find(i => i.id === s.id)?.quantity || 1
         })),
         total: (totalAmount / 100).toFixed(2),
-        requestedDate: body.serviceDate ? new Date(body.serviceDate) : null,
+        requestedDate: validatedServiceDate,
       });
       console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé au client');
     } catch (emailError) {

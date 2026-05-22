@@ -1,8 +1,19 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
+import { rateLimit, RateLimitConfigs, getClientIp, rateLimitExceededResponse } from '@/lib/rate-limit';
 
 export async function GET(req: Request) {
   try {
+    // 🔒 RATE LIMITING
+    const clientIp = getClientIp(req);
+    const rateLimitKey = `checkout-details:${clientIp}`;
+    const rateLimitResult = rateLimit(rateLimitKey, RateLimitConfigs.API_PUBLIC);
+
+    if (!rateLimitResult.success) {
+      console.warn(`🚫 Rate limit dépassé pour checkout-details depuis ${clientIp}`);
+      return rateLimitExceededResponse(rateLimitResult.reset);
+    }
+
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get('session_id');
 
@@ -12,6 +23,11 @@ export async function GET(req: Request) {
 
     // Vérifier que le session_id a le bon format Stripe
     if (!sessionId.startsWith('cs_')) {
+      return NextResponse.json({ error: 'session_id invalide' }, { status: 400 });
+    }
+
+    // 🔒 Validation supplémentaire: longueur et caractères autorisés
+    if (sessionId.length > 128 || !/^[cs]_[a-zA-Z0-9_]+$/.test(sessionId)) {
       return NextResponse.json({ error: 'session_id invalide' }, { status: 400 });
     }
 
