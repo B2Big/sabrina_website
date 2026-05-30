@@ -10,7 +10,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Appel API Supabase (table services publique)
+        id: ping
         run: |
-          curl -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/services?select=id&limit=1" \
-          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}"
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/services?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+          echo "http_code=$HTTP_CODE" >> $GITHUB_OUTPUT
+          echo "HTTP Status: $HTTP_CODE"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Ping Supabase échoué (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+
+      - name: Alerte email via Resend (si échec)
+        if: failure()
+        run: |
+          curl -X POST 'https://api.resend.com/emails' \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H 'Content-Type: application/json' \
+            -d '{
+              "from": "contact@sab-fit.com",
+              "to": "johan.dev.pro@gmail.com",
+              "subject": "🚨 [ALERTE] Sabrina — Ping Supabase échoué",
+              "html": "<h2>Alerte Sab-Fit</h2><p>Le ping automatique vers Supabase a échoué (HTTP '${{ steps.ping.outputs.http_code }}').</p><p>La base de données risque de se mettre en pause si le problème persiste.</p><p><strong>Action requise :</strong> vérifier le dashboard Supabase et le workflow GitHub Actions.</p><br><p>— Sab-Fit Monitoring</p>"
+            }'
