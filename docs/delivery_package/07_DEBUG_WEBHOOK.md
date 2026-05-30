@@ -67,7 +67,7 @@ Après avoir créé le webhook :
 **Cette clé doit être ajoutée dans Netlify :**
 
 ```
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_VOTRE_SECRET_A_COPIER_DEPUIS_STRIPE
 ```
 
 ---

@@ -36,7 +36,7 @@ Après avoir créé le webhook :
 Ajouter dans `.env.local` (et dans votre plateforme de déploiement) :
 
 ```bash
-STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_VOTRE_SECRET_A_COPIER_DEPUIS_STRIPE
 ```
 
 ### 4. Redéployer l'application
