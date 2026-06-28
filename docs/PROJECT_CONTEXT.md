@@ -1,7 +1,7 @@
 # Contexte du Projet Sabrina Coaching
 
 **Dernière mise à jour** : 2026-06-28
-**Version** : Marketing Release
+**Version** : Marketing Release + Infra Anti-Pause
 **Session** : 2026-06-28
 
 ---
@@ -110,7 +110,7 @@ Accessible via `/admin`
 - [x] Paiement Stripe testé en production
 - [x] Klarna 3x configuré et fonctionnel
 - [x] Seed Prisma sécurisé (upsert, pas de suppression)
-- [x] **Workflow GitHub Actions** — Ping Supabase auto **quotidien** avec écriture en DB (via anon key + RLS) + alerte email Resend si échec
+- [x] **Workflow GitHub Actions** — Ping Supabase auto **quotidien** avec écriture en DB (via anon key + RLS) + alerte email Resend si échec — **validé en production**
 - [ ] Analytics (Google Analytics / Plausible) - optionnel
 - [ ] Monitoring erreurs (Sentry) - optionnel
 

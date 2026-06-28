@@ -29,6 +29,12 @@
 - Policy `SELECT` publique pour la vérification avec `anon` key
 - Policy `INSERT` publique restreinte à `source = 'github-actions'` (empêche l'insertion de données arbitraires)
 
+### ✅ Validation
+- **Run manuel #14+** : succès ✅
+- **Écriture DB** : HTTP 201 confirmé en production
+- **Lecture DB** : HTTP 200 confirmé en production
+- **Alerte RLS** Supabase sur `public.health_checks` résolue
+
 ### 🔐 Secrets requis
 Assure-toi que ces secrets sont bien configurés dans GitHub :
 - `SUPABASE_URL`
