@@ -105,6 +105,21 @@ CREATE POLICY "Service role can manage relation"
 ON public."_PromotionToService" FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- =============================================================================
+-- 8. HEALTH_CHECKS
+-- =============================================================================
+ALTER TABLE public.health_checks ENABLE ROW LEVEL SECURITY;
+
+-- Le public peut lire les health checks (vérification workflow)
+DROP POLICY IF EXISTS "Public can read health_checks" ON public.health_checks;
+CREATE POLICY "Public can read health_checks"
+ON public.health_checks FOR SELECT TO anon, authenticated USING (true);
+
+-- Service role peut tout faire (backend + workflow GitHub Actions)
+DROP POLICY IF EXISTS "Service role can manage health_checks" ON public.health_checks;
+CREATE POLICY "Service role can manage health_checks"
+ON public.health_checks FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+-- =============================================================================
 -- VÉRIFICATION FINALE
 -- =============================================================================
 SELECT 

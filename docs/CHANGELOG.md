@@ -24,6 +24,11 @@
 - **Lecture DB** : `GET /rest/v1/health_checks` avec `SUPABASE_ANON_KEY` (vérifie l'accès public)
 - **Alerte email** : conservée, déclenchée uniquement en cas d'échec
 
+#### 3. Sécurité RLS
+- Activation de **Row Level Security** sur `public.health_checks`
+- Policy `SELECT` publique pour la vérification avec `anon` key
+- Policy `ALL` pour `service_role` (workflow GitHub Actions)
+
 ### 🔐 Secrets requis
 Assure-toi que ces secrets sont bien configurés dans GitHub :
 - `SUPABASE_URL`
