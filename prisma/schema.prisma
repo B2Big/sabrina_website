@@ -186,3 +186,16 @@ model AdminLog {
   @@index([createdAt])
   @@map("admin_logs")
 }
+
+// ============================================
+// HEALTH CHECK - PING SUPABASE ANTI-PAUSE
+// ============================================
+
+model HealthCheck {
+  id        String   @id @default(uuid())
+  checkedAt DateTime @default(now()) @map("checked_at")
+  source    String   @default("github-actions") @map("source")
+
+  @@index([checkedAt])
+  @@map("health_checks")
+}

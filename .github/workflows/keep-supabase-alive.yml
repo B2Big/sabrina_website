@@ -2,24 +2,48 @@ name: Supabase Keep Alive Ping
 
 on:
   schedule:
-    - cron: '0 0 */3 * *'
+    - cron: '0 6 * * *'  # Tous les jours à 6h UTC (évite la pause auto Supabase)
   workflow_dispatch:
 
 jobs:
   ping-supabase:
     runs-on: ubuntu-latest
     steps:
-      - name: Appel API Supabase (table services publique)
-        id: ping
+      - name: Écriture en base (health check)
+        id: write
+        run: |
+          UUID=$(cat /proc/sys/kernel/random/uuid)
+          echo "uuid=$UUID" >> $GITHUB_OUTPUT
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.SUPABASE_URL }}/rest/v1/health_checks" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d "{\"id\":\"${UUID}\",\"source\":\"github-actions\"}")
+
+          echo "write_http_code=$HTTP_CODE" >> $GITHUB_OUTPUT
+          echo "Write HTTP: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" != "201" ]; then
+            echo "::error::Écriture Supabase échouée (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+
+      - name: Lecture depuis la base (vérification publique)
+        id: read
         run: |
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/services?select=id&limit=1" \
+            -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/health_checks?select=id&limit=1" \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
-          echo "http_code=$HTTP_CODE" >> $GITHUB_OUTPUT
-          echo "HTTP Status: $HTTP_CODE"
+
+          echo "read_http_code=$HTTP_CODE" >> $GITHUB_OUTPUT
+          echo "Read HTTP: $HTTP_CODE"
+
           if [ "$HTTP_CODE" != "200" ]; then
-            echo "::error::Ping Supabase échoué (HTTP $HTTP_CODE)"
+            echo "::error::Lecture Supabase échouée (HTTP $HTTP_CODE)"
             exit 1
           fi
 
@@ -33,5 +57,5 @@ jobs:
               "from": "contact@sab-fit.com",
               "to": "johan.dev.pro@gmail.com",
               "subject": "🚨 [ALERTE] Sabrina — Ping Supabase échoué",
-              "html": "<h2>Alerte Sab-Fit</h2><p>Le ping automatique vers Supabase a échoué (HTTP '${{ steps.ping.outputs.http_code }}').</p><p>La base de données risque de se mettre en pause si le problème persiste.</p><p><strong>Action requise :</strong> vérifier le dashboard Supabase et le workflow GitHub Actions.</p><br><p>— Sab-Fit Monitoring</p>"
+              "html": "<h2>Alerte Sab-Fit</h2><p>Le ping automatique vers Supabase a échoué.</p><p>Écriture: '${{ steps.write.outputs.write_http_code }}' | Lecture: '${{ steps.read.outputs.read_http_code }}'</p><p>La base de données risque de se mettre en pause si le problème persiste.</p><p><strong>Action requise :</strong> vérifier le dashboard Supabase.</p><br><p>— Sab-Fit Monitoring</p>"
             }'

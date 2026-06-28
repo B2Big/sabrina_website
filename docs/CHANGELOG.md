@@ -4,6 +4,65 @@
 
 ---
 
+## [2026-06-28] Supabase Anti-Pause — Workflow Renforcé
+
+### 🚨 Contexte
+- **Projet Supabase mis en pause** par inactivité du free tier
+- **Réactivation manuelle** réussie via le dashboard Supabase
+- L'ancien workflow (ping API tous les 3 jours + `SELECT`) s'avérait **insuffisant** pour garder le projet actif
+
+### ✅ Implémenté
+
+#### 1. Table `health_checks` dédiée
+- Ajout du modèle `HealthCheck` dans `prisma/schema.prisma`
+- Synchronisation via `prisma db push`
+- Stockage des pings quotidiens avec timestamp et source
+
+#### 2. Workflow GitHub Actions renforcé
+- **Fréquence** : `0 6 * * *` — tous les jours à 6h UTC (au lieu de tous les 3 jours)
+- **Écriture DB** : `POST /rest/v1/health_checks` avec `SUPABASE_SERVICE_ROLE_KEY`
+- **Lecture DB** : `GET /rest/v1/health_checks` avec `SUPABASE_ANON_KEY` (vérifie l'accès public)
+- **Alerte email** : conservée, déclenchée uniquement en cas d'échec
+
+### 🔐 Secrets requis
+Assure-toi que ces secrets sont bien configurés dans GitHub :
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` ⭐ **nouveau**
+- `RESEND_API_KEY`
+
+### 📁 Fichiers concernés
+- `.github/workflows/keep-supabase-alive.yml` (modifié)
+- `prisma/schema.prisma` (modifié)
+- `docs/PROJECT_CONTEXT.md` (mis à jour)
+
+---
+
+## [2026-05-30] Session Infra — Vérification & Monitoring
+
+### ✅ Vérifications effectuées
+- **Connexion Prisma** : `prisma.service.count()` → 20 services ✅
+- **API Supabase REST** : Ping HTTP 200 confirmé ✅
+- **Workflow GitHub Actions** : Test manuel réussi (9s) ✅
+- **Secrets GitHub** : `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `RESEND_API_KEY` confirmés
+- **Variables `.env.local`** : `DATABASE_URL`, `DIRECT_URL`, `SUPABASE_SERVICE_ROLE_KEY` confirmées
+
+### 📝 Informations clarifiées
+- **Fréquence ping** : Tous les **3 jours** (cron `0 0 */3 * *`) — pas 6
+- **Alerte email** : Envoyée **uniquement en cas d'échec** (`if: failure()`)
+- **Destinataire** : `johan.dev.pro@gmail.com`
+- **Expéditeur** : `contact@sab-fit.com` via Resend
+
+### 📁 Fichiers concernés
+- `.github/workflows/keep-supabase-alive.yml` (existant, non modifié)
+- `prisma/schema.prisma` (existant, non modifié)
+- `docs/sessions/2026-05/SESSION_2026-05-30.md` (créé)
+- `docs/PROJECT_CONTEXT.md` (mis à jour)
+
+**Aucun fichier de code modifié** — session de vérification/diagnostic uniquement.
+
+---
+
 ## 🎯 Vue d'Ensemble Rapide
 
 ### Status Production

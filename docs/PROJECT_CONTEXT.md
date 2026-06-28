@@ -1,8 +1,8 @@
 # Contexte du Projet Sabrina Coaching
 
-**Dernière mise à jour** : 2026-05-12
+**Dernière mise à jour** : 2026-06-28
 **Version** : Marketing Release
-**Session** : 2026-05-12
+**Session** : 2026-06-28
 
 ---
 
@@ -49,6 +49,7 @@ Le projet est désormais consolidé autour d'une **application web unique** (Nex
    - `stripeSessionId`, `stripePaymentId`, `paidAt`
 5. **newsletter_subscribers** : Abonnés newsletter (RGPD)
 6. **admin_logs** : Audit trail des actions admin
+7. **health_checks** : Pings quotidiens pour garder Supabase actif
 
 ---
 
@@ -109,6 +110,7 @@ Accessible via `/admin`
 - [x] Paiement Stripe testé en production
 - [x] Klarna 3x configuré et fonctionnel
 - [x] Seed Prisma sécurisé (upsert, pas de suppression)
+- [x] **Workflow GitHub Actions** — Ping Supabase auto **quotidien** avec écriture en DB + alerte email Resend si échec
 - [ ] Analytics (Google Analytics / Plausible) - optionnel
 - [ ] Monitoring erreurs (Sentry) - optionnel
 
