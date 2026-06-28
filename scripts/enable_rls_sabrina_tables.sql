@@ -114,10 +114,11 @@ DROP POLICY IF EXISTS "Public can read health_checks" ON public.health_checks;
 CREATE POLICY "Public can read health_checks"
 ON public.health_checks FOR SELECT TO anon, authenticated USING (true);
 
--- Service role peut tout faire (backend + workflow GitHub Actions)
-DROP POLICY IF EXISTS "Service role can manage health_checks" ON public.health_checks;
-CREATE POLICY "Service role can manage health_checks"
-ON public.health_checks FOR ALL TO service_role USING (true) WITH CHECK (true);
+-- Le public peut insérer des health checks (workflow GitHub Actions)
+DROP POLICY IF EXISTS "Public can insert health_checks" ON public.health_checks;
+CREATE POLICY "Public can insert health_checks"
+ON public.health_checks FOR INSERT TO anon, authenticated
+WITH CHECK (source = 'github-actions');
 
 -- =============================================================================
 -- VÉRIFICATION FINALE

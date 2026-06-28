@@ -20,14 +20,14 @@
 
 #### 2. Workflow GitHub Actions renforcé
 - **Fréquence** : `0 6 * * *` — tous les jours à 6h UTC (au lieu de tous les 3 jours)
-- **Écriture DB** : `POST /rest/v1/health_checks` avec `SUPABASE_SERVICE_ROLE_KEY`
+- **Écriture DB** : `POST /rest/v1/health_checks` avec `SUPABASE_ANON_KEY`
 - **Lecture DB** : `GET /rest/v1/health_checks` avec `SUPABASE_ANON_KEY` (vérifie l'accès public)
 - **Alerte email** : conservée, déclenchée uniquement en cas d'échec
 
 #### 3. Sécurité RLS
 - Activation de **Row Level Security** sur `public.health_checks`
 - Policy `SELECT` publique pour la vérification avec `anon` key
-- Policy `ALL` pour `service_role` (workflow GitHub Actions)
+- Policy `INSERT` publique restreinte à `source = 'github-actions'` (empêche l'insertion de données arbitraires)
 
 ### 🔐 Secrets requis
 Assure-toi que ces secrets sont bien configurés dans GitHub :
