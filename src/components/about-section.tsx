@@ -231,18 +231,6 @@ export function AboutSection() {
                           </div>
                         </div>
 
-                        {/* Instagram Link */}
-                        <a
-                          href={CONTACT_INFO.instagram}
-                          target="_blank"
-                          rel="noopener noreferrer me"
-                          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white font-bold transition-transform hover:scale-[1.02]"
-                          style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
-                          itemProp="sameAs"
-                        >
-                          <Instagram className="w-5 h-5" />
-                          <span className="text-sm">@sab.fit_coaching83</span>
-                        </a>
                       </div>
                     </div>
                   </div>
@@ -250,6 +238,19 @@ export function AboutSection() {
               )}
             </AnimatePresence>
           </motion.div>
+
+          {/* Instagram Link - Always visible below accordion */}
+          <a
+            href={CONTACT_INFO.instagram}
+            target="_blank"
+            rel="noopener noreferrer me"
+            className="flex items-center justify-center gap-2 w-full max-w-md mx-auto mt-6 py-3 rounded-xl text-white font-bold transition-transform hover:scale-[1.02] shadow-lg"
+            style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
+            itemProp="sameAs"
+          >
+            <Instagram className="w-5 h-5" />
+            <span className="text-sm">@sab.fit_coaching83</span>
+          </a>
 
           {/* Hint text when closed */}
           {!isOpen && (

@@ -128,7 +128,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
           <div className="relative z-10 mb-2 md:mb-3 lg:mb-4">
             <div className="inline-flex items-center gap-1 bg-red-50 border border-red-200 md:border-2 rounded-lg md:rounded-xl px-2 md:px-3 py-1 md:py-1.5 shadow-sm">
               <Flame className="w-3 h-3 md:w-3.5 md:h-3.5 text-red-500 animate-pulse" />
-              <span className="text-[9px] md:text-xs font-black text-red-600 uppercase tracking-wide">
+              <span className="text-[11px] md:text-xs font-black text-red-600 uppercase tracking-wide">
                 -{economie}€
               </span>
             </div>

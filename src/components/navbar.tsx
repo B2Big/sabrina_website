@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, ArrowUpRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Instagram } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Button } from './ui/button';
+import { CONTACT_INFO } from '@/data/content';
 
 const navLinks = [
   { name: 'Coaching', href: '#coaching' },
@@ -72,6 +73,17 @@ export function Navbar() {
 
           {/* CTA & Mobile Toggle */}
           <div className="flex items-center gap-2">
+            <a
+              href={CONTACT_INFO.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full text-white shadow-lg hover:scale-110 transition-transform"
+              style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
+              aria-label="Instagram Sab-Fit"
+            >
+              <Instagram className="w-5 h-5" />
+            </a>
+
             <Button variant="training" size="sm" className="rounded-full px-6 h-10 shadow-lg shadow-training/20" asChild>
               <Link href="#contact" className="flex items-center gap-2">
                 Réserver <ArrowUpRight className="w-4 h-4" />
@@ -115,6 +127,20 @@ export function Navbar() {
                 </li>
               ))}
               <li className="h-px bg-slate-100 my-2" role="separator" />
+              <li role="none">
+                <a
+                  href={CONTACT_INFO.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-4 text-xl font-bold text-white rounded-xl transition-colors flex justify-between items-center"
+                  style={{ background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }}
+                  role="menuitem"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Instagram
+                  <Instagram className="w-5 h-5" />
+                </a>
+              </li>
               <li role="none">
                 <Button className="w-full h-14 text-lg rounded-xl" onClick={() => setIsOpen(false)} asChild>
                   <Link href="#contact" role="menuitem">Prendre RDV maintenant</Link>
