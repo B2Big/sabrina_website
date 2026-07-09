@@ -105,7 +105,6 @@ export default async function Home() {
         <Marquee 
           items={["PERFORMANCE", "RÉCUPÉRATION", "BIEN-ÊTRE", "ÉQUILIBRE", "FORCE", "SÉRÉNITÉ"]} 
           speed={30}
-          className="border-y-4 border-white shadow-2xl"
         />
 
         {/* WHY CHOOSE SECTION */}

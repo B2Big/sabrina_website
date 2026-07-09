@@ -32,25 +32,25 @@ export function Marquee({ items, children, direction = 'left', speed = 30, class
     if (!isMobile || !items) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % items.length);
-    }, 4000); // Change word every 4 seconds
+    }, 5000); // Change word every 5 seconds
     return () => clearInterval(timer);
   }, [isMobile, items?.length]);
 
-  // --- MOBILE VIEW: Smooth crossfade (ONLY IF ITEMS PROVIDED) ---
+  // --- MOBILE VIEW: Smooth fade (ONLY IF ITEMS PROVIDED) ---
   if (isMobile && items && !children) {
     return (
       <div 
-        className={cn("relative flex items-center justify-center overflow-hidden bg-slate-900 py-6 border-y-4 border-white shadow-2xl h-[80px]", className)}
+        className={cn("relative flex items-center justify-center overflow-hidden bg-slate-900 py-6 h-[80px]", className)}
       >
-        <AnimatePresence mode="sync">
+        <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, y: 8, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 1.04 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ 
-              duration: 1.2, 
-              ease: [0.4, 0, 0.2, 1]
+              duration: 0.8, 
+              ease: "easeInOut"
             }}
             className="absolute inset-0 flex items-center justify-center"
           >
