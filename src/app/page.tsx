@@ -151,7 +151,7 @@ export default async function Home() {
             {/* COACHING PROCESS */}
             <CoachingProcess />
 
-            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 lg:gap-12 relative z-10">
+            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-10 relative z-10">
               {coachingServices.map((service, index) => (
                 <ServiceCard key={service.id} service={service} index={index} />
               ))}
@@ -196,7 +196,7 @@ export default async function Home() {
             {/* MASSAGE AMBIANCE */}
             <MassageAmbiance />
 
-            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 lg:gap-12 relative z-10">
+            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8 lg:gap-10 relative z-10">
               {massageServices.map((service, index) => (
                 <ServiceCard key={service.id} service={service} index={index} />
               ))}

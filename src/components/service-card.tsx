@@ -74,10 +74,10 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
         className={cn(
           "group relative h-full bg-white p-3 md:p-5 lg:p-8 flex flex-col overflow-hidden transition-all duration-300 sketch-card",
           (isPopular || isBestValue)
-            ? "border-[3px] scale-[1.03]"
+            ? "border-[3px] z-10"
             : "",
-          (isPopular || isBestValue) && isCoaching ? "border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.4)]" : "",
-          (isPopular || isBestValue) && !isCoaching ? "border-rose-600 shadow-[0_0_20px_rgba(225,29,72,0.4)]" : ""
+          (isPopular || isBestValue) && isCoaching ? "border-blue-600 shadow-[0_0_30px_rgba(37,99,235,0.35)]" : "",
+          (isPopular || isBestValue) && !isCoaching ? "border-rose-600 shadow-[0_0_30px_rgba(225,29,72,0.35)]" : ""
         )}
       >
 
