@@ -289,36 +289,34 @@ function ContactFormContent() {
             </label>
           </div>
 
-          {items.length > 0 && (
-            <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-2 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPaymentMode('onsite')}
-                className={cn(
-                  "flex-1 py-3 px-2 md:px-4 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2",
-                  paymentMode === 'onsite'
-                    ? "bg-slate-900 text-white shadow-lg"
-                    : "text-slate-500 hover:bg-slate-100"
-                )}
-              >
-                <CalendarCheck className="w-4 h-4" />
-                Réserver uniquement
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentMode('online')}
-                className={cn(
-                  "flex-1 py-3 px-2 md:px-4 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2",
-                  paymentMode === 'online'
-                    ? "bg-slate-900 text-white shadow-lg"
-                    : "text-slate-500 hover:bg-slate-100"
-                )}
-              >
-                <CreditCard className="w-4 h-4" />
-                Réserver et payer
-              </button>
-            </div>
-          )}
+          <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => setPaymentMode('onsite')}
+              className={cn(
+                "flex-1 py-3 px-2 md:px-4 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2",
+                paymentMode === 'onsite'
+                  ? "bg-slate-900 text-white shadow-lg"
+                  : "text-slate-500 hover:bg-slate-100"
+              )}
+            >
+              <CalendarCheck className="w-4 h-4" />
+              Réserver uniquement
+            </button>
+            <button
+              type="button"
+              onClick={() => setPaymentMode('online')}
+              className={cn(
+                "flex-1 py-3 px-2 md:px-4 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2",
+                paymentMode === 'online'
+                  ? "bg-slate-900 text-white shadow-lg"
+                  : "text-slate-500 hover:bg-slate-100"
+              )}
+            >
+              <CreditCard className="w-4 h-4" />
+              Réserver et payer
+            </button>
+          </div>
 
           <div className="flex flex-col gap-3 pt-2">
             {paymentMode === 'onsite' && (
@@ -349,11 +347,11 @@ function ContactFormContent() {
               </>
             )}
 
-            {paymentMode === 'online' && items.length > 0 && (
+            {paymentMode === 'online' && (
                 <>
                 <Button
                     type="button"
-                    disabled={isPending || isCheckoutLoading || !cguAccepted}
+                    disabled={isPending || isCheckoutLoading || !cguAccepted || items.length === 0}
                     onClick={async () => {
                         try {
                             setIsCheckoutLoading(true);
@@ -443,7 +441,7 @@ function ContactFormContent() {
                 {Number(total) >= 35 && (
                     <Button
                         type="button"
-                        disabled={isPending || isCheckoutLoading || !cguAccepted}
+                        disabled={isPending || isCheckoutLoading || !cguAccepted || items.length === 0}
                         onClick={async () => {
                             try {
                                 setIsCheckoutLoading(true);
