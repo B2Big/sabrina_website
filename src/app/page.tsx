@@ -215,11 +215,11 @@ export default async function Home() {
           <meta itemProp="contactType" content="Réservation Coaching et Massage" />
           <meta itemProp="areaServed" content="Var, Provence-Alpes-Côte d'Azur" />
           <meta itemProp="availableLanguage" content="French" />
-          <div className="container relative mx-auto px-4 md:px-8">
-            <div className="bg-slate-900/90 backdrop-blur-2xl rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 border border-white/10 shadow-2xl relative overflow-hidden text-white">
+          <div className="container relative mx-auto px-0 md:px-8">
+            <div className="bg-slate-900/90 backdrop-blur-2xl rounded-none md:rounded-[3rem] md:p-16 border-0 md:border border-white/10 shadow-2xl relative overflow-hidden text-white">
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 relative z-10">
-                <div className="space-y-10 flex flex-col justify-center">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-16 relative z-10">
+                <div className="space-y-10 flex flex-col justify-center px-4 md:px-0 py-8 md:py-0">
                   <div>
                     <h2 className="text-5xl md:text-7xl font-black tracking-tight mb-6">
                       Let&apos;s <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-rose-300">Start</span>.
@@ -242,8 +242,8 @@ export default async function Home() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-3xl p-5 md:p-8 text-slate-900 shadow-xl">
-                  <h3 className="text-2xl font-black mb-6">Envoyer un message</h3>
+                <div className="bg-white rounded-t-3xl md:rounded-3xl p-5 md:p-8 text-slate-900 shadow-xl">
+                  <h3 className="text-2xl font-black mb-6">Réservation</h3>
                   <ContactForm />
                 </div>
               </div>
