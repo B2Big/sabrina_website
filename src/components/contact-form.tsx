@@ -3,11 +3,9 @@
 import { useActionState, useEffect, useState, Suspense } from 'react';
 import { createReservationSurPlace } from '@/app/actions';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, Dumbbell, Sparkles, HelpCircle, ShoppingBag, X, CalendarCheck, CreditCard, Globe, Wallet } from 'lucide-react';
+import { Loader2, Send, ShoppingBag, X, CalendarCheck, CreditCard, Globe, Wallet, Calendar } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useCart } from '@/context/cart-context';
 
 const initialState = {
@@ -16,62 +14,20 @@ const initialState = {
   errors: undefined,
 };
 
-const SUBJECTS = [
-  { id: 'coaching', label: 'Coaching Sportif', icon: Dumbbell, color: 'text-training', bg: 'bg-training/10 border-training/20' },
-  { id: 'massage', label: 'Massage & Soins', icon: Sparkles, color: 'text-care', bg: 'bg-care/10 border-care/20' },
-  { id: 'autre', label: 'Autre demande', icon: HelpCircle, color: 'text-slate-500', bg: 'bg-slate-100 border-slate-200' },
-];
-
 function ContactFormContent() {
   const [state, formAction, isPending] = useActionState(createReservationSurPlace, initialState);
-  const [selectedSubject, setSelectedSubject] = useState<string>('coaching');
-  const [messageText, setMessageText] = useState('');
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [cguAccepted, setCguAccepted] = useState(false);
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
 
   const { items, total, removeFromCart, clearCart } = useCart();
-  const searchParams = useSearchParams();
-
-  // Auto-fill from Cart OR URL
-  useEffect(() => {
-    // Priority 1: Cart Items
-    if (items.length > 0) {
-        // Classify subject based on dominance
-        const hasMassage = items.some(i => i.category === 'Massages' || i.category === 'Cures');
-        const hasCoaching = items.some(i => i.category === 'Coaching');
-        
-        if (hasMassage && !hasCoaching) setSelectedSubject('massage');
-        else if (!hasMassage && hasCoaching) setSelectedSubject('coaching');
-        else setSelectedSubject('autre'); // Mixed
-
-        // Generate Message
-        const summary = items.map(i => `- ${i.quantity}x ${i.title} : ${i.price}`).join('\n');
-        setMessageText(`Bonjour Sabrina,\n\nJe souhaite réserver les séances suivantes :\n${summary}\n\nTotal estimé : ${total} €\n\nMes disponibilités sont...`);
-        return;
-    }
-
-    // Priority 2: URL Param (Legacy single item link support)
-    const serviceName = searchParams.get('service');
-    if (serviceName) {
-      const lowerName = serviceName.toLowerCase();
-      if (lowerName.includes('massage') || lowerName.includes('soin') || lowerName.includes('cure') || lowerName.includes('jambes')) {
-        setSelectedSubject('massage');
-      } else {
-        setSelectedSubject('coaching');
-      }
-      setMessageText(`Bonjour Sabrina,\n\nJe souhaiterais prendre RDV pour la prestation : "${serviceName}".\nMes disponibilités sont...`);
-    }
-  }, [items, total, searchParams]);
 
   // Trigger Confetti on Success & Clear Cart
   useEffect(() => {
     if (state.success) {
-      // Vider le panier
       clearCart();
 
-      // Confettis
       const duration = 3 * 1000;
       const animationEnd = Date.now() + duration;
       const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999 };
@@ -108,7 +64,7 @@ function ContactFormContent() {
             type="button"
             className="rounded-full px-8"
           >
-            Nouveau message
+            Nouvelle réservation
           </Button>
         </div>
       ) : (
@@ -120,8 +76,8 @@ function ContactFormContent() {
             </div>
           )}
 
-          {/* CART SUMMARY (If items exist) */}
-          {items.length > 0 && (
+          {/* CART SUMMARY */}
+          {items.length > 0 ? (
             <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-6 mb-6">
                 <div className="flex items-center gap-2 mb-4 text-slate-900 font-black uppercase tracking-wider text-sm">
                     <ShoppingBag className="w-5 h-5" />
@@ -130,14 +86,12 @@ function ContactFormContent() {
                 <div className="space-y-3">
                     {items.map((item) => (
                         <div key={item.id} className="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded-xl shadow-sm gap-2 sm:gap-3">
-                            {/* Ligne 1: Quantité + Titre (toute la largeur sur mobile) */}
                             <div className="flex items-center gap-3">
                                 <span className="bg-slate-900 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0">
                                     {item.quantity}
                                 </span>
                                 <span className="font-bold text-slate-700 text-sm">{item.title}</span>
                             </div>
-                            {/* Ligne 2: Prix + Bouton (aligné à droite sur desktop, même ligne sur mobile) */}
                             <div className="flex items-center justify-between sm:justify-end gap-3 pl-9 sm:pl-0">
                                 <span className="font-black text-slate-900">{item.price}</span>
                                 <button type="button" onClick={() => removeFromCart(item.id)} className="text-slate-400 hover:text-red-500 p-1">
@@ -177,38 +131,15 @@ function ContactFormContent() {
                     </div>
                 </div>
             </div>
-          )}
-
-          {/* Subject Selection (Hidden if cart active? No, let user adjust if needed, or maybe just default to inferred one) */}
-          {items.length === 0 && (
-            <div className="space-y-3">
-                <label className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
-                Je suis intéressé(e) par...
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {SUBJECTS.map((subject) => (
-                    <button
-                    key={subject.id}
-                    type="button"
-                    onClick={() => setSelectedSubject(subject.id)}
-                    className={cn(
-                        "relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer outline-none",
-                        selectedSubject === subject.id 
-                        ? `${subject.bg} ring-1 ring-offset-2 ring-slate-200` 
-                        : "bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50 text-slate-400 grayscale hover:grayscale-0"
-                    )}
-                    >
-                    <subject.icon className={cn("w-6 h-6 mb-1", selectedSubject === subject.id ? subject.color : "text-slate-400")} />
-                    <span className={cn("text-xs font-bold", selectedSubject === subject.id ? "text-slate-900" : "text-slate-400")}>
-                        {subject.label}
-                    </span>
-                    </button>
-                ))}
-                </div>
+          ) : (
+            <div className="p-6 bg-amber-50 border-2 border-amber-200 rounded-2xl text-center">
+              <p className="text-amber-900 font-bold text-sm">
+                Ajoutez un ou plusieurs services à votre panier pour réserver.
+              </p>
             </div>
           )}
 
-          <input type="hidden" name="subject" value={selectedSubject} />
+          <input type="hidden" name="subject" value="reservation" />
 
           {/* Panier en JSON pour l'email */}
           <input
@@ -271,26 +202,23 @@ function ContactFormContent() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="message" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
-                Votre Message {items.length > 0 && <span className="text-training text-xs normal-case font-medium">(Pré-rempli avec votre sélection)</span>}
+              <label htmlFor="serviceDate" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1 flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                Date souhaitée
               </label>
-              <textarea
-                id="message"
-                name="message"
-                rows={8}
-                required
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-medium placeholder:text-slate-300 focus:outline-none focus:border-slate-300 focus:bg-white transition-all resize-none shadow-sm"
-                placeholder="Bonjour, je souhaiterais avoir des informations sur..."
+              <input
+                id="serviceDate"
+                name="serviceDate"
+                type="date"
+                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
               />
-              {state.errors?.message?.[0] && (
-                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.message[0]}</p>
+              {state.errors?.serviceDate?.[0] && (
+                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.serviceDate[0]}</p>
               )}
             </div>
           </div>
 
-          {/* Global Payment Info - Enhanced */}
+          {/* Global Payment Info */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 bg-slate-50 rounded-2xl border border-slate-200">
             <span className="text-xs font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Paiements acceptés</span>
             <div className="flex flex-wrap justify-center items-center gap-2">
@@ -362,7 +290,7 @@ function ContactFormContent() {
           <div className="flex flex-col gap-3 pt-2">
             <Button
                 type="submit"
-                disabled={isPending || isCheckoutLoading || !cguAccepted}
+                disabled={isPending || isCheckoutLoading || !cguAccepted || items.length === 0}
                 className="w-full h-auto min-h-[4rem] py-3 text-sm sm:text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none px-4 flex items-center justify-center gap-2"
             >
                 {isPending ? (
@@ -373,7 +301,7 @@ function ContactFormContent() {
                 ) : (
                 <>
                     <CalendarCheck className="w-5 h-5 shrink-0" />
-                    <span className="whitespace-normal leading-tight">Réserver uniquement</span>
+                    <span className="whitespace-normal leading-tight">Réserver sans payer</span>
                 </>
                 )}
             </Button>
@@ -389,16 +317,16 @@ function ContactFormContent() {
                 <>
                 <Button
                     type="button"
-                    disabled={isPending || isCheckoutLoading}
+                    disabled={isPending || isCheckoutLoading || !cguAccepted}
                     onClick={async () => {
                         try {
                             setIsCheckoutLoading(true);
                             setCheckoutError(null);
 
-                            // Valider les champs obligatoires avant checkout
                             const nameInput = document.getElementById('name') as HTMLInputElement;
                             const emailInput = document.getElementById('email') as HTMLInputElement;
                             const phoneInput = document.getElementById('phone') as HTMLInputElement;
+                            const dateInput = document.getElementById('serviceDate') as HTMLInputElement;
 
                             if (!cguAccepted) {
                                 setCheckoutError('Veuillez accepter les Conditions Générales d\'Utilisation pour continuer.');
@@ -422,7 +350,6 @@ function ContactFormContent() {
                                 return;
                             }
 
-                            // 🔒 Envoyer id, quantity + infos client
                             const checkoutItems = items.map(item => ({
                                 id: item.id,
                                 quantity: item.quantity
@@ -436,9 +363,10 @@ function ContactFormContent() {
                                     customerName: nameInput.value.trim(),
                                     customerEmail: emailInput.value.trim(),
                                     customerPhone: phoneInput.value.trim(),
-                                    message: messageText,
+                                    message: 'Réservation via formulaire',
                                     newsletter: newsletterOptIn,
-                                    preferredMethod: 'all'
+                                    preferredMethod: 'all',
+                                    serviceDate: dateInput?.value || undefined,
                                 }),
                             });
 
@@ -475,20 +403,20 @@ function ContactFormContent() {
                     )}
                 </Button>
 
-                {/* Bouton Klarna 3x - Visible uniquement si total >= 35€ */}
+                {/* Bouton Klarna 3x */}
                 {Number(total) >= 35 && (
                     <Button
                         type="button"
-                        disabled={isPending || isCheckoutLoading}
+                        disabled={isPending || isCheckoutLoading || !cguAccepted}
                         onClick={async () => {
                             try {
                                 setIsCheckoutLoading(true);
                                 setCheckoutError(null);
 
-                                // Valider les champs obligatoires avant checkout
                                 const nameInput = document.getElementById('name') as HTMLInputElement;
                                 const emailInput = document.getElementById('email') as HTMLInputElement;
                                 const phoneInput = document.getElementById('phone') as HTMLInputElement;
+                                const dateInput = document.getElementById('serviceDate') as HTMLInputElement;
 
                                 if (!cguAccepted) {
                                     setCheckoutError('Veuillez accepter les Conditions Générales d\'Utilisation pour continuer.');
@@ -512,7 +440,6 @@ function ContactFormContent() {
                                     return;
                                 }
 
-                                // 🔒 Envoyer id, quantity + infos client avec preference Klarna
                                 const checkoutItems = items.map(item => ({
                                     id: item.id,
                                     quantity: item.quantity
@@ -526,9 +453,10 @@ function ContactFormContent() {
                                         customerName: nameInput.value.trim(),
                                         customerEmail: emailInput.value.trim(),
                                         customerPhone: phoneInput.value.trim(),
-                                        message: messageText,
+                                        message: 'Réservation via formulaire',
                                         newsletter: newsletterOptIn,
-                                        preferredMethod: 'klarna'
+                                        preferredMethod: 'klarna',
+                                        serviceDate: dateInput?.value || undefined,
                                     }),
                                 });
 
@@ -559,7 +487,6 @@ function ContactFormContent() {
                             </>
                         ) : (
                             <>
-                                {/* Icône Klarna style */}
                                 <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none">
                                     <rect width="24" height="24" rx="4" fill="#0A0B09"/>
                                     <path d="M12 6c-2.5 0-4 1.5-4 3.5 0 1.5.8 2.3 2 3l-1.5 4h3l.8-2.5h1.4l-.8 2.5h3l1.5-4.5c.5-1.5-.5-3-2.5-3H12z" fill="#FFB3C7"/>

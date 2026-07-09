@@ -17,7 +17,7 @@ const ContactSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   email: z.string().email("Email invalide"),
   phone: z.string().min(10, "Veuillez entrer un numéro de téléphone valide (10 chiffres)"),
-  message: z.string().min(5, "Le message doit contenir au moins 5 caractères"),
+  message: z.string().optional().default("Réservation via formulaire"),
   cart: z.string().optional(), // JSON stringifié du panier
   serviceDate: z.string().optional().nullable(), // Date souhaitée (optionnelle, peut être null)
 });
