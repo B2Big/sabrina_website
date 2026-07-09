@@ -5,6 +5,7 @@ import { createReservationSurPlace } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Loader2, Send, ShoppingBag, X, CalendarCheck, CreditCard, Globe, Wallet, Calendar } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useCart } from '@/context/cart-context';
 
@@ -20,6 +21,7 @@ function ContactFormContent() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [cguAccepted, setCguAccepted] = useState(false);
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
+  const [paymentMode, setPaymentMode] = useState<'onsite' | 'online'>('onsite');
 
   const { items, total, removeFromCart, clearCart } = useCart();
 
@@ -287,33 +289,67 @@ function ContactFormContent() {
             </label>
           </div>
 
-          <div className="flex flex-col gap-3 pt-2">
-            <Button
-                type="submit"
-                disabled={isPending || isCheckoutLoading || !cguAccepted || items.length === 0}
-                className="w-full h-auto min-h-[4rem] py-3 text-sm sm:text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none px-4 flex items-center justify-center gap-2"
-            >
-                {isPending ? (
-                <>
-                    <Loader2 className="w-5 h-5 animate-spin shrink-0" />
-                    <span className="whitespace-normal leading-tight">Envoi...</span>
-                </>
-                ) : (
-                <>
-                    <CalendarCheck className="w-5 h-5 shrink-0" />
-                    <span className="whitespace-normal leading-tight">Réserver sans payer</span>
-                </>
+          {items.length > 0 && (
+            <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-2 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setPaymentMode('onsite')}
+                className={cn(
+                  "flex-1 py-3 px-2 md:px-4 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2",
+                  paymentMode === 'onsite'
+                    ? "bg-slate-900 text-white shadow-lg"
+                    : "text-slate-500 hover:bg-slate-100"
                 )}
-            </Button>
+              >
+                <CalendarCheck className="w-4 h-4" />
+                Réserver uniquement
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMode('online')}
+                className={cn(
+                  "flex-1 py-3 px-2 md:px-4 rounded-xl text-xs md:text-sm font-black transition-all flex items-center justify-center gap-2",
+                  paymentMode === 'online'
+                    ? "bg-slate-900 text-white shadow-lg"
+                    : "text-slate-500 hover:bg-slate-100"
+                )}
+              >
+                <CreditCard className="w-4 h-4" />
+                Réserver et payer
+              </button>
+            </div>
+          )}
 
-            {items.length > 0 && (
-                <div className="relative flex items-center justify-center my-2">
-                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200"></span></div>
-                    <span className="relative bg-white px-2 text-[10px] text-slate-400 uppercase font-bold">OU payer en ligne</span>
+          <div className="flex flex-col gap-3 pt-2">
+            {paymentMode === 'onsite' && (
+              <>
+                <Button
+                  type="submit"
+                  disabled={isPending || isCheckoutLoading || !cguAccepted || items.length === 0}
+                  className="w-full h-auto min-h-[4rem] py-3 text-sm sm:text-base md:text-lg rounded-2xl bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10 font-black tracking-tight transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none px-4 flex items-center justify-center gap-2"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+                      <span className="whitespace-normal leading-tight">Envoi...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CalendarCheck className="w-5 h-5 shrink-0" />
+                      <span className="whitespace-normal leading-tight">Réserver sans payer</span>
+                    </>
+                  )}
+                </Button>
+
+                <div className="text-center py-2 px-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <p className="text-xs text-emerald-800 font-bold">
+                    💶 Le règlement se fera sur place, en main propre, le jour de votre séance.
+                  </p>
                 </div>
+              </>
             )}
 
-            {items.length > 0 && (
+            {paymentMode === 'online' && items.length > 0 && (
                 <>
                 <Button
                     type="button"
