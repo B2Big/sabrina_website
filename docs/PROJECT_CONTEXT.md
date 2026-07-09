@@ -1,8 +1,8 @@
 # Contexte du Projet Sabrina Coaching
 
-**Dernière mise à jour** : 2026-06-28
-**Version** : Marketing Release + Infra Anti-Pause
-**Session** : 2026-06-28
+**Dernière mise à jour** : 2026-07-09
+**Version** : Excalidraw Refonte + Réservation Focus
+**Session** : 2026-07-09
 
 ---
 
@@ -61,16 +61,23 @@ Le projet est désormais consolidé autour d'une **application web unique** (Nex
 - **Catalogue Dynamique** : 20 services récupérés en temps réel depuis la BDD
 - **Panic Sell (Vente Flash)** : Bandeau d'alerte avec calcul auto des prix barrés
 - **Panier Flottant** : Affiche le total et permet la réservation
-- **Scarcity Badge** : Compteur de disponibilité live (1-6 places) avec urgence colorée
+- **Badges Marketing** : "Top Choix", "Best Value", économies en euros
 - **Photo Marquee** : Double rangée d'images sport/massage animées
 - **Carrousel Hero** : 5 images optimisées WebP avec autoplay et navigation
+- **Style Excalidraw** : Cartes, boutons et sections avec rendu dessin moderne pastel
 
 #### Réservation (DUAL FLOW)
 
 | Flux | Paiement | Emails | Statut |
 |------|----------|--------|--------|
-| **Sur Place** | Lors du RDV | 🟠 Orange (confirmation) | `attente_paiement_sur_place` |
-| **En Ligne** | Stripe | 🟢 Vert (reçu inclus) | `paye_confirme` |
+| **Sur Place** | Lors du RDV, en main propre | 🟠 Orange (confirmation) | `attente_paiement_sur_place` |
+| **En Ligne** | Stripe (CB / PayPal / Klarna 3x) | 🟢 Vert (reçu inclus) | `paye_confirme` |
+
+**Formulaire optimisé** :
+- Toggle "Réserver uniquement" / "Réserver et payer"
+- Champ "date souhaitée"
+- Pas de champ message libre — orienté vente directe
+- Pleine largeur sur mobile
 
 **Emails automatiques** (via Resend) :
 - Client : Confirmation de réservation
@@ -88,7 +95,7 @@ Accessible via `/admin`
 
 ---
 
-## 5. État Actuel (03/03/2026)
+## 5. État Actuel (09/07/2026)
 
 ### ✅ Opérationnel
 - [x] Base de données connectée (Supabase)
@@ -103,6 +110,9 @@ Accessible via `/admin`
 - [x] PWA installable
 - [x] **SEO optimisé** (JSON-LD, WebP, meta tags)
 - [x] **Images optimisées WebP** (-60% poids)
+- [x] **Refonte visuelle Excalidraw** — style dessin moderne, palette pastel
+- [x] **Formulaire de réservation/vente** — toggle sur place / en ligne
+- [x] **Instagram intégré** dans navbar et section Sabrina
 
 ### ⚠️ Configuration Production
 - [x] URL webhook Stripe configurée (`www.sab-fit.com`)
@@ -142,7 +152,9 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 | `src/lib/audit.ts` | Système d'audit trail |
 | `src/app/api/webhooks/stripe/route.ts` | Handler webhook Stripe |
 | `src/app/api/admin/audit-logs/route.ts` | API audit logs |
-| `src/components/contact-form.tsx` | Formulaire réservation |
+| `src/components/contact-form.tsx` | Formulaire réservation/vente avec toggle |
+| `src/components/navbar.tsx` | Navigation avec badge Instagram |
+| `src/components/about-section.tsx` | Présentation Sabrina + lien Instagram |
 | `src/components/admin/audit-log.tsx` | Panel audit admin |
 | `src/app/admin/layout.tsx` | Layout avec timeout 1h |
 | `src/lib/constants.ts` | Constantes centralisées |

@@ -4,6 +4,62 @@
 
 ---
 
+## [2026-07-09] Refonte Excalidraw + Formulaire Réservation/Vente
+
+### 🎨 Refonte Visuelle Globale
+- **Style Excalidraw** appliqué sur l'ensemble du site — rendu dessin moderne avec bordures irrégulières et ombres douces
+- **Palette pastel** — dégradés adoucis sur titres, icônes et éléments visuels
+- **Typographie manuscrite** — Comic Neue importée et appliquée comme police secondaire
+- **Textures papier** — fond légèrement texturé pour renforcer l'ambiance dessin
+
+### 🧹 Suppression des Éléments Parasites
+- Retrait des badges "plus que X places disponibles" sur les cartes de prestations
+- Retrait des compteurs d'urgence dans la section contact
+- La section massage ambiance est devenue un badge informatif centré et non-cliquable
+
+### 🛒 Cartes de Vente Optimisées
+- Taille réduite et réorganisée sur mobile tout en gardant titre, description, avantages, prix et bouton
+- Correction des collisions entre les cartes mises en avant (Top Choix / Best Value)
+- Badge économie "-XX€" légèrement agrandi sur mobile pour plus de lisibilité
+
+### 📅 Formulaire de Contact → Formulaire de Réservation
+- Suppression de la section "intéressé par coaching / massage / autre demande"
+- Suppression du champ "votre message"
+- Ajout d'un champ "date souhaitée"
+- Ajout d'un toggle :
+  - **Réserver uniquement** → règlement sur place en main propre
+  - **Réserver et payer** → CB, PayPal ou Klarna 3x sans frais
+- Formulaire pleine largeur sur mobile
+- Titre mis à jour : "Réservation"
+
+### 📸 Instagram
+- Icône Instagram ajoutée dans la navbar (desktop et mobile)
+- Lien Instagram sorti de l'accordéon "Qui est Sabrina ?" et visible en permanence en dessous
+
+### 🎬 Animation Marquee Mobile
+- Remplacement de l'animation par un fondu en deux spans fixes
+- Suppression du clignotement au changement de mot
+- Suppression de l'effet de vague/bordure blanche
+
+### ✅ Validation
+- **Build** : OK ✅
+- **Push** : `origin/main` ✅
+
+### 📁 Fichiers concernés
+- `src/app/globals.css`
+- `src/app/layout.tsx`
+- `src/app/page.tsx`
+- `src/components/ui/abstract-shape.tsx`
+- `src/components/service-card.tsx`
+- `src/components/sections/massage-ambiance.tsx`
+- `src/components/contact-form.tsx`
+- `src/components/navbar.tsx`
+- `src/components/about-section.tsx`
+- `src/components/ui/marquee.tsx`
+- `src/app/actions.ts`
+
+---
+
 ## [2026-06-28] Supabase Anti-Pause — Workflow Renforcé
 
 ### 🚨 Contexte
