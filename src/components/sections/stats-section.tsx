@@ -73,7 +73,7 @@ export function StatsSection() {
               transition={{ duration: 0.5, delay: i * 0.1 }}
             >
               <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 md:p-8 text-center hover:bg-white/10 transition-colors duration-300">
-                <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-training to-accent-mint flex items-center justify-center mb-4 shadow-lg shadow-training/20 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-indigo-300 via-cyan-300 to-mint-300 flex items-center justify-center mb-4 shadow-lg shadow-indigo-300/20 group-hover:scale-110 transition-transform duration-300">
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="text-4xl md:text-5xl font-black text-white mb-2">

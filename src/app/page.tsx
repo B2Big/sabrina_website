@@ -130,7 +130,7 @@ export default async function Home() {
                 </span>
                 <h2 className="text-6xl md:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]" itemProp="name">
                   Coaching <br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-accent-mint">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-cyan-300 to-mint-300">
                     Fitness Sur Mesure
                   </span>
                 </h2>
@@ -175,7 +175,7 @@ export default async function Home() {
                 </span>
                 <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-slate-900 tracking-tighter leading-[0.9]" itemProp="name">
                   Massage & <br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-care to-accent-peach">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 via-rose-300 to-amber-200">
                     Récupération Sportive
                   </span>
                 </h2>
@@ -222,7 +222,7 @@ export default async function Home() {
                 <div className="space-y-10 flex flex-col justify-center">
                   <div>
                     <h2 className="text-5xl md:text-7xl font-black tracking-tight mb-6">
-                      Let&apos;s <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">Start</span>.
+                      Let&apos;s <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-rose-300">Start</span>.
                     </h2>
                     <p className="text-slate-400 text-xl leading-relaxed max-w-md">
                       Prêt(e) à changer ? N&apos;attendez plus, les créneaux partent vite.

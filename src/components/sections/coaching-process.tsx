@@ -9,28 +9,28 @@ const STEPS = [
     icon: Target,
     title: 'Bilan Initial',
     desc: '30 minutes offertes pour évaluer ton niveau, tes objectifs et tes contraintes. On définit ensemble ta feuille de route.',
-    color: 'from-training to-indigo',
+    color: 'from-indigo-300 to-purple-300',
   },
   {
     num: '02',
     icon: ClipboardList,
     title: 'Programme Sur-mesure',
     desc: 'Séances adaptées à TON corps et TON emploi du temps. Pas de programme copié-collé, tout est personnalisé.',
-    color: 'from-indigo to-cyan',
+    color: 'from-purple-300 to-cyan-300',
   },
   {
     num: '03',
     icon: TrendingUp,
     title: 'Suivi & Ajustements',
     desc: 'Plans évolutifs, motivation continue, challenges personnalisés. Je m\'adapte à ton évolution en temps réel.',
-    color: 'from-cyan to-accent-mint',
+    color: 'from-cyan-300 to-mint-300',
   },
   {
     num: '04',
     icon: Trophy,
     title: 'Résultats Durables',
     desc: 'L\'objectif : graver de nouvelles habitudes pour ne plus jamais rechuter. Ton corps change, ta mentalité aussi.',
-    color: 'from-accent-mint to-training',
+    color: 'from-mint-300 to-indigo-300',
   },
 ];
 
@@ -51,7 +51,7 @@ export function CoachingProcess() {
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 mt-6 leading-[0.9]">
             Votre parcours{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-accent-mint">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-cyan-300 to-mint-300">
               coaching
             </span>
           </h2>
@@ -63,7 +63,7 @@ export function CoachingProcess() {
         {/* Timeline Desktop / Stack Mobile */}
         <div className="relative">
           {/* Connecting line — desktop only */}
-          <div className="hidden lg:block absolute top-[72px] left-[12.5%] right-[12.5%] h-1 bg-gradient-to-r from-training via-cyan to-accent-mint rounded-full" />
+          <div className="hidden lg:block absolute top-[72px] left-[12.5%] right-[12.5%] h-1 bg-gradient-to-r from-indigo-300 via-cyan-300 to-mint-300 rounded-full" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
             {STEPS.map((step, i) => (
@@ -96,7 +96,7 @@ export function CoachingProcess() {
                 {/* Mobile connector */}
                 {i < STEPS.length - 1 && (
                   <div className="lg:hidden flex justify-center my-4">
-                    <div className="w-1 h-8 bg-gradient-to-b from-training to-accent-mint rounded-full" />
+                    <div className="w-1 h-8 bg-gradient-to-b from-indigo-300 to-mint-300 rounded-full" />
                   </div>
                 )}
               </motion.div>

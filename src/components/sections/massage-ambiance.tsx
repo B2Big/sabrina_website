@@ -69,7 +69,7 @@ export function MassageAmbiance() {
 
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 mt-6 leading-[0.9]">
               Un moment rien que{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-care to-accent-peach">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-300 via-rose-300 to-amber-200">
                 pour vous
               </span>
             </h2>

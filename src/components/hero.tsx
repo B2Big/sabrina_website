@@ -155,7 +155,7 @@ export function Hero() {
             {/* Main Title - Visuel H1 mais sémantiquement H2 car H1 unique dans page.tsx */}
             <h2 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-slate-900 leading-[0.9]" itemProp="headline">
               <span className="block hover:text-training transition-colors duration-500 cursor-default">BOOST</span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 italic font-serif">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-rose-300 italic">
                 & Balance
               </span>
             </h2>

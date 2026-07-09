@@ -70,7 +70,7 @@ export function WhyChoose() {
               className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter text-slate-900 mt-6 leading-[0.9]"
             >
               Pourquoi{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-accent-mint">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-cyan-300 to-mint-300">
                 choisir
               </span>{' '}
               Sab-Fit
@@ -102,7 +102,7 @@ export function WhyChoose() {
                   variants={itemVariants}
                   className="flex items-start gap-4 group"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-training to-accent-mint flex items-center justify-center shadow-lg shadow-training/20 group-hover:scale-110 transition-transform duration-300">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-300 via-cyan-300 to-mint-300 flex items-center justify-center shadow-lg shadow-indigo-300/20 group-hover:scale-110 transition-transform duration-300">
                     <arg.icon className="w-5 h-5 text-white" />
                   </div>
                   <div>

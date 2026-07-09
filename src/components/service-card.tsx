@@ -72,25 +72,24 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         className={cn(
-          "group relative h-full bg-white rounded-[10px] p-3 md:p-5 lg:p-8 flex flex-col overflow-hidden transition-all duration-300",
+          "group relative h-full bg-white p-3 md:p-5 lg:p-8 flex flex-col overflow-hidden transition-all duration-300 sketch-card",
           (isPopular || isBestValue)
             ? "border-[3px] scale-[1.03]"
-            : "border-2",
+            : "",
           (isPopular || isBestValue) && isCoaching ? "border-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.4)]" : "",
-          (isPopular || isBestValue) && !isCoaching ? "border-rose-600 shadow-[0_0_20px_rgba(225,29,72,0.4)]" : "",
-          !isPopular && !isBestValue ? "border-slate-500 shadow-md hover:shadow-xl hover:border-slate-600" : ""
+          (isPopular || isBestValue) && !isCoaching ? "border-rose-600 shadow-[0_0_20px_rgba(225,29,72,0.4)]" : ""
         )}
       >
 
         {/* MARKETING BADGES — PLUS AGRESSIFS */}
         {isPopular && (
-          <div className="absolute top-0 right-0 bg-gradient-to-r from-slate-900 to-slate-700 text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-bl-2xl flex items-center gap-1.5 z-20 shadow-lg">
-            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400 animate-pulse" />
+          <div className="absolute top-0 right-0 bg-gradient-to-r from-indigo-400 to-purple-400 text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-bl-2xl flex items-center gap-1.5 z-20 shadow-lg">
+            <Star className="w-3.5 h-3.5 text-yellow-200 fill-yellow-200 animate-pulse" />
             Top Choix
           </div>
         )}
         {isBestValue && (
-          <div className="absolute top-0 right-0 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-bl-2xl flex items-center gap-1.5 z-20 shadow-lg">
+          <div className="absolute top-0 right-0 bg-gradient-to-r from-emerald-300 to-teal-300 text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-bl-2xl flex items-center gap-1.5 z-20 shadow-lg">
             <Zap className="w-3.5 h-3.5 fill-white animate-pulse" />
             Best Value
           </div>
@@ -201,7 +200,7 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
                    {service.price}
                </span>
                {showKlarna && (
-                   <span className="inline-flex items-center gap-1 md:gap-1.5 text-[7px] md:text-xs font-black text-white bg-gradient-to-r from-pink-500 to-rose-500 px-1.5 md:px-3 py-0.5 md:py-1.5 rounded-full shadow-lg shadow-pink-500/30">
+                   <span className="inline-flex items-center gap-1 md:gap-1.5 text-[7px] md:text-xs font-black text-white bg-gradient-to-r from-rose-300 to-pink-400 px-1.5 md:px-3 py-0.5 md:py-1.5 rounded-full shadow-lg shadow-rose-300/30">
                        <CreditCard className="w-2.5 h-2.5 md:w-3.5 md:h-3.5" />
                        3x sans frais
                    </span>
@@ -233,9 +232,9 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
              ) : (
           <Button 
             className={cn(
-              "w-full rounded-lg md:rounded-2xl font-black tracking-wide shadow-xl hover:shadow-2xl hover:scale-[1.03] active:scale-[0.98] transition-all text-white h-9 md:h-14 text-[11px] md:text-base px-2 md:px-4",
-              isPopular && "animate-pulse shadow-yellow-500/20",
-              isBestValue && "shadow-emerald-500/20"
+              "w-full sketch-button font-black tracking-wide text-white h-9 md:h-14 text-[11px] md:text-base px-2 md:px-4",
+              isPopular && "animate-pulse",
+              isBestValue && ""
             )} 
             style={{ backgroundColor: accentColor }} 
             onClick={() => addToCart(service)}

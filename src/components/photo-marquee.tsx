@@ -74,7 +74,7 @@ export function PhotoMarquee() {
       <div className="container mx-auto px-4 mb-16">
         <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter">
           L&apos;expertise <br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-rose-300">
             En Action
           </span>
         </h2>

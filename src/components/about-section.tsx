@@ -63,7 +63,7 @@ export function AboutSection() {
               {/* Title & Summary */}
               <div className="flex-1 text-left">
                 <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-2">
-                  Qui est <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">Sabrina</span> ?
+                  Qui est <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-rose-300">Sabrina</span> ?
                 </h2>
                 <p className="text-slate-600 text-sm md:text-base">
                   Coach sportive diplômée d&apos;État & praticienne bien-être • 15 ans d&apos;expérience
@@ -74,7 +74,7 @@ export function AboutSection() {
               <motion.div
                 animate={{ rotate: isOpen ? 180 : 0 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="w-12 h-12 rounded-full bg-gradient-to-br from-training to-care flex items-center justify-center shadow-lg flex-shrink-0"
+                className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-300 via-purple-300 to-rose-300 flex items-center justify-center shadow-lg flex-shrink-0"
               >
                 <ChevronDown className="w-6 h-6 text-white" />
               </motion.div>
@@ -133,12 +133,12 @@ export function AboutSection() {
 
                         {/* Quick Stats Grid */}
                         <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-gradient-to-br from-training/10 to-training/5 rounded-xl p-4 text-center">
-                            <p className="text-3xl font-black text-training">15</p>
+                          <div className="bg-gradient-to-br from-indigo-100 to-indigo-50 rounded-xl p-4 text-center">
+                            <p className="text-3xl font-black text-indigo-400">15</p>
                             <p className="text-xs text-slate-600 uppercase tracking-wide">ans d&apos;expérience</p>
                           </div>
-                          <div className="bg-gradient-to-br from-care/10 to-care/5 rounded-xl p-4 text-center">
-                            <p className="text-3xl font-black text-care">200+</p>
+                          <div className="bg-gradient-to-br from-rose-100 to-rose-50 rounded-xl p-4 text-center">
+                            <p className="text-3xl font-black text-rose-400">200+</p>
                             <p className="text-xs text-slate-600 uppercase tracking-wide">Clients accompagnés</p>
                           </div>
                         </div>

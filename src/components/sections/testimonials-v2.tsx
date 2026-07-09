@@ -44,7 +44,7 @@ export function TestimonialsV2() {
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 mt-6 leading-[0.9]">
             Ils m'ont fait{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-care">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-300 to-rose-300">
               confiance
             </span>
           </h2>

@@ -65,7 +65,7 @@ export function FaqVisual() {
 
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 mt-6 leading-[0.9]">
               Questions{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-training to-accent-mint">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-cyan-300 to-mint-300">
                 fréquentes
               </span>
             </h2>
