@@ -36,20 +36,20 @@ export function Marquee({ items, children, direction = 'left', speed = 30, class
     return () => clearInterval(timer);
   }, [isMobile, items?.length]);
 
-  // --- MOBILE VIEW: Smooth fade (ONLY IF ITEMS PROVIDED) ---
+  // --- MOBILE VIEW: Smooth crossfade (ONLY IF ITEMS PROVIDED) ---
   if (isMobile && items && !children) {
     return (
       <div 
         className={cn("relative flex items-center justify-center overflow-hidden bg-slate-900 py-6 h-[80px]", className)}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="sync">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.02 }}
             transition={{ 
-              duration: 0.8, 
+              duration: 1.5, 
               ease: "easeInOut"
             }}
             className="absolute inset-0 flex items-center justify-center"
