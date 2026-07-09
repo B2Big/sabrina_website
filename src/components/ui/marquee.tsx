@@ -17,9 +17,11 @@ export function Marquee({ items, children, direction = 'left', speed = 30, class
   const id = useId().replace(/:/g, '');
   const animName = `marquee-${id}`;
   
-  // Mobile Logic for 3D Flip
+  // Mobile Logic
   const [isMobile, setIsMobile] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [frontIndex, setFrontIndex] = useState(0);
+  const [backIndex, setBackIndex] = useState(1);
+  const [showFront, setShowFront] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -29,36 +31,43 @@ export function Marquee({ items, children, direction = 'left', speed = 30, class
   }, []);
 
   useEffect(() => {
-    if (!isMobile || !items) return;
+    if (!isMobile || !items || items.length < 2) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % items.length);
-    }, 5000); // Change word every 5 seconds
+      const activeIndex = showFront ? frontIndex : backIndex;
+      const nextIndex = (activeIndex + 1) % items.length;
+      if (showFront) {
+        setBackIndex(nextIndex);
+        setShowFront(false);
+      } else {
+        setFrontIndex(nextIndex);
+        setShowFront(true);
+      }
+    }, 5000); // Hold each word for 5 seconds
     return () => clearInterval(timer);
-  }, [isMobile, items?.length]);
+  }, [isMobile, items, frontIndex, backIndex, showFront]);
 
-  // --- MOBILE VIEW: Smooth crossfade (ONLY IF ITEMS PROVIDED) ---
+  // --- MOBILE VIEW: Seamless crossfade with two fixed spans ---
   if (isMobile && items && !children) {
     return (
       <div 
         className={cn("relative flex items-center justify-center overflow-hidden bg-slate-900 py-6 h-[80px]", className)}
       >
-        <AnimatePresence mode="sync">
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.02 }}
-            transition={{ 
-              duration: 1.5, 
-              ease: "easeInOut"
-            }}
-            className="absolute inset-0 flex items-center justify-center"
-          >
-            <span className="text-xl font-black uppercase text-white tracking-[0.2em] text-center w-full">
-              {items[currentIndex]}
-            </span>
-          </motion.div>
-        </AnimatePresence>
+        <span
+          className={cn(
+            "absolute inset-0 flex items-center justify-center text-xl font-black uppercase text-white tracking-[0.2em] text-center w-full transition-opacity duration-1000 ease-in-out",
+            showFront ? "opacity-100" : "opacity-0"
+          )}
+        >
+          {items[frontIndex]}
+        </span>
+        <span
+          className={cn(
+            "absolute inset-0 flex items-center justify-center text-xl font-black uppercase text-white tracking-[0.2em] text-center w-full transition-opacity duration-1000 ease-in-out",
+            showFront ? "opacity-0" : "opacity-100"
+          )}
+        >
+          {items[backIndex]}
+        </span>
       </div>
     );
   }
