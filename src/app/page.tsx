@@ -151,7 +151,7 @@ export default async function Home() {
             {/* COACHING PROCESS */}
             <CoachingProcess />
 
-            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-12 relative z-10">
+            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 lg:gap-12 relative z-10">
               {coachingServices.map((service, index) => (
                 <ServiceCard key={service.id} service={service} index={index} />
               ))}
@@ -196,7 +196,7 @@ export default async function Home() {
             {/* MASSAGE AMBIANCE */}
             <MassageAmbiance />
 
-            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-12 relative z-10">
+            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8 lg:gap-12 relative z-10">
               {massageServices.map((service, index) => (
                 <ServiceCard key={service.id} service={service} index={index} />
               ))}
@@ -227,17 +227,6 @@ export default async function Home() {
                     <p className="text-slate-400 text-xl leading-relaxed max-w-md">
                       Prêt(e) à changer ? N&apos;attendez plus, les créneaux partent vite.
                     </p>
-                  </div>
-
-                  {/* SCARCITY INDICATOR */}
-                  <div className="inline-flex items-center gap-3 bg-green-500/10 border border-green-500/20 px-4 py-3 rounded-xl animate-pulse">
-                    <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span>
-                    <span className="font-bold text-green-400 tracking-wide text-sm">
-                      Disponibilité : Quelques places cette semaine
-                    </span>
                   </div>
 
                   <div className="flex flex-col gap-6">

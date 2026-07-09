@@ -90,19 +90,12 @@ export function MassageAmbiance() {
               ))}
             </div>
 
-            {/* CTA */}
-            <div className="mt-10">
-              <Button
-                variant="care"
-                size="lg"
-                className="h-14 px-8 text-lg rounded-2xl shadow-xl shadow-care/20 hover:scale-105 transition-transform"
-                asChild
-              >
-                <a href="#massage">
-                  Réserver mon moment de détente
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </a>
-              </Button>
+            {/* Badge CTA non cliquable */}
+            <div className="mt-10 text-center md:text-left">
+              <div className="inline-flex items-center gap-2 h-12 md:h-14 px-4 md:px-8 text-base md:text-lg rounded-2xl shadow-xl shadow-care/20 bg-care text-white font-black tracking-wide">
+                Réserver mon moment de détente
+                <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+              </div>
             </div>
           </motion.div>
         </div>
