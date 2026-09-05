@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { prisma } from '@/lib/db-services';
+import { prisma, getActivePromotions } from '@/lib/db-services';
+import { parsePriceToNumber, applyPromotionDiscount } from '@/lib/pricing';
 import { checkoutSchema } from '@/lib/validations/schemas';
 import { rateLimit, RateLimitConfigs, getClientIp, rateLimitExceededResponse } from '@/lib/rate-limit';
 import { sendNotificationToSabrinaStripePending, sendConfirmationToCustomerStripePending } from '@/lib/resend';
@@ -82,12 +83,16 @@ export async function POST(req: Request) {
       );
     }
 
+    // 🔒 Prix cohérents avec l'affichage : charger les promos actives et appliquer les mêmes remises
+    const activePromotions = await getActivePromotions();
+    console.log('🏷️ [CHECKOUT] Promotions actives chargées:', activePromotions.length);
+
     // Créer un Map pour accès rapide
     const servicesMap = new Map(
       servicesFromDb.map(s => [s.id, s])
     );
 
-    // Construire les line items avec les VRAIS prix de la DB
+    // Construire les line items avec les VRAIS prix de la DB, remise promo appliquée (même logique que page.tsx)
     const lineItems = items.map((item) => {
       const service = servicesMap.get(item.id);
 
@@ -95,11 +100,18 @@ export async function POST(req: Request) {
         throw new Error(`Service ${item.id} introuvable`);
       }
 
-      // Parser le prix depuis la DB (format: "70 €" -> 70)
-      const priceNumber = parseFloat(service.price.replace(/[^0-9.]/g, ''));
+      // Prix de base depuis la DB (format: "70 €" -> 70)
+      const basePrice = parsePriceToNumber(service.price);
 
-      if (isNaN(priceNumber) || priceNumber <= 0) {
+      if (isNaN(basePrice) || basePrice <= 0) {
         throw new Error(`Prix invalide pour ${service.title}`);
+      }
+
+      // Appliquer la remise promotionnelle si une promo active cible ce service
+      const effectivePrice = applyPromotionDiscount(basePrice, activePromotions, service.id);
+
+      if (effectivePrice !== basePrice) {
+        console.log(`🏷️ [CHECKOUT] Promo appliquée sur ${service.title}: ${basePrice}€ -> ${effectivePrice}€`);
       }
 
       return {
@@ -109,7 +121,7 @@ export async function POST(req: Request) {
             name: service.title,
             description: service.category,
           },
-          unit_amount: Math.round(priceNumber * 100), // Centimes
+          unit_amount: Math.round(effectivePrice * 100), // Centimes
         },
         quantity: item.quantity,
       };
@@ -119,6 +131,14 @@ export async function POST(req: Request) {
     const totalAmount = lineItems.reduce((sum, item) => {
       return sum + (item.price_data.unit_amount * item.quantity)
     }, 0);
+
+    // Prix effectif par service (remise incluse) pour la réservation et les emails
+    const effectivePrices = new Map(
+      servicesFromDb.map(s => [
+        s.id,
+        applyPromotionDiscount(parsePriceToNumber(s.price), activePromotions, s.id)
+      ])
+    );
 
     // 💾 ÉTAPE 1: CRÉER LA RÉSERVATION EN BASE DE DONNÉES
     console.log('💾 [CHECKOUT] Création réservation...');
@@ -131,7 +151,7 @@ export async function POST(req: Request) {
         customerPhone: customerPhone,
         message: message || null,
         serviceTitle: servicesFromDb.map(s => s.title).join(', '),
-        servicePrice: parseFloat(servicesFromDb[0].price.replace(/[^0-9.]/g, '')) || 0,
+        servicePrice: effectivePrices.get(servicesFromDb[0].id) ?? 0,
         quantity: items.reduce((acc, item) => acc + item.quantity, 0),
         totalAmount: totalAmount / 100, // Convertir centimes -> euros
         paymentMethod: 'stripe',
@@ -152,7 +172,7 @@ export async function POST(req: Request) {
         customerPhone: customerPhone,
         services: servicesFromDb.map(s => ({
           title: s.title,
-          price: s.price.replace(/[^0-9.]/g, ''),
+          price: String(effectivePrices.get(s.id) ?? parsePriceToNumber(s.price)),
           quantity: items.find(i => i.id === s.id)?.quantity || 1
         })),
         total: (totalAmount / 100).toFixed(2),
@@ -168,7 +188,7 @@ export async function POST(req: Request) {
         reservationId: reservation.id,
         services: servicesFromDb.map(s => ({
           title: s.title,
-          price: s.price.replace(/[^0-9.]/g, ''),
+          price: String(effectivePrices.get(s.id) ?? parsePriceToNumber(s.price)),
           quantity: items.find(i => i.id === s.id)?.quantity || 1
         })),
         total: (totalAmount / 100).toFixed(2),

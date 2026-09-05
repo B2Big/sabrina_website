@@ -57,7 +57,7 @@ export function PromoBanner({ promotions }: PromoBannerProps) {
                 >
                     <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-center">
                         <Tag className="w-3 h-3 text-yellow-300 fill-yellow-300 animate-pulse shrink-0" />
-                        <span className="truncate max-w-[200px] xs:max-w-none">{currentItem.text}</span>
+                        <span className="truncate max-w-[200px]">{currentItem.text}</span>
                         {currentItem.link && (
                             <a href={currentItem.link} target="_blank" className="ml-1 bg-white text-red-600 px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0">
                                 GO

@@ -1,5 +1,3 @@
-'use server'
-
 import { prisma } from '@/lib/db-services'
 import { headers } from 'next/headers'
 import { DEFAULT_AUDIT_LOG_LIMIT, ONE_DAY } from './constants'

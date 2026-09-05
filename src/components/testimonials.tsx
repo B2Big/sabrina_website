@@ -46,7 +46,7 @@ export function Testimonials() {
       </div>
       
       {/* --- DESKTOP VIEW (Marquee Défilant) --- */}
-      <div className="hidden md:flex relative overflow-hidden user-select-none">
+      <div className="hidden md:flex relative overflow-hidden select-none">
         <motion.div
           initial={{ x: 0 }}
           animate={{ x: "-50%" }}

@@ -43,10 +43,12 @@ export type PromotionFormData = {
 }
 
 export async function getServices() {
+  await requireAdmin()
   return await getAllServices()
 }
 
 export async function getPromotions() {
+  await requireAdmin()
   try {
     return await prisma.promotion.findMany({
       orderBy: { createdAt: 'desc' },

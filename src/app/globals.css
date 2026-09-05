@@ -38,8 +38,15 @@
   --color-foreground: var(--foreground);
   
   --color-training: var(--color-training);
+  --color-training-light: #EEF2FF;
+  --color-training-dark: #6366F1;
   
   --color-care: var(--color-care);
+  --color-care-light: #FDF2F8;
+  --color-care-dark: #EC4899;
+
+  --color-accent-mint: var(--color-accent-mint);
+  --color-accent-peach: var(--color-accent-peach);
 
   --color-indigo: var(--color-indigo);
   --color-cyan: var(--color-cyan);
@@ -47,6 +54,8 @@
   --color-rose: var(--color-rose);
   --color-fuchsia: var(--color-fuchsia);
   --color-amber: var(--color-amber);
+
+  --color-ring: var(--color-training);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-hand: var(--font-hand), 'Comic Sans MS', 'Chalkboard SE', cursive;
@@ -182,22 +191,45 @@
   }
 }
 
-/* PERFORMANCE: Disable animations on mobile to prevent lag */
-@media (max-width: 768px) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+/* Animations d'entrée (remplacement du plugin tailwindcss-animate, non installé) */
+@keyframes enter {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-in {
+  animation: enter 0.5s ease-out both;
+}
 
-  /* Force elements to be visible immediately (overriding fade-ins) */
-  [data-aos], .animate-in, .motion-div {
-    opacity: 1 !important;
-    transform: none !important;
-    animation: none !important;
-    transition: none !important;
-  }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in {
+  animation: fade-in 0.5s ease-out both;
+}
+
+@keyframes zoom-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.zoom-in {
+  animation: zoom-in 0.5s ease-out both;
+}
+
+@keyframes slide-in-from-bottom {
+  from { opacity: 0; transform: translateY(1.25rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide-in-from-bottom-5 {
+  animation: slide-in-from-bottom 0.5s ease-out both;
+}
+
+@keyframes slide-in-from-top {
+  from { opacity: 0; transform: translateY(-0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide-in-from-top-2 {
+  animation: slide-in-from-top 0.5s ease-out both;
 }
 
 /* ACCESSIBILITÉ: Focus visible pour navigation clavier */

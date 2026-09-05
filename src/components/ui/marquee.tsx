@@ -86,7 +86,7 @@ export function Marquee({ items, children, direction = 'left', speed = 30, class
   )) : null);
 
   return (
-    <div className={cn("relative flex overflow-hidden user-select-none", !children && "bg-slate-900 py-4 border-y-4 border-white shadow-2xl", className)}>
+    <div className={cn("relative flex overflow-hidden select-none", !children && "bg-slate-900 py-4 border-y-4 border-white shadow-2xl", className)}>
       
       {/* Wrapper that moves */}
       <div 

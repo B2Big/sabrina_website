@@ -16,6 +16,7 @@ import { AboutSection } from "@/components/about-section";
 import { Service } from "@/data/content";
 import { FloatingCart } from "@/components/ui/floating-cart";
 import { getAllServices, getActivePromotions } from "@/lib/db-services";
+import { parsePriceToNumber, applyPromotionDiscount } from "@/lib/pricing";
 import { PromoBanner } from "@/components/promo-banner";
 import { WhyChoose } from "@/components/sections/why-choose";
 import { StatsSection } from "@/components/sections/stats-section";
@@ -34,37 +35,17 @@ export default async function Home() {
 
   if (dbServices && dbServices.length > 0) {
       services = dbServices.map(s => {
-          // 1. Check for active promotion for this service
-          // A promo matches if it includes this service ID in its services list
-          const activePromo = promotions.find(p => 
-              p.isActive && 
-              p.services && 
-              p.services.some((linkedService: any) => linkedService.id === s.id)
-          );
+          // 1. Vérifier la promo active pour ce service (logique partagée avec le checkout)
+          const basePrice = parsePriceToNumber(s.price);
+          const discountedPrice = applyPromotionDiscount(basePrice, promotions, s.id);
 
-          let finalPrice = s.price;
-          let finalOriginalPrice = s.originalPrice;
-          let bestValue = s.bestValue;
-
-          // 2. Apply Discount Logic
-          if (activePromo && activePromo.discountPercent) {
-             // Extract number from price string (e.g. "50 €" -> 50)
-             const priceMatch = s.price.match(/(\d+)/);
-             if (priceMatch) {
-                const basePrice = parseInt(priceMatch[0]);
-                const discountedPrice = Math.round(basePrice * (1 - activePromo.discountPercent / 100));
-                
-                finalOriginalPrice = s.price; // Move old price to original
-                finalPrice = `${discountedPrice} €`; // Set new price
-                bestValue = true; // Highlight as best value automatically
-             }
-          }
+          const hasDiscount = discountedPrice < basePrice;
 
           return {
             ...s,
-            price: finalPrice,
-            originalPrice: finalOriginalPrice,
-            bestValue: bestValue,
+            price: hasDiscount ? `${discountedPrice} €` : s.price,
+            originalPrice: hasDiscount ? s.price : s.originalPrice,
+            bestValue: hasDiscount ? true : s.bestValue,
             category: s.category as any,
             features: s.features || [],
             paymentLink: s.paymentLink || undefined,
