@@ -178,7 +178,6 @@
   }
 
 }
-
 /* ACCESSIBILITÉ: Respecter les préférences de réduction de mouvement */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -189,6 +188,54 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Fond parallaxe pastel — blobs animés en CSS pur (compositeur GPU, zéro JS par frame) */
+.parallax-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  will-change: transform;
+  animation: blob-drift 30s ease-in-out infinite alternate;
+}
+
+.parallax-blob.blob-1 { width: 40vw; height: 40vw; left: -10vw; top: -10vh; }
+.parallax-blob.blob-2 { width: 35vw; height: 35vw; right: -8vw; top: 15vh; animation-duration: 40s; }
+.parallax-blob.blob-3 { width: 30vw; height: 30vw; left: 20vw; bottom: -12vh; animation-duration: 35s; animation-delay: -10s; }
+.parallax-blob.blob-4 { width: 28vw; height: 28vw; right: 15vw; bottom: 10vh; animation-duration: 45s; animation-delay: -20s; }
+.parallax-blob.blob-5 { width: 24vw; height: 24vw; left: 45vw; top: 30vh; animation-duration: 38s; animation-delay: -15s; }
+
+@keyframes blob-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(6vw, -4vh) scale(1.08); }
+  66%  { transform: translate(-4vw, 5vh) scale(0.94); }
+  100% { transform: translate(3vw, -2vh) scale(1.04); }
+}
+
+/* Marquee photo — défilement CSS pur (boucle parfaite : -50% = une copie) */
+.marquee-track {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.marquee-left {
+  animation-name: marquee-left;
+  animation-duration: 45s;
+}
+
+.marquee-right {
+  animation-name: marquee-right;
+  animation-duration: 55s;
+}
+
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
 }
 
 /* Animations d'entrée (remplacement du plugin tailwindcss-animate, non installé) */

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { type Service } from '@/data/content';
 
 type CartItem = Service & { quantity: number };
@@ -27,7 +27,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Panier vide à chaque chargement de page (pas de persistance)
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const addToCart = (service: Service) => {
+  const addToCart = useCallback((service: Service) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.id === service.id);
       if (existing) {
@@ -37,26 +37,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prev, { ...service, quantity: 1 }];
     });
-  };
+  }, []);
 
-  const removeFromCart = (serviceId: string) => {
+  const removeFromCart = useCallback((serviceId: string) => {
     setItems((prev) => prev.filter((i) => i.id !== serviceId));
-  };
+  }, []);
 
   const clearCart = useCallback(() => {
     setItems([]);
   }, []);
 
   // Calculate total price (parsing "70 €" -> 70)
-  const total = items.reduce((sum, item) => {
-    return sum + (parsePrice(item.price) * item.quantity);
-  }, 0);
-
-  return (
-    <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, total }}>
-      {children}
-    </CartContext.Provider>
+  const total = useMemo(
+    () => items.reduce((sum, item) => sum + parsePrice(item.price) * item.quantity, 0),
+    [items]
   );
+
+  // 🔥 Value mémoïsée : évite le re-render de TOUTE la page (12 ServiceCard + FloatingCart + formulaire)
+  // à chaque changement du panier — seuls les consommateurs de useCart re-rendent.
+  const value = useMemo(
+    () => ({ items, addToCart, removeFromCart, clearCart, total }),
+    [items, total, addToCart, removeFromCart, clearCart]
+  );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {

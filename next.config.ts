@@ -25,7 +25,6 @@ const nextConfig: NextConfig = {
   
   // Optimisation du build
   poweredByHeader: false, // Masquer header X-Powered-By
-  generateEtags: false, // Désactiver ETags (utiliser Last-Modified à la place)
   // Fix workspace root detection warning
   outputFileTracingRoot: process.cwd(),
   

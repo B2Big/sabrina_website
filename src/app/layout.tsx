@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display, Comic_Neue } from "next/font/google";
+import { Inter, Comic_Neue } from "next/font/google";
 import "./globals.css";
 import { MobileNav } from "@/components/mobile-nav";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
@@ -11,13 +11,6 @@ const inter = Inter({
   subsets: ["latin"], 
   variable: "--font-inter",
   display: 'swap', // Optimisation: chargement asynchrone des polices
-  preload: true,
-});
-
-const playfair = Playfair_Display({ 
-  subsets: ["latin"], 
-  variable: "--font-playfair",
-  display: 'swap',
   preload: true,
 });
 
@@ -116,7 +109,7 @@ export default function RootLayout({
       </head>
       <body 
         suppressHydrationWarning={true} 
-        className={`${inter.variable} ${playfair.variable} ${comicNeue.variable} font-sans antialiased paper-texture text-stone-900`}
+        className={`${inter.variable} ${comicNeue.variable} font-sans antialiased paper-texture text-stone-900`}
       >
         {/* Skip to main content - Accessibilité clavier */}
         <a 
