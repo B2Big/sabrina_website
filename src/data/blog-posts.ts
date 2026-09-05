@@ -17,6 +17,8 @@ export type BlogPost = {
   date: string; // ISO
   readTime: string;
   excerpt: string;
+  image: string;
+  imageAlt: string;
   sections: BlogSection[];
   faq?: { q: string; a: string }[];
 };
@@ -32,6 +34,8 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: '5 min',
     excerpt:
       'Un kilo par semaine, des résultats visibles en un mois : voici ce qu\'il faut réellement attendre d\'un programme de perte de poids accompagné.',
+    image: '/img/sabrina/sport/webp/IMG_9920_1_1.webp',
+    imageAlt: 'Séance de coaching sportif personnalisé pour la perte de poids dans le Var (83)',
     sections: [
       {
         paragraphs: [
@@ -93,6 +97,8 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: '4 min',
     excerpt:
       'Massage sculptant aux bois de rose, la madérothérapie affine la silhouette et relance le drainage. Voici ce qui vous attend pendant une séance.',
+    image: '/img/sabrina/massage/webp/112233.webp',
+    imageAlt: 'Séance de madérothérapie — massage sculptant aux accessoires en bois dans le Var',
     sections: [
       {
         paragraphs: [
@@ -145,6 +151,8 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: '4 min',
     excerpt:
       'Toulon, Hyères, La Seyne-sur-Mer : le coaching à domicile lève tous les obstacles entre vous et la régularité sportive.',
+    image: '/img/sabrina/sport/webp/IMG_9800_1.webp',
+    imageAlt: 'Coaching sportif à domicile avec matériel fourni dans le Var (83)',
     sections: [
       {
         paragraphs: [
@@ -203,6 +211,8 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: '4 min',
     excerpt:
       'Courbatures, tensions, risque de blessure : le massage sportif est l\'allié de tous ceux qui s\'entraînent, du joggeur du dimanche au compétiteur.',
+    image: '/img/sabrina/massage/webp/756.webp',
+    imageAlt: 'Massage sportif pour la récupération musculaire et la prévention des blessures',
     sections: [
       {
         paragraphs: [

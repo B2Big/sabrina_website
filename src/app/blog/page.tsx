@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Clock, ChevronRight, Dumbbell, Sparkles, Heart } from 'lucide-react';
 import { BLOG_POSTS } from '@/data/blog-posts';
 
@@ -59,28 +60,39 @@ export default function BlogPage() {
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="bg-white border-2 border-slate-200 rounded-3xl p-6 shadow-[3px_4px_0px_0px_rgba(45,42,38,0.12)] hover:-translate-y-1 hover:shadow-[5px_7px_0px_0px_rgba(45,42,38,0.15)] transition-all flex flex-col"
+                className="group bg-white border-2 border-slate-200 rounded-3xl overflow-hidden shadow-[3px_4px_0px_0px_rgba(45,42,38,0.12)] hover:-translate-y-1 hover:shadow-[5px_7px_0px_0px_rgba(45,42,38,0.15)] transition-all flex flex-col"
               >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cat.className}`}>
-                    <Icon className="w-3.5 h-3.5" />
-                    {post.category}
-                  </span>
-                  <span className="text-xs text-slate-400 font-semibold flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" />
-                    {post.readTime}
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <Image
+                    src={post.image}
+                    alt={post.imageAlt}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cat.className}`}>
+                      <Icon className="w-3.5 h-3.5" />
+                      {post.category}
+                    </span>
+                    <span className="text-xs text-slate-400 font-semibold flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      {post.readTime}
+                    </span>
+                  </div>
+                  <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight mb-3">
+                    {post.title}
+                  </h2>
+                  <p className="text-slate-600 text-sm leading-relaxed flex-grow">
+                    {post.excerpt}
+                  </p>
+                  <span className="mt-4 text-sm font-black text-training inline-flex items-center gap-1">
+                    Lire l'article
+                    <ChevronRight className="w-4 h-4" />
                   </span>
                 </div>
-                <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight mb-3">
-                  {post.title}
-                </h2>
-                <p className="text-slate-600 text-sm leading-relaxed flex-grow">
-                  {post.excerpt}
-                </p>
-                <span className="mt-4 text-sm font-black text-training inline-flex items-center gap-1">
-                  Lire l'article
-                  <ChevronRight className="w-4 h-4" />
-                </span>
               </Link>
             );
           })}

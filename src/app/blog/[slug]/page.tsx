@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ChevronRight, ArrowLeft, Calendar } from 'lucide-react';
 import { BLOG_POSTS, getBlogPostBySlug } from '@/data/blog-posts';
@@ -36,6 +37,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       siteName: 'Sab-Fit Coaching & Massage',
       publishedTime: post.date,
       authors: ['Sabrina Compan'],
+      images: [
+        {
+          url: post.image,
+          width: 1200,
+          height: 800,
+          alt: post.imageAlt,
+        },
+      ],
     },
     robots: {
       index: true,
@@ -84,7 +93,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           name: 'Sab-Fit Coaching & Massage',
         },
         mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
-        image: `${SITE_URL}/img/sabrina/sab.webp`,
+        image: `${SITE_URL}${post.image}`,
       },
       {
         '@type': 'BreadcrumbList',
@@ -158,6 +167,18 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </h1>
           <p className="text-slate-600 text-lg font-medium mt-4 leading-relaxed">{post.excerpt}</p>
         </header>
+
+        {/* Image de couverture */}
+        <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border-2 border-slate-200 shadow-[5px_7px_0px_0px_rgba(45,42,38,0.15)] mb-10">
+          <Image
+            src={post.image}
+            alt={post.imageAlt}
+            fill
+            priority
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 768px"
+          />
+        </div>
 
         {/* Contenu */}
         <div className="space-y-8 mb-12">
