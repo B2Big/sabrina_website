@@ -4,6 +4,39 @@
 
 ---
 
+## [2026-09-05] Chantier SEO/GEO + Performance
+
+### 🤖 SEO & GEO (optimisation moteurs de réponse IA)
+- **`llms.txt` + `llms-full.txt`** : fichiers standard pour les agents IA (ChatGPT, Claude, Gemini, Perplexity)
+- **robots.txt étendu** : 10 bots IA ajoutés (Google-Extended, OAI-SearchBot, MistralBot, Amazonbot, CCBot, Applebot-Extended, cohere-ai, YouBot, Meta-ExternalAgent, Bytespider), sitemap fantôme retiré
+- **Pages dédiées par service** : `/services/[slug]` — 12+ pages dynamiques, JSON-LD Service + Offer (prix promo inclus) + FAQ, CTA ajout panier
+- **Pages locales par ville** : `/villes/toulon`, `/villes/hyeres`, `/villes/la-seyne-sur-mer`, `/villes/la-valette-du-var` — contenu unique, quartiers, JSON-LD
+- **Page `/tarifs`** : prix dynamiques depuis la DB avec promos, JSON-LD OfferCatalog
+- **Page `/faq`** : FAQ en source unique (`src/data/faqs.ts`) partagée accueil/page/JSON-LD
+- **Page `/a-propos`** : E-E-A-T complet (bio, chiffres, certifications), JSON-LD AboutPage
+- **Blog** : `/blog` + 4 articles de fond (perte de poids, madérothérapie, coaching domicile, massage sportif) avec images de couverture, JSON-LD BlogPosting
+- **JSON-LD nettoyé** : aggregateRating retiré, FAQ alignée sur le visible, email harmonisé, catalogue dynamisé
+- **Sitemap** : 25+ vraies URL (services, villes, blog, tarifs, faq)
+- **Avis Google** : composant `GoogleReviewLink` prêt (activation via `googleReviewsUrl`)
+- **Lien #tarifs cassé** remplacé par Blog dans la navbar
+
+### ⚡ Performance
+- **ParallaxBackground** : canvas 60 fps → blobs CSS animés par le GPU (zéro JS par frame)
+- **PhotoMarquee** : 24 listeners de scroll supprimés → animation CSS en boucle parfaite
+- **CartProvider mémoïsé** (`useMemo`/`useCallback`) — fin des re-renders massifs de la page au panier
+- **Playfair_Display supprimée** (~100 KB économisés, jamais utilisée)
+- **Image OG `sab.webp` compressée** : 1 935 KB → 100 KB (-95 %)
+- **Fuite rAF corrigée** dans SmoothScroller (Lenis)
+- **ETags restaurés** (`generateEtags: false` retiré)
+- Images marquee en `loading="lazy"` avec `sizes` précis
+
+### 📁 Fichiers concernés
+- Nouveaux : `lib/pricing.ts`, `lib/slug.ts`, `data/faqs.ts`, `data/cities.ts`, `data/blog-posts.ts`, `app/services/[slug]`, `app/villes/[slug]`, `app/tarifs`, `app/faq`, `app/a-propos`, `app/blog`, `components/service-cta.tsx`, `components/google-review-link.tsx`, `public/llms.txt`, `public/llms-full.txt`
+- Supprimés : `components/ui/parallax-image.tsx`
+- Modifiés : `layout.tsx`, `cart-context.tsx`, `parallax-background.tsx`, `photo-marquee.tsx`, `smooth-scroller.tsx`, `globals.css`, `sitemap.ts`, `navbar.tsx`, `footer.tsx`, `json-ld.tsx`, `next.config.ts`
+
+---
+
 ## [2026-09-05] Audit Complet + Corrections Critiques
 
 ### 🔍 Audit (4 axes en parallèle)

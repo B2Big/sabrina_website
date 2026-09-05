@@ -1,7 +1,7 @@
 # Contexte du Projet Sabrina Coaching
 
 **Dernière mise à jour** : 2026-09-05
-**Version** : Audit & Sécurisation
+**Version** : Audit + SEO/GEO + Performance
 **Session** : 2026-09-05
 
 ---
@@ -66,6 +66,16 @@ Le projet est désormais consolidé autour d'une **application web unique** (Nex
 - **Carrousel Hero** : 5 images optimisées WebP avec autoplay et navigation
 - **Style Excalidraw** : Cartes, boutons et sections avec rendu dessin moderne pastel
 
+#### SEO & GEO (moteurs de réponse IA)
+- **`llms.txt`** + **`llms-full.txt`** : standard pour ChatGPT, Claude, Gemini, Perplexity
+- **robots.txt** : 20+ bots IA autorisés (GPTBot, ClaudeBot, Google-Extended, MistralBot, CCBot...)
+- **Pages dédiées par service** : `/services/[slug]` avec JSON-LD Service + Offer + FAQ
+- **Pages locales** : `/villes/toulon`, `/villes/hyeres`, `/villes/la-seyne-sur-mer`, `/villes/la-valette-du-var`
+- **Blog** : 4 articles de fond avec images, JSON-LD BlogPosting
+- **Pages statiques SEO** : `/tarifs` (prix dynamiques), `/faq`, `/a-propos` (E-E-A-T)
+- **JSON-LD dynamique** : catalogue généré depuis la DB, FAQ alignée sur le contenu visible
+- **Sitemap** : 25+ vraies URL (services, villes, blog)
+
 #### Réservation (DUAL FLOW)
 
 | Flux | Paiement | Emails | Statut |
@@ -116,6 +126,8 @@ Accessible via `/admin`
 - [x] **Prix promo cohérents** — la remise est appliquée à l'affichage ET au paiement Stripe (via `src/lib/pricing.ts`)
 - [x] **Credentials admin tournés** — mots de passe via variables d'env, plus aucun secret en dur
 - [x] **Logs d'audit protégés** — `'use server'` retiré de `lib/audit.ts`, `requireAdmin` sur les lectures admin
+- [x] **Écosystème GEO complet** — `llms.txt` + `llms-full.txt`, pages services/villes/blog/tarifs/faq/a-propos, JSON-LD cohérent
+- [x] **Performance optimisée** — animations CSS pures (canvas et framer-motion décoratifs remplacés), panier mémoïsé, fontes nettoyées, image OG compressée (-95 %)
 
 ### ⚠️ Configuration Production
 - [x] URL webhook Stripe configurée (`www.sab-fit.com`)
@@ -152,6 +164,14 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 |---------|------|
 | `src/app/actions.ts` | Server action réservation sur place |
 | `src/lib/pricing.ts` | **Logique de prix partagée affichage/checkout (NOUVEAU)** |
+| `src/lib/slug.ts` | **Slugification SEO des services (NOUVEAU)** |
+| `src/data/faqs.ts` | **FAQ source unique (NOUVEAU)** |
+| `src/data/cities.ts` | **Pages locales par ville (NOUVEAU)** |
+| `src/data/blog-posts.ts` | **Articles de blog (NOUVEAU)** |
+| `src/app/services/[slug]/page.tsx` | **Pages dédiées par service (NOUVEAU)** |
+| `src/app/villes/[slug]/page.tsx` | **Pages locales (NOUVEAU)** |
+| `public/llms.txt` | **Fichier GEO pour agents IA (NOUVEAU)** |
+| `public/llms-full.txt` | **Contenu complet pour IA (NOUVEAU)** |
 | `src/lib/resend.ts` | Templates emails (4 variants) |
 | `src/lib/audit.ts` | Système d'audit trail |
 | `src/app/api/webhooks/stripe/route.ts` | Handler webhook Stripe |
@@ -192,15 +212,18 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 - [x] Rotation credentials admin
 - [x] Protection des logs d'audit
 - [x] Classes Tailwind fantômes + media query mobile
+- [x] **Chantier SEO/GEO** — llms.txt, pages services/villes/blog/tarifs/faq/a-propos
+- [x] **Performance** — animations CSS, panier mémoïsé, fontes nettoyées, image OG compressée
 - [ ] **Supprimer les paquets inutilisés** — next-auth (CVE critical), bcryptjs, react-hook-form, @stripe/stripe-js, ts-node
 - [ ] **Restaurer le lint** — rétrograder eslint en ^9 + CI GitHub (build+lint)
 - [ ] **`npm audit fix`** — next → 16.3.4 (CVE high), resend → 6.26
 - [ ] **Nettoyer le code mort** — Testimonials/Faq/ValuesSection, ClientOnly, optimized-image, modèle Order
 - [ ] **Factoriser** — resend.ts (999 lignes), logique newsletter ×3, checkout dupliqué ×2
-- [ ] **Accessibilité** — contrastes WCAG, aria-expanded, userScalable: false, lien #tarifs cassé
+- [ ] **Accessibilité** — contrastes WCAG, aria-expanded, userScalable (fait) 
 - [ ] **Durcir le webhook Stripe** — vérif amount_total, idempotence atomique
 - [ ] **Rate limiting Redis** — remplacer l'in-memory
 - [ ] **Tests** — ciblés checkout/emails, suppression des console.log sensibles
+- [ ] **Avis Google** — activer `googleReviewsUrl` (action manuelle Sabrina)
 
 ### Court Terme
 - [x] **Refonte marketing des offres** — 20 services avec badges économies
