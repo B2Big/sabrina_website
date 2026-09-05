@@ -3,7 +3,10 @@
  *
  * Ce script crée les comptes admin dans Supabase Auth et leur attribue des rôles.
  *
- * Prérequis : SUPABASE_SERVICE_ROLE_KEY dans .env.local
+ * Prérequis :
+ *   - SUPABASE_SERVICE_ROLE_KEY dans .env.local
+ *   - ADMIN_SABRINA_PASSWORD et ADMIN_JOHAN_PASSWORD dans .env.local
+ *     (mot de passe fourni UNIQUEMENT via variable d'environnement, jamais en dur)
  *
  * Usage : npx tsx scripts/setup-admin-users.ts
  */
@@ -41,17 +44,17 @@ type AdminUser = {
   role: 'ADMIN' | 'DEVELOPER'
 }
 
-// Définir les utilisateurs admin à créer
+// Les mots de passe viennent des variables d'environnement — jamais du code source
 const ADMIN_USERS: AdminUser[] = [
   {
     email: 'sabcompan8306@gmail.com',
-    password: '$@brinafit1418X', // À REMPLIR : Mot de passe pour Sabrina
+    password: process.env.ADMIN_SABRINA_PASSWORD || '',
     name: 'Sabrina',
     role: 'ADMIN'
   },
   {
-    email: 'johan.dev.pro@gmail.com', // À REMPLIR : Votre email développeur
-    password: '1418@johan$XXX', // À REMPLIR : Votre mot de passe développeur
+    email: 'johan.dev.pro@gmail.com',
+    password: process.env.ADMIN_JOHAN_PASSWORD || '',
     name: 'Developer',
     role: 'DEVELOPER'
   }

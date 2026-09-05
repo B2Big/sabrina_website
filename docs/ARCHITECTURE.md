@@ -248,7 +248,7 @@ prisma/schema.prisma
 │                  UTILISATEUR                            │
 │                                                         │
 │  Email: sabcompan8306@gmail.com                         │
-│  Password: $@brinafit1418X                              │
+│  Password: (géré via gestionnaire de mots de passe)     │
 └────────────────────┬────────────────────────────────────┘
                      │
                      ▼

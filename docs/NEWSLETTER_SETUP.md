@@ -50,7 +50,7 @@ Vous avez une erreur d'authentification PostgreSQL. C'est à cause de l'encodage
 
 ```bash
 # Le @ dans votre mot de passe DOIT être encodé en %40
-DIRECT_URL=postgresql://postgres.abfhvkrrlnuldwgzpxaj:12345%40johanXXX@db.abfhvkrrlnuldwgzpxaj.supabase.co:5432/postgres
+DIRECT_URL=postgresql://postgres.abfhvkrrlnuldwgzpxaj:MOT_DE_PASSE_ENCODE@db.abfhvkrrlnuldwgzpxaj.supabase.co:5432/postgres
 ```
 
 Si ce n'est pas le cas, modifiez et relancez :

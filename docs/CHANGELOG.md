@@ -234,19 +234,19 @@ NEXT_PUBLIC_SUPABASE_URL=https://abfhvkrrlnuldwgzpxaj.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 # Stripe LIVE (Production uniquement)
-STRIPE_SECRET_KEY=sk_live_51SugwQFfIdJQX82q...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_51SugwQFfIdJQX82q...
+STRIPE_SECRET_KEY=sk_live_XXX_MASQUEE
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_XXX_MASQUEE
 STRIPE_WEBHOOK_SECRET=(obtenu de Stripe webhook)
 
 # Stripe TEST (Local uniquement)
-STRIPE_SECRET_KEY=sk_test_51Su9XeJuxdNEmvsbe...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51Su9XeJuxdNEmvsbt...
+STRIPE_SECRET_KEY=sk_test_XXX_MASQUEE
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_XXX_MASQUEE
 
 # Resend
-RESEND_API_KEY=re_4jhB5LDS_4Q9oZmH5wD2EWuZcN58H9dPp
+RESEND_API_KEY=re_XXXXXXXX_REMPLACEE_APRES_ROTATION
 
 # Database
-DATABASE_URL=postgresql://postgres:12345%40johanXXX@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+DATABASE_URL=postgresql://postgres:MOT_DE_PASSE@aws-1-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true
 ```
 
 ### Métriques
@@ -289,8 +289,8 @@ DATABASE_URL=postgresql://postgres:12345%40johanXXX@aws-1-eu-west-1.pooler.supab
 #### 1. Stripe LIVE - Configuration Complète
 - ✅ Création compte Stripe production
 - ✅ Clés LIVE configurées sur Netlify
-  - `STRIPE_SECRET_KEY`: sk_live_51SugwQFfIdJQX82q...
-  - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: pk_live_51SugwQFfIdJQX82q...
+  - `STRIPE_SECRET_KEY`: sk_live_XXX_MASQUEE
+  - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: pk_live_XXX_MASQUEE
 - ✅ Webhook configuré: https://www.sab-fit.com/api/webhooks/stripe
 - ✅ Signature webhook obtenue et configurée
 - ✅ Événements écoutés: `checkout.session.completed`
@@ -309,8 +309,8 @@ DATABASE_URL=postgresql://postgres:12345%40johanXXX@aws-1-eu-west-1.pooler.supab
 
 #### 3. Sécurité Resend (Rotation de Clé)
 **Problème**: GitHub a détecté une clé API exposée dans le repository
-- ❌ Ancienne clé révoquée: `re_T87XcjJ6_XczUGHKk2gKmmKyF1ti9fZvE`
-- ✅ Nouvelle clé créée: `re_4jhB5LDS_4Q9oZmH5wD2EWuZcN58H9dPp`
+- ❌ Ancienne clé révoquée: `re_XXX_ANCIENNE_CLE_REVOQUEE`
+- ✅ Nouvelle clé créée: `re_XXX_NOUVELLE_CLE`
 - ✅ Permission: "Sending Access" (recommandé pour sécurité)
 - ✅ Fichiers nettoyés: docs/CREDENTIAL_ROTATION.md, .env, .env.local, .env.production
 - ✅ DNS Resend configurés sur Infomaniak pour sab-fit.com
@@ -906,18 +906,18 @@ const line_items = servicesFromDb.map(service => ({
 #### 9. Script Setup Admin Users
 **Fichier créé**: `scripts/setup-admin-users.ts` (93 lignes)
 
-**Utilisateurs créés**:
+**Utilisateurs créés** (mots de passe fournis via variables d'environnement, jamais en dur dans le code):
 ```typescript
 const ADMIN_USERS: AdminUser[] = [
   {
     email: 'sabcompan8306@gmail.com',
-    password: '$@brinafit1418X',
+    password: process.env.ADMIN_SABRINA_PASSWORD || '',
     name: 'Sabrina',
     role: 'ADMIN'
   },
   {
     email: 'johan.dev.pro@gmail.com',
-    password: '1418@johan$XXX',
+    password: process.env.ADMIN_JOHAN_PASSWORD || '',
     name: 'Developer',
     role: 'DEVELOPER'
   }
@@ -1008,17 +1008,17 @@ P1000: Authentication failed against database server at `db.abfhvkrrlnuldwgzpxaj
 
 **Cause**: Symbole @ dans le mot de passe non encodé en URL
 
-**Mot de passe**: `12345@johanXXX`
+**Mot de passe**: `ANCIEN_MOT_DE_PASSE_DB`
 
 **Fix dans .env**:
 ```bash
 # ❌ AVANT
-DATABASE_URL="postgresql://postgres:12345@johanXXX@db..."
-DIRECT_URL="postgresql://postgres:12345@johanXXX@db..."
+DATABASE_URL="postgresql://postgres:MOT_DE_PASSE@db..."
+DIRECT_URL="postgresql://postgres:MOT_DE_PASSE@db..."
 
 # ✅ APRÈS
-DATABASE_URL="postgresql://postgres:12345%40johanXXX@db..."
-DIRECT_URL="postgresql://postgres:12345%40johanXXX@db..."
+DATABASE_URL="postgresql://postgres:MOT_DE_PASSE_URL_ENCODE@db..."
+DIRECT_URL="postgresql://postgres:MOT_DE_PASSE_URL_ENCODE@db..."
 ```
 
 **Encodage**: @ → %40 (URL encoding)

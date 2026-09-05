@@ -1,10 +1,20 @@
 # 🔐 Rotation des Credentials Exposés
 
-## ⚠️ URGENCE CRITIQUE
+## ✅ Rotation effectuée le 2026-09-05
 
-Vos credentials ont été exposés dans le fichier `.env.local` et potentiellement dans l'historique Git.
+- [x] **Mots de passe admin Supabase changés** (comptes `sabcompan8306@gmail.com` et `johan.dev.pro@gmail.com`) via `scripts/rotate-admin-passwords.mjs` — nouveaux mots de passe générés aléatoirement (20 caractères).
+- [x] **`scripts/setup-admin-users.ts` sécurisé** — les mots de passe sont désormais lus depuis les variables d'environnement `ADMIN_SABRINA_PASSWORD` et `ADMIN_JOHAN_PASSWORD` (plus aucun secret en dur dans le code).
+- [x] **`scripts/create-admin.js` supprimé** — script obsolète (mot de passe passé en argument de ligne de commande, ciblait l'ancien setup SQLite).
+- [x] **`.gitignore` durci** — `.env.example` re-tracké, `.rotated-passwords.txt` ignoré.
+- [x] **Le repo GitHub étant privé**, le nettoyage d'historique (git filter-repo) reste **optionnel** : la rotation rend les anciens mots de passe inutilisables. À faire seulement si le repo devient public.
 
-**Vous DEVEZ** effectuer les actions suivantes **IMMÉDIATEMENT** :
+> ⚠️ Après la rotation : penser à supprimer le script `scripts/rotate-admin-passwords.mjs` et le fichier `.rotated-passwords.txt` une fois les nouveaux mots de passe sauvegardés dans un gestionnaire de mots de passe.
+
+---
+
+## ⚠️ Contexte d'origine
+
+Vos credentials avaient été exposés dans le fichier `.env.local` et potentiellement dans l'historique Git.
 
 ---
 
@@ -70,7 +80,7 @@ Après la rotation, Supabase vous donnera de nouvelles URLs :
 
 ```bash
 # Ancien (EXPOSÉ - NE PLUS UTILISER)
-DATABASE_URL="postgresql://postgres.xxx:12345%40johanXXX@..."
+DATABASE_URL="postgresql://postgres.xxx:ANCIEN_MOT_DE_PASSE@..."
 
 # Nouveau (après rotation)
 DATABASE_URL="postgresql://postgres.xxx:NOUVEAU_MOT_DE_PASSE@..."
@@ -255,7 +265,7 @@ Après rotation, tester :
 3. **Vérifier qu'aucun secret n'est exposé** :
    ```bash
    # Rechercher les anciens secrets dans le code
-   grep -r "12345@johan" .
+   grep -r "ANCIEN_MOT_DE_PASSE" .
    grep -r "re_EXAMPLE" .
 
    # Ne devrait rien trouver (sauf dans ce fichier doc)
