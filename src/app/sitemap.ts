@@ -1,9 +1,10 @@
 import { MetadataRoute } from 'next';
+import { getAllServices, getServiceSlug } from '@/lib/db-services';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://sab-fit.com';
-  
-  // Pages statiques réelles (pas de fragments : ignorés par Google et les bots IA)
+
+  // Pages statiques
   const staticPages = [
     {
       url: baseUrl,
@@ -19,8 +20,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Note : le site est une one-page ; les sections services sont des ancres (#coaching, #massage)
-  // qui ne peuvent pas être indexées. Des pages dédiées par service sont prévues (roadmap GEO).
+  // Pages dédiées par service (vraies URL indexables)
+  const servicePages: MetadataRoute.Sitemap = [];
+  try {
+    const services = await getAllServices();
+    for (const service of services) {
+      const slug = getServiceSlug(service);
+      if (!slug) continue;
+      servicePages.push({
+        url: `${baseUrl}/services/${slug}`,
+        lastModified: service.updatedAt ?? new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      });
+    }
+  } catch (error) {
+    console.error('Error generating sitemap for services:', error);
+  }
 
-  return staticPages;
+  return [...staticPages, ...servicePages];
 }

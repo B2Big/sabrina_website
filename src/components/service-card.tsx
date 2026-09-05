@@ -5,8 +5,10 @@ import { Clock, TrendingUp, Sparkles, Dumbbell, Star, Zap, Check, Plus, Minus, C
 import { type Service } from '@/data/content';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { slugify } from '@/lib/slug';
 import React from 'react';
 import { useCart } from '@/context/cart-context';
+import Link from 'next/link';
 
 interface ServiceCardProps {
   service: Service;
@@ -115,9 +117,11 @@ export function ServiceCard({ service, index }: ServiceCardProps) {
         </div>
 
         <div className="relative z-10 space-y-1 md:space-y-2 mb-2 md:mb-3 lg:mb-4">
-            <h3 className="text-base md:text-xl lg:text-2xl font-black text-slate-900 leading-tight line-clamp-2 md:line-clamp-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-slate-900 group-hover:to-slate-600 transition-all">
-              {service.title}
-            </h3>
+            <Link href={`/services/${slugify(service.title)}`} className="block">
+              <h3 className="text-base md:text-xl lg:text-2xl font-black text-slate-900 leading-tight line-clamp-2 md:line-clamp-none group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-slate-900 group-hover:to-slate-600 transition-all hover:underline underline-offset-4 decoration-slate-300">
+                {service.title}
+              </h3>
+            </Link>
             <div className="hidden md:block w-16 h-1.5 rounded-full bg-slate-100 group-hover:w-full transition-all duration-500" style={{ backgroundColor: isCoaching ? '#EFF6FF' : '#FFF1F2' }}>
                 <div className="h-full w-0 group-hover:w-1/3 transition-all duration-700 delay-100 rounded-full" style={{ backgroundColor: accentColor }} />
             </div>
