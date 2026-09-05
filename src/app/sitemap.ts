@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getAllServices, getServiceSlug } from '@/lib/db-services';
+import { BLOG_POSTS } from '@/data/blog-posts';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://sab-fit.com';
@@ -13,12 +14,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/cgu`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.3,
     },
   ];
+
+  // Articles de blog
+  const blogPages: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }));
 
   // Pages dédiées par service (vraies URL indexables)
   const servicePages: MetadataRoute.Sitemap = [];
@@ -38,5 +53,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error generating sitemap for services:', error);
   }
 
-  return [...staticPages, ...servicePages];
+  return [...staticPages, ...servicePages, ...blogPages];
 }

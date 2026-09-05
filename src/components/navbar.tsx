@@ -10,7 +10,7 @@ import { CONTACT_INFO } from '@/data/content';
 const navLinks = [
   { name: 'Coaching', href: '#coaching' },
   { name: 'Massage', href: '#massage' },
-  { name: 'Tarifs', href: '#tarifs' },
+  { name: 'Blog', href: '/blog' },
 ];
 
 export function Navbar() {

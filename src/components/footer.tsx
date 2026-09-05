@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Mail, Instagram, Shield, MapPin, Phone } from 'lucide-react';
+import { GoogleReviewLink } from '@/components/google-review-link';
 import { CONTACT_INFO } from '@/data/content';
 
 export function Footer() {
@@ -108,6 +109,7 @@ export function Footer() {
               </span>
             </a>
 
+            <GoogleReviewLink className="flex items-center gap-3 text-slate-500 hover:text-slate-900 transition-colors font-medium" />
           </div>
         </div>
 

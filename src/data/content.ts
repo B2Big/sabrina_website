@@ -2,7 +2,10 @@ export const CONTACT_INFO = {
   phone: "06 66 26 24 29",
   email: "sabcompan8306@gmail.com",
   instagram: "https://www.instagram.com/sab.fit_coaching83",
-  location: "Var (83) - À domicile ou en cabinet"
+  location: "Var (83) - À domicile ou en cabinet",
+  // Lien "Laisser un avis Google" (short link g.page/r/... ou writereview)
+  // À compléter depuis Google Business Profile > "Demander des avis"
+  googleReviewsUrl: ""
 };
 
 export const CATEGORIES = ["Massages", "Coaching", "Cures"] as const;
