@@ -13,9 +13,10 @@ Crawl-delay: 1
 # SECTION 2: Bots d'IA et LLM (autorisation explicite)
 # =====================================================
 
-# OpenAI (ChatGPT, GPTBot)
+# OpenAI (ChatGPT, GPTBot, SearchGPT)
 User-agent: GPTBot
 User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
 User-agent: OpenAI-Image-Search
 Allow: /
 Crawl-delay: 1
@@ -32,12 +33,13 @@ User-agent: Perplexity-User
 Allow: /
 Crawl-delay: 1
 
-# Google (Gemini, Bard, Search)
+# Google (Gemini, Bard, Search) - Google-Extended contrôle l'indexation pour Gemini
 User-agent: Googlebot
 User-agent: Googlebot-Image
 User-agent: Googlebot-Video
 User-agent: Googlebot-News
 User-agent: Google-InspectionTool
+User-agent: Google-Extended
 Allow: /
 Crawl-delay: 1
 
@@ -48,11 +50,50 @@ User-agent: MicrosoftPreview
 Allow: /
 Crawl-delay: 1
 
-# Meta (Facebook, Instagram, WhatsApp)
+# Mistral AI (Le Chat)
+User-agent: MistralBot
+Allow: /
+Crawl-delay: 1
+
+# Amazon (Rufus, Alexa)
+User-agent: Amazonbot
+Allow: /
+Crawl-delay: 1
+
+# Common Crawl (alimente les datasets de nombreux LLM)
+User-agent: CCBot
+Allow: /
+Crawl-delay: 1
+
+# Apple (Siri, Safari, Apple Intelligence)
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: AppleNewsBot
+Allow: /
+Crawl-delay: 1
+
+# Cohere (Coral, Command)
+User-agent: cohere-ai
+Allow: /
+Crawl-delay: 1
+
+# You.com
+User-agent: YouBot
+Allow: /
+Crawl-delay: 1
+
+# Meta (Facebook, Instagram, WhatsApp, Meta AI)
 User-agent: facebookexternalhit
 User-agent: Facebot
 User-agent: Instagram
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
 Allow: /
+
+# ByteDance (Doubao)
+User-agent: Bytespider
+Allow: /
+Crawl-delay: 1
 
 # Twitter/X
 User-agent: Twitterbot
@@ -61,11 +102,6 @@ Allow: /
 
 # LinkedIn
 User-agent: LinkedInBot
-Allow: /
-
-# Apple (Siri, Safari)
-User-agent: Applebot
-User-agent: AppleNewsBot
 Allow: /
 
 # Autres moteurs de recherche
@@ -90,7 +126,8 @@ Allow: /
 # SECTION 3: Sitemaps
 # =====================================================
 Sitemap: https://sab-fit.com/sitemap.xml
-Sitemap: https://sab-fit.com/sitemap-services.xml
+# llms.txt pour les agents IA (ChatGPT, Claude, Gemini, Perplexity...)
+# Disponible sur https://sab-fit.com/llms.txt
 
 # =====================================================
 # SECTION 4: Zones interdites (sécurité et privacité)

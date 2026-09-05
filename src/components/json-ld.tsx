@@ -1,34 +1,93 @@
-'use client';
-
 import { CONTACT_INFO } from '@/data/content';
+import { getAllServices } from '@/lib/db-services';
+import { parsePriceToNumber } from '@/lib/pricing';
 
-export function StructuredData() {
+const SITE_URL = 'https://sab-fit.com';
+
+// FAQ alignée sur la FAQ visible de la page (faq-visual.tsx) — exigence Google & cohérence IA
+const FAQ_ITEMS = [
+  {
+    q: 'Je débute complètement, est-ce que c\'est pour moi ?',
+    a: 'Absolument ! Chaque programme est 100% adapté à votre niveau. Que vous soyez débutant ou sportif confirmé, Sabrina ajuste l\'intensité et les exercices pour vous faire progresser en toute sécurité.'
+  },
+  {
+    q: 'Où se passent les séances ?',
+    a: 'À votre domicile dans tout le Var (83) ou en cabinet selon vos préférences et la prestation choisie. Le coaching à domicile inclut tout le matériel nécessaire.'
+  },
+  {
+    q: 'Quels sont les moyens de paiement ?',
+    a: 'Carte bancaire en ligne (via Stripe), paiement en 3x sans frais avec Klarna, ou espèces/CB sur place le jour de la séance.'
+  },
+  {
+    q: 'Puis-je offrir une séance en cadeau ?',
+    a: 'Oui ! Contactez-nous via le formulaire pour un bon cadeau personnalisé. Une belle idée pour faire découvrir le coaching ou le massage à vos proches.'
+  },
+  {
+    q: 'Quelle tenue pour une séance de coaching ?',
+    a: 'Une tenue de sport confortable et des baskets. Sabrina apporte tout le matériel nécessaire (haltères, élastiques, tapis, etc.).'
+  },
+  {
+    q: 'Le massage est-il remboursé ?',
+    a: 'Les massages bien-être ne sont pas remboursés par la Sécurité Sociale, mais certaines mutuelles prennent en charge les séances de kiné. Renseignez-vous auprès de la vôtre.'
+  },
+  {
+    q: 'Combien de temps avant de voir des résultats ?',
+    a: 'Dès les premières semaines avec un suivi régulier. La plupart des clients ressentent une différence dès la 3ème séance et des résultats visibles après 1 mois.'
+  },
+  {
+    q: 'Comment annuler ou déplacer un rendez-vous ?',
+    a: 'Contactez Sabrina par téléphone ou email au moins 24h à l\'avance. L\'annulation tardive peut entraîner des frais selon les conditions de la prestation.'
+  },
+];
+
+export async function StructuredData() {
+  // Catalogue généré depuis la base de données (prix toujours synchronisés avec le site)
+  let offerCatalog: Record<string, unknown>[] = [];
+  try {
+    const services = await getAllServices();
+    offerCatalog = services.map((service) => ({
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': 'Service',
+        name: service.title,
+        description: service.description,
+        provider: {
+          '@type': 'ProfessionalService',
+          name: 'Sab-Fit'
+        },
+        areaServed: 'Var (83)'
+      },
+      price: parsePriceToNumber(service.price).toFixed(2),
+      priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock',
+      url: `${SITE_URL}/#${service.category === 'Coaching' ? 'coaching' : 'massage'}`
+    }));
+  } catch (error) {
+    console.error('StructuredData: impossible de charger les services', error);
+  }
+
   // 0. Person - Sabrina Compan (Propriétaire/Founder)
   const personOwner = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    '@id': 'https://sab-fit.com/#sabrina-compan',
+    '@id': `${SITE_URL}/#sabrina-compan`,
     name: 'Sabrina Compan',
     givenName: 'Sabrina',
     familyName: 'Compan',
     jobTitle: 'Coach Sportif & Masseuse Professionnelle',
     description: 'Fondatrice de Sab-Fit, coach sportif certifiée et praticienne en massages bien-être avec 15 ans d\'expérience dans le Var (83).',
-    url: 'https://sab-fit.com',
-    image: 'https://sab-fit.com/img/sabrina/sab.webp',
-    email: 'contact@sab-fit.com',
+    url: SITE_URL,
+    image: `${SITE_URL}/img/sabrina/sab.webp`,
+    email: CONTACT_INFO.email,
     telephone: CONTACT_INFO.phone,
     sameAs: [
       'https://www.instagram.com/sab.fit_coaching83'
     ],
     worksFor: {
       '@type': 'ProfessionalService',
-      '@id': 'https://sab-fit.com/#business'
+      '@id': `${SITE_URL}/#business`
     },
     alumniOf: [
-      {
-        '@type': 'EducationalOrganization',
-        name: 'Coach Référent - Diplôme d\'État'
-      },
       {
         '@type': 'EducationalOrganization',
         name: 'BP JEPS AGFF (Activités Gymniques de la Forme et de Force)'
@@ -51,31 +110,31 @@ export function StructuredData() {
   };
 
   // 1. ProfessionalService - Sabrina comme professionnelle
-  const professionalService = {
+  const professionalService: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
-    '@id': 'https://sab-fit.com/#business',
+    '@id': `${SITE_URL}/#business`,
     name: 'Sab-Fit Coaching & Massage',
     alternateName: 'Sabrina Coaching Sportif',
-    url: 'https://sab-fit.com',
-    logo: 'https://sab-fit.com/logo.svg',
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.svg`,
     image: [
-      'https://sab-fit.com/img/sabrina/sab.webp',
-      'https://sab-fit.com/img/sabrina/sabrina-1.webp'
+      `${SITE_URL}/img/sabrina/sab.webp`,
+      `${SITE_URL}/img/sabrina/sabrina-1.webp`
     ],
     telephone: CONTACT_INFO.phone,
-    email: 'contact@sab-fit.com',
+    email: CONTACT_INFO.email,
     founder: {
       '@type': 'Person',
-      '@id': 'https://sab-fit.com/#sabrina-compan'
+      '@id': `${SITE_URL}/#sabrina-compan`
     },
     owner: {
       '@type': 'Person',
-      '@id': 'https://sab-fit.com/#sabrina-compan'
+      '@id': `${SITE_URL}/#sabrina-compan`
     },
     priceRange: '€€',
     currenciesAccepted: 'EUR',
-    paymentAccepted: ['Cash', 'Credit Card', 'PayPal', 'Stripe'],
+    paymentAccepted: ['Cash', 'Credit Card', 'PayPal', 'Stripe', 'Klarna'],
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
@@ -90,19 +149,6 @@ export function StructuredData() {
         closes: '18:00'
       }
     ],
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: 'Domicile ou Cabinet - Déplacements sur tout le Var',
-      addressLocality: 'Toulon',
-      addressRegion: 'Provence-Alpes-Côte d\'Azur',
-      postalCode: '83000',
-      addressCountry: 'FR'
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 43.1242,
-      longitude: 5.9280
-    },
     areaServed: [
       {
         '@type': 'City',
@@ -110,7 +156,7 @@ export function StructuredData() {
         '@id': 'https://www.wikidata.org/wiki/Q44189'
       },
       {
-        '@type': 'City', 
+        '@type': 'City',
         name: 'Hyères',
         '@id': 'https://www.wikidata.org/wiki/Q203253'
       },
@@ -128,209 +174,51 @@ export function StructuredData() {
     description: 'Coaching sportif personnalisé et massages bien-être à domicile dans le Var (83). Programmes fitness sur mesure, perte de poids, récupération sportive, madérothérapie.',
     sameAs: [
       'https://www.instagram.com/sab.fit_coaching83'
-    ],
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'Services de Coaching et Massage',
-      itemListElement: [
-        {
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: 'Coaching Sportif Personnalisé',
-            description: 'Programmes sur mesure pour perte de poids, prise de masse ou récupération post-natale',
-            provider: {
-              '@type': 'ProfessionalService',
-              name: 'Sab-Fit'
-            },
-            areaServed: 'Var (83)'
-          },
-          price: '50.00',
-          priceCurrency: 'EUR',
-          priceValidUntil: '2026-12-31',
-          availability: 'https://schema.org/InStock',
-          url: 'https://sab-fit.com/#coaching'
-        },
-        {
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: 'Pack 10 Séances Coaching',
-            description: '10 séances de coaching sportif personnalisé - Engagement optimal',
-            provider: {
-              '@type': 'ProfessionalService',
-              name: 'Sab-Fit'
-            }
-          },
-          price: '450.00',
-          priceCurrency: 'EUR',
-          priceValidUntil: '2026-12-31',
-          availability: 'https://schema.org/InStock',
-          url: 'https://sab-fit.com/#coaching'
-        },
-        {
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: 'Massage Madérothérapie',
-            description: 'Massage sculptant aux bois de rose pour affiner la silhouette et drainer',
-            provider: {
-              '@type': 'ProfessionalService',
-              name: 'Sab-Fit'
-            }
-          },
-          price: '85.00',
-          priceCurrency: 'EUR',
-          priceValidUntil: '2026-12-31',
-          availability: 'https://schema.org/InStock',
-          url: 'https://sab-fit.com/#massage'
-        },
-        {
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: 'Massage Sportif',
-            description: 'Relâchement musculaire profond pour sportifs et récupération',
-            provider: {
-              '@type': 'ProfessionalService',
-              name: 'Sab-Fit'
-            }
-          },
-          price: '70.00',
-          priceCurrency: 'EUR',
-          priceValidUntil: '2026-12-31',
-          availability: 'https://schema.org/InStock',
-          url: 'https://sab-fit.com/#massage'
-        },
-        {
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: 'Massage Californien',
-            description: 'Détente profonde et lâcher-prise pour évacuer le stress',
-            provider: {
-              '@type': 'ProfessionalService',
-              name: 'Sab-Fit'
-            }
-          },
-          price: '70.00',
-          priceCurrency: 'EUR',
-          priceValidUntil: '2026-12-31',
-          availability: 'https://schema.org/InStock',
-          url: 'https://sab-fit.com/#massage'
-        },
-        {
-          '@type': 'Offer',
-          itemOffered: {
-            '@type': 'Service',
-            name: 'Cure Profonde - 5 Massages',
-            description: 'Cure complète de 5 massages pour transformation profonde',
-            provider: {
-              '@type': 'ProfessionalService',
-              name: 'Sab-Fit'
-            }
-          },
-          price: '400.00',
-          priceCurrency: 'EUR',
-          priceValidUntil: '2026-12-31',
-          availability: 'https://schema.org/InStock',
-          url: 'https://sab-fit.com/#massage'
-        }
-      ]
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '47',
-      bestRating: '5',
-      worstRating: '1'
-    }
+    ]
   };
 
-  // 2. FAQPage - Pour les extraits enrichis
+  if (offerCatalog.length > 0) {
+    professionalService.hasOfferCatalog = {
+      '@type': 'OfferCatalog',
+      name: 'Services de Coaching et Massage',
+      itemListElement: offerCatalog
+    };
+  }
+
+  // 2. FAQPage - alignée sur la FAQ visible de la page
   const faqPage = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    '@id': 'https://sab-fit.com/#faq',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'Quels sont les tarifs du coaching sportif avec Sab-Fit ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Les tarifs du coaching sportif à domicile dans le Var sont : Séance découverte à 50€, Pack 5 séances à 250€, Pack 10 séances à 450€ (meilleure valeur), et Pack 20 séances à 800€. Paiement possible en espèces, carte bancaire ou en ligne via Stripe.'
-        }
-      },
-      {
-        '@type': 'Question',
-        name: 'Où se déroulent les séances de coaching et massage ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'À SFC (Hyères, La Valette-du-Var, La Moutonne) ou à domicile dans le Var (83).'
-        }
-      },
-      {
-        '@type': 'Question',
-        name: 'Qu\'est-ce que la madérothérapie et combien ça coûte ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'La madérothérapie est un massage sculptant aux bois de rose qui affine la silhouette, draine et détoxifie. Tarif : 85€ la séance de 1h15. Cure de 5 séances à 400€. Réservation en ligne possible avec paiement sécurisé Stripe.'
-        }
-      },
-      {
-        '@type': 'Question',
-        name: 'Comment réserver un créneau avec Sabrina ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Vous pouvez réserver directement en ligne sur sab-fit.com avec paiement sécurisé Stripe, ou choisir "Réserver uniquement" pour payer sur place (espèces ou CB). Je vous recontacte sous 24h pour fixer les rendez-vous selon vos disponibilités.'
-        }
-      },
-      {
-        '@type': 'Question',
-        name: 'Quels types de massage proposez-vous ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Je propose plusieurs types de massages bien-être à domicile : Madérothérapie (sculptant aux bois de rose), Massage Sportif (récupération musculaire), Massage Californien (détente profonde), et Drainage Lymphatique. Tarifs de 70€ à 85€ la séance.'
-        }
-      },
-      {
-        '@type': 'Question',
-        name: 'Le coaching est-il adapté aux débutants ?',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'Absolument ! Les programmes sont 100% personnalisés selon votre niveau, vos objectifs (perte de poids, tonification, récupération post-natale) et vos contraintes. Que vous soyez débutant ou sportif confirmé, chaque séance est adaptée à vos capacités.'
-        }
+    '@id': `${SITE_URL}/#faq`,
+    mainEntity: FAQ_ITEMS.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a
       }
-    ]
+    }))
   };
 
   // 3. WebSite - Pour la recherche de site
   const webSite = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': 'https://sab-fit.com/#website',
-    url: 'https://sab-fit.com',
+    '@id': `${SITE_URL}/#website`,
+    url: SITE_URL,
     name: 'Sab-Fit Coaching & Massage',
     alternateName: 'Sabrina Coaching Sportif Var',
     description: 'Coaching sportif personnalisé et massages bien-être à domicile dans le Var (83)',
     publisher: {
       '@type': 'ProfessionalService',
-      '@id': 'https://sab-fit.com/#business'
+      '@id': `${SITE_URL}/#business`
     },
     potentialAction: [
-      {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: 'https://sab-fit.com/?search={search_term_string}'
-        },
-        'query-input': 'required name=search_term_string'
-      },
       {
         '@type': 'ReserveAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: 'https://sab-fit.com/#contact',
+          urlTemplate: `${SITE_URL}/#contact`,
           actionPlatform: [
             'http://schema.org/DesktopWebPlatform',
             'http://schema.org/MobileWebPlatform'
@@ -348,35 +236,21 @@ export function StructuredData() {
   const webPage = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    '@id': 'https://sab-fit.com/#webpage',
-    url: 'https://sab-fit.com',
+    '@id': `${SITE_URL}/#webpage`,
+    url: SITE_URL,
     name: 'Sab-Fit | Coaching Fitness & Massage Var (83) - Domicile',
     description: 'Coaching sportif personnalisé et massages bien-être à domicile dans le Var (83). Programmes fitness sur mesure, madérothérapie, récupération sportive.',
     isPartOf: {
       '@type': 'WebSite',
-      '@id': 'https://sab-fit.com/#website'
+      '@id': `${SITE_URL}/#website`
     },
     about: {
       '@type': 'ProfessionalService',
-      '@id': 'https://sab-fit.com/#business'
+      '@id': `${SITE_URL}/#business`
     },
     primaryImageOfPage: {
       '@type': 'ImageObject',
-      url: 'https://sab-fit.com/img/sabrina/sab.webp'
-    },
-    breadcrumb: {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          item: {
-            '@type': 'Thing',
-            '@id': 'https://sab-fit.com',
-            name: 'Accueil'
-          }
-        }
-      ]
+      url: `${SITE_URL}/img/sabrina/sab.webp`
     }
   };
 
@@ -389,7 +263,7 @@ export function StructuredData() {
         '@type': 'ListItem',
         position: 1,
         name: 'Accueil',
-        item: 'https://sab-fit.com'
+        item: SITE_URL
       }
     ]
   };

@@ -1,0 +1,66 @@
+# Sab-Fit — Coaching Fitness & Massage (Var 83)
+
+> Sab-Fit est le service de coaching sportif personnalisé et de massages bien-être de Sabrina Compan, coach sportive diplômée d'État et praticienne en massages, intervenant à domicile ou en cabinet dans tout le Var (83). 15 ans d'expérience, 200+ clients accompagnés.
+
+## À propos
+
+- **Fondatrice** : Sabrina Compan, coach sportive diplômée d'État (BP JEPS) et praticienne en massages bien-être (madérothérapie, massage sportif, massage californien, drainage lymphatique).
+- **Expérience** : plus de 15 ans dans l'accompagnement sportif et le bien-être.
+- **Zone d'intervention** : Var (83) — Toulon, Hyères, La Seyne-sur-Mer et environs, à domicile ou en cabinet.
+- **Horaires** : lundi–vendredi 8h–20h, samedi 9h–18h.
+- **Site web** : https://sab-fit.com
+
+## Services
+
+### Coaching sportif
+
+- [Coaching 1-to-1](https://sab-fit.com/#coaching) : séance individuelle sur-mesure (technique, motivation, dépassement de soi), 1h.
+- [Pack 5 séances](https://sab-fit.com/#coaching) : un premier cycle pour ancrer de nouvelles habitudes et voir les premiers résultats.
+- [Pack 10 séances](https://sab-fit.com/#coaching) : accompagnement complet pour une transformation durable.
+- [Mix Running & Renfo](https://sab-fit.com/#coaching) : programme combinant course à pied et renforcement musculaire, suivi mensuel.
+- [Small Group](https://sab-fit.com/#coaching) : entraînement collectif entre amis ou collègues (min. 5 participants).
+
+Objectifs courants : perte de poids, remise en forme, préparation physique, rééducation post-natale, reprise sportive.
+
+### Massages & soins
+
+- [Massage Signature](https://sab-fit.com/#massage) : 1h de détente ou de récupération sportive, adaptée aux besoins du moment.
+- [Grand Soin](https://sab-fit.com/#massage) : 1h30 de lâcher-prise profond.
+- [Cure Essentielle](https://sab-fit.com/#massage) : 5 séances d'1h pour un rituel bien-être régulier.
+- [Cure Profonde](https://sab-fit.com/#massage) : 5 séances longues d'1h30 pour un travail en profondeur.
+
+Techniques : madérothérapie, massage sportif, massage californien, drainage lymphatique.
+
+### Forfaits combinés
+
+- [Pack Essentiel](https://sab-fit.com/#coaching) : équilibre sport + récupération.
+- [Pack Performance](https://sab-fit.com/#coaching) : suivi poussé et récupération optimisée.
+- [Pack Premium](https://sab-fit.com/#coaching) : accompagnement VIP complet.
+
+## Tarifs
+
+Les tarifs et offres promotionnelles en cours sont disponibles sur https://sab-fit.com/#coaching (coaching) et https://sab-fit.com/#massage (massages). La réservation en ligne affiche le prix exact, remise éventuelle incluse.
+
+## Réservation & paiement
+
+- Réservation en ligne sur https://sab-fit.com/#contact.
+- Deux options : "Réserver uniquement" (paiement sur place, en main propre, espèces ou CB) ou "Réserver et payer" en ligne.
+- Paiement en ligne : carte bancaire, PayPal, ou Klarna 3x sans frais (à partir de 35 €).
+- Bon cadeau : disponible sur demande via le formulaire de contact.
+
+## FAQ
+
+- **Je débute complètement, est-ce pour moi ?** Oui, chaque programme est 100 % adapté au niveau, aux objectifs et aux contraintes de chacun.
+- **Où se passent les séances ?** À domicile dans tout le Var (83) ou en cabinet ; le matériel est fourni.
+- **Quels sont les moyens de paiement ?** CB en ligne (Stripe), Klarna 3x sans frais, ou espèces/CB sur place.
+- **Le massage est-il remboursé ?** Non remboursé par la Sécurité Sociale ; certaines mutuelles prennent en charge les séances de kiné.
+- **Combien de temps avant des résultats ?** Souvent dès la 3ᵉ séance, résultats visibles après 1 mois avec un suivi régulier.
+- **Comment annuler ou déplacer un RDV ?** Par téléphone ou email au moins 24 h à l'avance.
+
+## Contact
+
+- **Téléphone** : 06 66 26 24 29
+- **Email** : sabcompan8306@gmail.com
+- **Instagram** : https://www.instagram.com/sab.fit_coaching83
+- **Réservation** : https://sab-fit.com/#contact
+- **CGU** : https://sab-fit.com/cgu

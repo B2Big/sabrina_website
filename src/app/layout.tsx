@@ -33,9 +33,6 @@ export const viewport: Viewport = {
   themeColor: "#3B82F6",
   width: "device-width",
   initialScale: 1,
-  // Note: userScalable=false pour expérience PWA app-like
-  // Les utilisateurs peuvent toujours zoomer avec les paramètres d'accessibilité
-  userScalable: false,
   viewportFit: 'cover', // Pour les appareils avec encoche
 };
 
