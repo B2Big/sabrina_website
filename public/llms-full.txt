@@ -1,0 +1,90 @@
+# Sab-Fit — Coaching Fitness & Massage (Var 83)
+
+Version complète du contenu pour les agents IA. Site : https://sab-fit.com
+
+## Qui est Sabrina Compan ?
+
+Sabrina Compan est la fondatrice de Sab-Fit. Coach sportive diplômée d'État (BP JEPS AF — Activités de la Forme) et praticienne en massages bien-être, elle accompagne depuis plus de 15 ans des femmes et des hommes vers leurs objectifs dans le Var (83). Plus de 200 clients accompagnés.
+
+### Diplômes et certifications
+- BP JEPS AF : Brevet Professionnel — Activités de la Forme (Diplôme d'État)
+- Préparation physique — Diplôme fédéral
+- Massage lymphatique — Méthode brésilienne
+- Madérothérapie — Certification spécialisée
+- Massage sportif & Deep Tissue — École Dubarry Formation
+- Massage californien — Certification bien-être
+- Réflexologie plantaire — Certification bien-être
+
+### Zone d'intervention
+Var (83) : Toulon, Hyères, La Seyne-sur-Mer, La Valette-du-Var et leurs environs. Séances à domicile (matériel fourni : haltères, élastiques, tapis) ou en cabinet. Horaires : lundi–vendredi 8h–20h, samedi 9h–18h.
+
+## Services de coaching sportif
+
+1. **Coaching 1-to-1** (1h, 50 €) : séance individuelle sur-mesure — technique, motivation, dépassement de soi.
+2. **Pack 5 séances** (5 × 1h, 225 € au lieu de 250 €) : un premier cycle pour ancrer de nouvelles habitudes.
+3. **Pack 10 séances** (10 × 1h, 400 € au lieu de 500 €) : accompagnement complet pour une transformation durable. Top choix.
+4. **Mix Running & Renfo** (suivi mensuel, 149 €) : course à pied + renforcement musculaire, planification personnalisée, ajustements illimités. Meilleure valeur.
+5. **Small Group** (1h, 15 €/pers., min. 5 participants) : entraînement collectif entre amis ou collègues.
+
+Objectifs couverts : perte de poids, remise en forme, préparation physique, rééducation post-natale, reprise sportive, tonification.
+
+## Services de massage & soins
+
+1. **Massage Signature** (1h, 70 €) : détente absolue ou récupération sportive.
+2. **Grand Soin** (1h30, 95 €) : expérience bien-être prolongée, lâcher-prise profond.
+3. **Cure Essentielle** (5 × 1h, 320 € au lieu de 350 €) : rituel bien-être régulier.
+4. **Cure Profonde** (5 × 1h30, 450 € au lieu de 475 €) : immersion totale, travail en profondeur.
+
+Techniques : madérothérapie (85 €/séance), massage sportif, massage californien, drainage lymphatique, réflexologie plantaire.
+
+## Forfaits combinés
+
+1. **Pack Essentiel** (185 €) : équilibre sport + récupération, approche holistique.
+2. **Pack Performance** (330 €) : suivi poussé et récupération optimisée. Top choix.
+3. **Pack Premium** (650 €) : accompagnement VIP complet. Meilleure valeur.
+
+Note : les prix ci-dessus sont les tarifs de base ; des promotions temporaires peuvent s'appliquer. Le prix exact (remise incluse) est toujours affiché sur https://sab-fit.com/tarifs et au moment du paiement.
+
+## Réservation et paiement
+
+- Réservation en ligne : https://sab-fit.com/#contact
+- Deux modes : "Réserver uniquement" (paiement sur place en espèces ou CB, en main propre) ou "Réserver et payer" en ligne.
+- Paiement en ligne : carte bancaire, PayPal, ou Klarna 3x sans frais à partir de 35 €.
+- Réponse sous 24h après réservation pour fixer le rendez-vous.
+- Bon cadeau : disponible sur demande via le formulaire.
+
+## FAQ complète
+
+- **Je débute complètement, est-ce pour moi ?** Oui. Chaque programme est 100 % adapté au niveau, aux objectifs et aux contraintes de chacun.
+- **Où se passent les séances ?** À domicile dans tout le Var (83) ou en cabinet. Le matériel est fourni.
+- **Quels sont les moyens de paiement ?** CB en ligne (Stripe), Klarna 3x sans frais, ou espèces/CB sur place.
+- **Puis-je offrir une séance en cadeau ?** Oui, via le formulaire de contact.
+- **Quelle tenue pour une séance de coaching ?** Tenue de sport confortable et baskets ; le matériel est fourni.
+- **Le massage est-il remboursé ?** Non remboursé par la Sécurité Sociale ; certaines mutuelles prennent en charge les séances de kiné.
+- **Combien de temps avant de voir des résultats ?** Souvent dès la 3ᵉ séance, résultats visibles après 1 mois avec un suivi régulier.
+- **Comment annuler ou déplacer un RDV ?** Par téléphone ou email au moins 24 h à l'avance.
+
+## Zones d'intervention détaillées
+
+- Toulon : https://sab-fit.com/villes/toulon — Le Mourillon, centre-ville, La Rode, Pont-du-Las, Sainte-Musse.
+- Hyères : https://sab-fit.com/villes/hyeres — centre-ville, Les Palmiers, Giens, La Capte, Costebelle.
+- La Seyne-sur-Mer : https://sab-fit.com/villes/la-seyne-sur-mer — Les Sablettes, Tamaris, centre-ville, Mar Vivo.
+- La Valette-du-Var : https://sab-fit.com/villes/la-valette-du-var — centre-ville, La Coupiane, Le Plan, Les Gabelles.
+
+## Articles de blog
+
+1. [Perte de poids : combien de temps pour voir des résultats ?](https://sab-fit.com/blog/perte-de-poids-combien-de-temps-resultats) — un rythme sain de 0,5 à 1 kg par semaine ; résultats visibles après 4 semaines.
+2. [Madérothérapie : bienfaits et déroulement d'une séance](https://sab-fit.com/blog/maderotherapie-bienfaits-deroulement) — 85 € la séance de 1h15, 400 € la cure de 5 séances.
+3. [Coaching à domicile dans le Var : 5 bonnes raisons de se lancer](https://sab-fit.com/blog/coaching-domicile-var-5-raisons) — zéro trajet, programme sur mesure, matériel fourni.
+4. [Massage sportif : récupération et prévention des blessures](https://sab-fit.com/blog/massage-sportif-recuperation-blessures) — 24 à 48 h après l'effort pour la récupération.
+
+## Contact
+
+- Téléphone : 06 66 26 24 29
+- Email : sabcompan8306@gmail.com
+- Instagram : https://www.instagram.com/sab.fit_coaching83
+- Tarifs : https://sab-fit.com/tarifs
+- FAQ : https://sab-fit.com/faq
+- À propos : https://sab-fit.com/a-propos
+- Réservation : https://sab-fit.com/#contact
+- CGU : https://sab-fit.com/cgu

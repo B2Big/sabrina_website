@@ -53,6 +53,36 @@ export function Footer() {
                   Contact & Réservation
                 </Link>
               </li>
+              <li>
+                <Link href="/tarifs" className="text-slate-500 hover:text-training transition-colors text-sm">
+                  Tarifs
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="text-slate-500 hover:text-training transition-colors text-sm">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/a-propos" className="text-slate-500 hover:text-training transition-colors text-sm">
+                  À Propos de Sabrina
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="text-slate-500 hover:text-training transition-colors text-sm">
+                  Blog & Conseils
+                </Link>
+              </li>
+              <li>
+                <Link href="/villes/toulon" className="text-slate-500 hover:text-training transition-colors text-sm">
+                  Toulon
+                </Link>
+              </li>
+              <li>
+                <Link href="/villes/hyeres" className="text-slate-500 hover:text-training transition-colors text-sm">
+                  Hyères
+                </Link>
+              </li>
             </ul>
           </nav>
 

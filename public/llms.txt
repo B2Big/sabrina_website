@@ -2,13 +2,16 @@
 
 > Sab-Fit est le service de coaching sportif personnalisé et de massages bien-être de Sabrina Compan, coach sportive diplômée d'État et praticienne en massages, intervenant à domicile ou en cabinet dans tout le Var (83). 15 ans d'expérience, 200+ clients accompagnés.
 
+> Version complète du contenu : https://sab-fit.com/llms-full.txt
+
 ## À propos
 
 - **Fondatrice** : Sabrina Compan, coach sportive diplômée d'État (BP JEPS) et praticienne en massages bien-être (madérothérapie, massage sportif, massage californien, drainage lymphatique).
 - **Expérience** : plus de 15 ans dans l'accompagnement sportif et le bien-être.
-- **Zone d'intervention** : Var (83) — Toulon, Hyères, La Seyne-sur-Mer et environs, à domicile ou en cabinet.
+- **Zone d'intervention** : Var (83) — Toulon, Hyères, La Seyne-sur-Mer, La Valette-du-Var et environs, à domicile ou en cabinet.
 - **Horaires** : lundi–vendredi 8h–20h, samedi 9h–18h.
 - **Site web** : https://sab-fit.com
+- **Page À propos** : https://sab-fit.com/a-propos
 
 ## Services
 
@@ -39,7 +42,15 @@ Techniques : madérothérapie, massage sportif, massage californien, drainage ly
 
 ## Tarifs
 
-Les tarifs et offres promotionnelles en cours sont disponibles sur https://sab-fit.com/#coaching (coaching) et https://sab-fit.com/#massage (massages). La réservation en ligne affiche le prix exact, remise éventuelle incluse.
+- **Page tarifs complète** : https://sab-fit.com/tarifs (prix à jour, promotions incluses)
+- Les tarifs et offres promotionnelles en cours sont disponibles sur https://sab-fit.com/#coaching (coaching) et https://sab-fit.com/#massage (massages). La réservation en ligne affiche le prix exact, remise éventuelle incluse.
+
+## Zones d'intervention
+
+- [Coach sportif et massage à Toulon](https://sab-fit.com/villes/toulon)
+- [Coach sportif et massage à Hyères](https://sab-fit.com/villes/hyeres)
+- [Coach sportif et massage à La Seyne-sur-Mer](https://sab-fit.com/villes/la-seyne-sur-mer)
+- [Coach sportif et massage à La Valette-du-Var](https://sab-fit.com/villes/la-valette-du-var)
 
 ## Réservation & paiement
 
@@ -63,6 +74,8 @@ Les tarifs et offres promotionnelles en cours sont disponibles sur https://sab-f
 - **Email** : sabcompan8306@gmail.com
 - **Instagram** : https://www.instagram.com/sab.fit_coaching83
 - **Réservation** : https://sab-fit.com/#contact
+- **FAQ** : https://sab-fit.com/faq
+- **Tarifs** : https://sab-fit.com/tarifs
 - **CGU** : https://sab-fit.com/cgu
 
 ## Blog & conseils
