@@ -4,6 +4,53 @@
 
 ---
 
+## [2026-09-05] Audit Complet + Corrections Critiques
+
+### 🔍 Audit (4 axes en parallèle)
+- Architecture (routes, composants, schéma Prisma)
+- Sécurité (API, auth, webhook Stripe, RLS)
+- Frontend (Tailwind, accessibilité, performance)
+- Dépendances (npm outdated, build, eslint, audit)
+
+### 🔐 Sécurité
+- **Rotation des mots de passe admin Supabase** — nouveaux mots de passe forts (20 caractères), anciens compromis neutralisés
+- **`scripts/setup-admin-users.ts` sécurisé** — mots de passe via variables d'env `ADMIN_SABRINA_PASSWORD` / `ADMIN_JOHAN_PASSWORD`, plus aucun secret en dur
+- **`scripts/create-admin.js` supprimé** (mot de passe en ligne de commande, obsolète)
+- **`'use server'` retiré de `lib/audit.ts`** — les logs d'audit admin n'étaient plus exposés publiquement
+- **`requireAdmin()` ajouté** à `getServices` / `getPromotions` (server actions publiques sans garde)
+- **Secrets historiques masqués** dans CHANGELOG, ARCHITECTURE et NEWSLETTER_SETUP (clés Resend/Stripe, mots de passe DB)
+- **`.env.example` re-tracké** dans Git (le modèle était ignoré par `.gitignore`)
+- GitHub Push Protection a bloqué un push avec d'anciennes clés Resend — masquées puis re-poussé
+
+### 💸 Bug de Prix Promo (critique métier)
+- **Problème** : le client voyait un prix remisé sur le site mais payait le plein tarif chez Stripe
+- **Fix** : création de `src/lib/pricing.ts` — logique de prix partagée entre affichage (`page.tsx`) et paiement (`api/checkout`)
+- Les line items Stripe, la réservation et les emails utilisent maintenant le prix effectif remisé
+
+### 🎨 Corrections Frontend
+- **Classes Tailwind fantômes corrigées** : `accent-mint`, `accent-peach`, `training-light/dark`, `care-light/dark`, `ring` ajoutées au `@theme` — les pastilles, hovers et dégradés refonctionnent
+- `user-select-none` → `select-none`, breakpoint `xs` inexistant retiré
+- **Media query mobile anti-animations supprimée** — elle forçait `transition-duration: 0.01ms` sur mobile et cassait le crossfade du marquee
+- **Keyframes d'entrée maison** ajoutées (`animate-in`, `fade-in`, `zoom-in`, `slide-in-*`) en remplacement du plugin tailwindcss-animate absent
+
+### ✅ Validation
+- **Build** : OK ✅
+- **Push** : `origin/main` ✅
+
+### 📁 Fichiers concernés
+- `src/lib/pricing.ts` (nouveau)
+- `src/app/api/checkout/route.ts`
+- `src/app/page.tsx`
+- `src/lib/audit.ts`
+- `src/app/admin/actions.ts`
+- `src/app/globals.css`
+- `src/components/ui/marquee.tsx`, `testimonials.tsx`, `promo-banner.tsx`
+- `scripts/setup-admin-users.ts`, suppression `create-admin.js`
+- `.gitignore`, `.env.example`
+- Docs : CHANGELOG, ARCHITECTURE, CREDENTIAL_ROTATION, NEWSLETTER_SETUP
+
+---
+
 ## [2026-07-09] Refonte Excalidraw + Formulaire Réservation/Vente
 
 ### 🎨 Refonte Visuelle Globale

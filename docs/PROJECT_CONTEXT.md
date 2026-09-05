@@ -1,8 +1,8 @@
 # Contexte du Projet Sabrina Coaching
 
-**Dernière mise à jour** : 2026-07-09
-**Version** : Excalidraw Refonte + Réservation Focus
-**Session** : 2026-07-09
+**Dernière mise à jour** : 2026-09-05
+**Version** : Audit & Sécurisation
+**Session** : 2026-09-05
 
 ---
 
@@ -113,6 +113,9 @@ Accessible via `/admin`
 - [x] **Refonte visuelle Excalidraw** — style dessin moderne, palette pastel
 - [x] **Formulaire de réservation/vente** — toggle sur place / en ligne
 - [x] **Instagram intégré** dans navbar et section Sabrina
+- [x] **Prix promo cohérents** — la remise est appliquée à l'affichage ET au paiement Stripe (via `src/lib/pricing.ts`)
+- [x] **Credentials admin tournés** — mots de passe via variables d'env, plus aucun secret en dur
+- [x] **Logs d'audit protégés** — `'use server'` retiré de `lib/audit.ts`, `requireAdmin` sur les lectures admin
 
 ### ⚠️ Configuration Production
 - [x] URL webhook Stripe configurée (`www.sab-fit.com`)
@@ -148,6 +151,7 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 | Fichier | Rôle |
 |---------|------|
 | `src/app/actions.ts` | Server action réservation sur place |
+| `src/lib/pricing.ts` | **Logique de prix partagée affichage/checkout (NOUVEAU)** |
 | `src/lib/resend.ts` | Templates emails (4 variants) |
 | `src/lib/audit.ts` | Système d'audit trail |
 | `src/app/api/webhooks/stripe/route.ts` | Handler webhook Stripe |
@@ -183,8 +187,23 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 
 ## 9. Roadmap
 
+### Audit 2026-09-05 — Corrections restantes (par priorité)
+- [x] Prix promo cohérents affichage/checkout
+- [x] Rotation credentials admin
+- [x] Protection des logs d'audit
+- [x] Classes Tailwind fantômes + media query mobile
+- [ ] **Supprimer les paquets inutilisés** — next-auth (CVE critical), bcryptjs, react-hook-form, @stripe/stripe-js, ts-node
+- [ ] **Restaurer le lint** — rétrograder eslint en ^9 + CI GitHub (build+lint)
+- [ ] **`npm audit fix`** — next → 16.3.4 (CVE high), resend → 6.26
+- [ ] **Nettoyer le code mort** — Testimonials/Faq/ValuesSection, ClientOnly, optimized-image, modèle Order
+- [ ] **Factoriser** — resend.ts (999 lignes), logique newsletter ×3, checkout dupliqué ×2
+- [ ] **Accessibilité** — contrastes WCAG, aria-expanded, userScalable: false, lien #tarifs cassé
+- [ ] **Durcir le webhook Stripe** — vérif amount_total, idempotence atomique
+- [ ] **Rate limiting Redis** — remplacer l'in-memory
+- [ ] **Tests** — ciblés checkout/emails, suppression des console.log sensibles
+
 ### Court Terme
-- [x] **Refonte marketing des offres** — 20 services avec badges économies + scarcity
+- [x] **Refonte marketing des offres** — 20 services avec badges économies
 - [x] **Carrousel hero** — 5 images WebP avec autoplay
 - [x] **Klarna 3x** — Paiement fractionné sans frais
 - [ ] **Dashboard réservations** - Vue liste des réservations clients dans /admin
