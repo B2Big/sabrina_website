@@ -153,6 +153,8 @@ model Reservation {
   endAt             DateTime?         @map("end_at")
   // Expiration du verrou temporaire (statut en_attente) — libération paresseuse
   holdExpiresAt     DateTime?         @map("hold_expires_at")
+  // Événement Google Calendar créé pour ce RDV (si connecté)
+  googleEventId     String?           @map("google_event_id")
   
   // Timestamps
   createdAt         DateTime          @default(now()) @map("created_at")
@@ -191,11 +193,26 @@ model Unavailability {
   startAt   DateTime @map("start_at")
   endAt     DateTime @map("end_at")
   reason    String?
+  source    String?  // "admin" | "google" (importé depuis Google Calendar)
 
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([startAt, endAt])
   @@map("unavailabilities")
+}
+
+// Token OAuth2 Google Calendar (compte de Sabrina) — chiffré
+model GoogleCalendarToken {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  accessToken  String   @map("access_token") // chiffré AES-256-GCM
+  refreshToken String   @map("refresh_token") // chiffré AES-256-GCM
+  expiresAt    DateTime @map("expires_at")
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("google_calendar_tokens")
 }
 
 // Verrou temporaire d'un créneau pendant la saisie du paiement (soft-lock ~15 min)

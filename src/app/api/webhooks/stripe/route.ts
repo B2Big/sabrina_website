@@ -9,6 +9,7 @@ import {
   sendPaymentFailedToCustomer,
   sendRefundNotificationToCustomer
 } from '@/lib/resend'
+import { createGoogleEventForReservation, deleteGoogleEventForReservation } from '@/lib/google-calendar'
 
 /**
  * Webhook Stripe pour recevoir les événements de paiement
@@ -188,6 +189,21 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
   // 3. ENVOYER LES EMAILS "PAYÉS" (Bundle Reçu + Confirmation)
   await sendPaymentConfirmationEmails(session, updatedReservation)
+
+  // 4. GOOGLE CALENDAR : ajouter le RDV à l'agenda de Sabrina (no-op si non connecté)
+  try {
+    await createGoogleEventForReservation({
+      id: updatedReservation.id,
+      startAt: updatedReservation.startAt,
+      endAt: updatedReservation.endAt,
+      serviceTitle: updatedReservation.serviceTitle,
+      customerName: updatedReservation.customerName,
+      customerPhone: updatedReservation.customerPhone,
+    });
+  } catch (googleError) {
+    console.error('[WEBHOOK] ❌ Erreur Google Calendar:', googleError);
+    // Non bloquant
+  }
 }
 
 /**
@@ -385,6 +401,13 @@ async function handleAsyncPaymentFailed(session: Stripe.Checkout.Session) {
 
     console.log('[WEBHOOK] ✅ Réservation annulée, créneau libéré')
 
+    // Supprimer l'événement Google Calendar correspondant (no-op si non connecté)
+    try {
+      await deleteGoogleEventForReservation(reservation.googleEventId)
+    } catch (googleError) {
+      console.error('[WEBHOOK] ❌ Erreur suppression événement Google:', googleError)
+    }
+
     // Email client : paiement non abouti
     try {
       await sendPaymentFailedToCustomer({
@@ -428,6 +451,13 @@ async function handleSessionExpired(session: Stripe.Checkout.Session) {
     if (updated.count === 0) return
 
     console.log('[WEBHOOK] ✅ Réservation annulée (session expirée), créneau libéré')
+
+    // Supprimer l'événement Google Calendar correspondant (no-op si non connecté)
+    try {
+      await deleteGoogleEventForReservation(reservation.googleEventId)
+    } catch (googleError) {
+      console.error('[WEBHOOK] ❌ Erreur suppression événement Google:', googleError)
+    }
 
     try {
       await sendPaymentFailedToCustomer({
@@ -522,6 +552,13 @@ async function handleRefund(charge: Stripe.Charge) {
     }
 
     console.log('[WEBHOOK] ✅ Réservation annulée (remboursement), créneau libéré')
+
+    // Supprimer l'événement Google Calendar correspondant (no-op si non connecté)
+    try {
+      await deleteGoogleEventForReservation(reservation.googleEventId)
+    } catch (googleError) {
+      console.error('[WEBHOOK] ❌ Erreur suppression événement Google:', googleError)
+    }
 
     try {
       await sendRefundNotificationToCustomer({

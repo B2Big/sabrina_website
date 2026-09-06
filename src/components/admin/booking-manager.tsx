@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Phone, X, Loader2, Calendar, Clock, ShieldAlert, Ban, CheckCircle2, RefreshCw } from 'lucide-react';
+import { Phone, X, Loader2, Calendar, Clock, ShieldAlert, Ban, CheckCircle2, RefreshCw, Link2, Unlink } from 'lucide-react';
 import {
   getBookingData,
   addUnavailability,
@@ -68,6 +68,60 @@ export function BookingManager() {
   const [error, setError] = useState<string | null>(null);
   const [dayOffset, setDayOffset] = useState(0);
   const [busy, setBusy] = useState<string | null>(null);
+  const [calendarConnected, setCalendarConnected] = useState(false);
+  const [calendarEmail, setCalendarEmail] = useState<string | null>(null);
+  const [calendarBusy, setCalendarBusy] = useState(false);
+
+  const loadCalendarStatus = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/google-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'status' }),
+      });
+      const data = await res.json();
+      setCalendarConnected(data.connected);
+      setCalendarEmail(data.email ?? null);
+    } catch {
+      // silencieux : l'intégration est simplement considérée non connectée
+    }
+  }, []);
+
+  const syncCalendar = async () => {
+    setCalendarBusy(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/google-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sync' }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Synchronisation échouée');
+      } else {
+        await load();
+      }
+    } catch {
+      setError('Synchronisation échouée');
+    } finally {
+      setCalendarBusy(false);
+    }
+  };
+
+  const disconnectCalendar = async () => {
+    setCalendarBusy(true);
+    try {
+      await fetch('/api/admin/google-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'disconnect' }),
+      });
+      await loadCalendarStatus();
+    } finally {
+      setCalendarBusy(false);
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -86,7 +140,8 @@ export function BookingManager() {
 
   useEffect(() => {
     load();
-  }, [load]);
+    loadCalendarStatus();
+  }, [load, loadCalendarStatus]);
 
   const targetDate = new Date();
   targetDate.setDate(targetDate.getDate() + dayOffset);
@@ -159,6 +214,53 @@ export function BookingManager() {
           <button onClick={load} className="text-xs underline shrink-0">Réessayer</button>
         </div>
       )}
+
+      {/* ==== 0. GOOGLE CALENDAR ==== */}
+      <div className="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-blue-500" />
+            <div>
+              <p className="font-black text-slate-900 text-sm">Google Calendar</p>
+              <p className="text-xs text-slate-500 font-medium">
+                {calendarConnected
+                  ? `Connecté : ${calendarEmail ?? 'agenda'}. Les RDV indisponibles masquent les créneaux.`
+                  : 'Non connecté. Connectez l\'agenda de Sabrina pour bloquer automatiquement ses indispos.'}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {calendarConnected ? (
+              <>
+                <button
+                  onClick={syncCalendar}
+                  disabled={calendarBusy}
+                  className="flex items-center gap-1.5 min-h-[44px] px-4 rounded-xl bg-blue-500 text-white font-bold text-xs hover:bg-blue-600 disabled:opacity-50"
+                >
+                  {calendarBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                  Synchroniser
+                </button>
+                <button
+                  onClick={disconnectCalendar}
+                  disabled={calendarBusy}
+                  className="flex items-center gap-1.5 min-h-[44px] px-4 rounded-xl bg-white text-slate-500 font-bold text-xs border border-slate-200 hover:bg-slate-100 disabled:opacity-50"
+                >
+                  <Unlink className="w-4 h-4" />
+                  Déconnecter
+                </button>
+              </>
+            ) : (
+              <a
+                href="/api/admin/google-calendar/auth"
+                className="flex items-center gap-1.5 min-h-[44px] px-4 rounded-xl bg-blue-500 text-white font-bold text-xs hover:bg-blue-600"
+              >
+                <Link2 className="w-4 h-4" />
+                Connecter
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* ==== 1. SÉLECTEUR DE JOUR ==== */}
       <div>
