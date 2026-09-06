@@ -317,3 +317,179 @@ export async function reorderServices(orderedIds: string[]) {
     return { success: false, error: 'Failed to reorder services' }
   }
 }
+
+// ============================================
+// BOOKING — GESTION DES CRÉNEAUX & RÉSERVATIONS
+// ============================================
+
+export async function getBookingData() {
+  await requireAdmin()
+
+  const now = new Date()
+  const horizon = new Date(now.getTime() + 30 * 24 * 3600 * 1000)
+
+  const [reservations, unavailabilities, rules] = await Promise.all([
+    prisma.reservation.findMany({
+      where: {
+        AND: [
+          { startAt: { not: null } },
+          { startAt: { gte: now } },
+          { startAt: { lte: horizon } },
+          { status: { not: 'annule' } },
+        ],
+      },
+      orderBy: { startAt: 'asc' },
+    }),
+    prisma.unavailability.findMany({
+      where: { endAt: { gte: now } },
+      orderBy: { startAt: 'asc' },
+    }),
+    prisma.availabilityRule.findMany({
+      orderBy: { dayOfWeek: 'asc' },
+    }),
+  ])
+
+  return {
+    reservations: reservations.map((r) => ({
+      id: r.id,
+      status: r.status,
+      customerName: r.customerName,
+      customerEmail: r.customerEmail,
+      customerPhone: r.customerPhone,
+      message: r.message,
+      serviceTitle: r.serviceTitle,
+      totalAmount: r.totalAmount,
+      paymentMethod: r.paymentMethod,
+      startAt: r.startAt ? r.startAt.toISOString() : null,
+      endAt: r.endAt ? r.endAt.toISOString() : null,
+    })),
+    unavailabilities: unavailabilities.map((u) => ({
+      id: u.id,
+      startAt: u.startAt.toISOString(),
+      endAt: u.endAt.toISOString(),
+      reason: u.reason,
+    })),
+    rules: rules.map((r) => ({
+      id: r.id,
+      dayOfWeek: r.dayOfWeek,
+      startTime: r.startTime,
+      endTime: r.endTime,
+      bufferMinutes: r.bufferMinutes,
+      isActive: r.isActive,
+    })),
+  }
+}
+
+export async function addUnavailability(input: {
+  start: string
+  end: string
+  reason?: string | null
+}) {
+  const user = await requireAdmin()
+
+  const start = new Date(input.start)
+  const end = new Date(input.end)
+  if (isNaN(start.getTime()) || isNaN(end.getTime()) || end.getTime() <= start.getTime()) {
+    return { success: false, error: 'Plage invalide' }
+  }
+
+  await prisma.unavailability.create({
+    data: {
+      startAt: start,
+      endAt: end,
+      reason: input.reason?.trim() || null,
+    },
+  })
+
+  await logAdminAction(user.id, user.email, 'CLEANUP_DATA', 'Unavailability', undefined, {
+    booking: 'block',
+    start: input.start,
+    end: input.end,
+  })
+
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function removeUnavailability(id: string) {
+  const user = await requireAdmin()
+
+  await prisma.unavailability.deleteMany({ where: { id } })
+
+  await logAdminAction(user.id, user.email, 'CLEANUP_DATA', 'Unavailability', id, {
+    booking: 'unblock',
+  })
+
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function saveAvailabilityRule(input: {
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  bufferMinutes?: number
+}) {
+  const user = await requireAdmin()
+
+  const dayOfWeek = Number(input.dayOfWeek)
+  if (!Number.isInteger(dayOfWeek) || dayOfWeek < 0 || dayOfWeek > 6) {
+    return { success: false, error: 'Jour invalide' }
+  }
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(input.startTime) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(input.endTime)) {
+    return { success: false, error: 'Heure invalide (format HH:MM)' }
+  }
+  if (input.endTime <= input.startTime) {
+    return { success: false, error: 'L\'heure de fin doit être après l\'heure de début' }
+  }
+
+  const bufferMinutes = Math.max(0, Math.min(120, Number(input.bufferMinutes) || 0))
+
+  await prisma.availabilityRule.upsert({
+    where: { id: 'rule-' + dayOfWeek },
+    update: {
+      startTime: input.startTime,
+      endTime: input.endTime,
+      bufferMinutes,
+      isActive: true,
+    },
+    create: {
+      id: 'rule-' + dayOfWeek,
+      dayOfWeek,
+      startTime: input.startTime,
+      endTime: input.endTime,
+      bufferMinutes,
+      isActive: true,
+    },
+  })
+
+  await logAdminAction(user.id, user.email, 'CLEANUP_DATA', 'AvailabilityRule', `rule-${dayOfWeek}`, {
+    booking: 'update-hours',
+    startTime: input.startTime,
+    endTime: input.endTime,
+    bufferMinutes,
+  })
+
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function cancelReservation(id: string) {
+  const user = await requireAdmin()
+
+  const updated = await prisma.reservation.updateMany({
+    where: { id, status: { not: 'annule' } },
+    data: { status: 'annule' },
+  })
+
+  if (updated.count === 0) {
+    return { success: false, error: 'Réservation déjà annulée ou introuvable' }
+  }
+
+  await logAdminAction(user.id, user.email, 'CLEANUP_DATA', 'Reservation', id, {
+    booking: 'cancel',
+  })
+
+  revalidatePath('/admin')
+  return { success: true }
+}

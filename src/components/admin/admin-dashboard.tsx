@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Plus, Pencil, Trash2, ArrowLeft, LogOut, Shield, History, ArrowUp, ArrowDown, Save } from 'lucide-react'
+import { Plus, Pencil, Trash2, ArrowLeft, LogOut, Shield, History, ArrowUp, ArrowDown, Save, CalendarDays } from 'lucide-react'
 import Link from 'next/link'
 import { ServiceFormData, upsertService, deleteService, reorderServices } from '@/app/admin/actions'
 import { logoutAction } from '@/app/login/actions'
@@ -10,6 +10,7 @@ import { ServiceForm } from '@/components/admin/service-form'
 import { PromoList } from '@/components/admin/promo-list'
 import { NewsletterList } from '@/components/admin/newsletter-list'
 import { AuditLogPanel } from '@/components/admin/audit-log'
+import { BookingManager } from '@/components/admin/booking-manager'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -21,7 +22,7 @@ interface AdminDashboardProps {
 }
 
 export function AdminDashboard({ services, promotions, newsletterSubscribers, newsletterStats }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'services' | 'promotions' | 'newsletter' | 'audit'>('services')
+  const [activeTab, setActiveTab] = useState<'services' | 'promotions' | 'newsletter' | 'bookings' | 'audit'>('services')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingService, setEditingService] = useState<ServiceFormData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -170,6 +171,16 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
                 Newsletter
             </button>
             <button
+                onClick={() => setActiveTab('bookings')}
+                className={cn(
+                    "px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2",
+                    activeTab === 'bookings' ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200" : "text-slate-500 hover:text-emerald-500 hover:bg-emerald-50"
+                )}
+            >
+                <CalendarDays className="w-4 h-4" />
+                Réservations
+            </button>
+            <button
                 onClick={() => setActiveTab('audit')}
                 className={cn(
                     "px-6 py-2.5 rounded-xl font-bold text-sm transition-all duration-300 flex items-center gap-2",
@@ -182,7 +193,11 @@ export function AdminDashboard({ services, promotions, newsletterSubscribers, ne
         </div>
 
         {/* Content */}
-        {activeTab === 'audit' ? (
+        {activeTab === 'bookings' ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-6">
+              <BookingManager />
+            </div>
+        ) : activeTab === 'audit' ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <AuditLogPanel />
               <div className="bg-white rounded-2xl border border-slate-200 p-6">
