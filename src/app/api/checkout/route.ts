@@ -220,6 +220,7 @@ export async function POST(req: Request) {
         total: (totalAmount / 100).toFixed(2),
         message: message || null,
         requestedDate: finalRequestedDate,
+        slot: validatedSlotStart && validatedSlotEnd ? { start: validatedSlotStart, end: validatedSlotEnd } : null,
       });
       console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé à Sabrina');
 
@@ -235,6 +236,7 @@ export async function POST(req: Request) {
         })),
         total: (totalAmount / 100).toFixed(2),
         requestedDate: finalRequestedDate,
+        slot: validatedSlotStart && validatedSlotEnd ? { start: validatedSlotStart, end: validatedSlotEnd } : null,
       });
       console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé au client');
     } catch (emailError) {

@@ -5,7 +5,9 @@ import { prisma } from '@/lib/db-services'
 import Stripe from 'stripe'
 import { 
   sendConfirmationToCustomerPaye, 
-  sendNotificationToSabrinaPaye 
+  sendNotificationToSabrinaPaye,
+  sendPaymentFailedToCustomer,
+  sendRefundNotificationToCustomer
 } from '@/lib/resend'
 
 /**
@@ -15,11 +17,13 @@ import {
  * - checkout.session.completed : Paiement réussi
  * - checkout.session.async_payment_succeeded : Paiement asynchrone réussi (ex: virement)
  * - checkout.session.async_payment_failed : Paiement asynchrone échoué
+ * - checkout.session.expired : Session expirée sans paiement → annulation + libération du créneau
  * - payment_intent.payment_failed : Échec de paiement
- * 
+ * - charge.refunded : Remboursement → annulation + libération du créneau
+ *
  * FLUX:
  * 1. La réservation est créée AVANT le paiement (status: attente_paiement_sur_place)
- * 2. Le webhook met à jour la réservation (status: paye_confirme)
+ * 2. Le webhook met à jour la réservation (status: paye_confirme) de façon ATOMIQUE (updateMany)
  * 3. Les emails sont envoyés avec le statut "PAYÉ"
  */
 
@@ -59,10 +63,9 @@ export async function POST(req: Request) {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
     console.log(`[WEBHOOK] Événement reçu`)
   } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue'
     console.error('[WEBHOOK] Erreur de vérification de signature')
     return NextResponse.json(
-      { error: `Webhook Error: ${errorMessage}` },
+      { error: 'Webhook Error: signature invalide' },
       { status: 400 }
     )
   }
@@ -78,7 +81,7 @@ export async function POST(req: Request) {
 
       case 'checkout.session.async_payment_succeeded': {
         const session = event.data.object as Stripe.Checkout.Session
-        await handleAsyncPaymentSucceeded(session)
+        await handleCheckoutCompleted(session)
         break
       }
 
@@ -88,9 +91,21 @@ export async function POST(req: Request) {
         break
       }
 
+      case 'checkout.session.expired': {
+        const session = event.data.object as Stripe.Checkout.Session
+        await handleSessionExpired(session)
+        break
+      }
+
       case 'payment_intent.payment_failed': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent
         await handlePaymentFailed(paymentIntent)
+        break
+      }
+
+      case 'charge.refunded': {
+        const charge = event.data.object as Stripe.Charge
+        await handleRefund(charge)
         break
       }
 
@@ -98,11 +113,12 @@ export async function POST(req: Request) {
         console.log(`[WEBHOOK] Événement non traité`)
     }
 
+    // 200 : événement traité (ou déjà traité — idempotence)
     return NextResponse.json({ received: true })
   } catch (error) {
-    console.error('[WEBHOOK] Erreur lors du traitement')
-    // Toujours retourner 200 pour éviter que Stripe retry indéfiniment
-    return NextResponse.json({ received: true })
+    // 500 : erreur réelle → Stripe retry avec backoff exponentiel
+    console.error('[WEBHOOK] Erreur lors du traitement', error)
+    return NextResponse.json({ error: 'Traitement échoué' }, { status: 500 })
   }
 }
 
@@ -115,48 +131,63 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const paymentMethod = session.payment_method_types?.[0] || 'unknown';
   console.log(`💳 [WEBHOOK] Paiement réussi via ${paymentMethod.toUpperCase()}`)
 
-  try {
-    // 1. RÉCUPÉRER LA RÉSERVATION PAR LE SESSION ID STRIPE
-    const reservation = await prisma.reservation.findUnique({
-      where: { stripeSessionId: session.id }
-    })
+  // 1. RÉCUPÉRER LA RÉSERVATION PAR LE SESSION ID STRIPE
+  const reservation = await prisma.reservation.findUnique({
+    where: { stripeSessionId: session.id }
+  })
 
-    if (!reservation) {
-      console.error('[WEBHOOK] Réservation non trouvée')
-      // Créer une réservation de secours (cas où le checkout n'a pas créé la réservation)
-      await createFallbackReservation(session)
-      return
-    }
-
-    // 2. VÉRIFIER SI DÉJÀ TRAITÉ (éviter les doublons)
-    if (reservation.status === 'paye_confirme') {
-      console.log('[WEBHOOK] ℹ️ Réservation déjà marquée comme payée')
-      return
-    }
-
-    // 3. METTRE À JOUR LA RÉSERVATION
-    const updatedReservation = await prisma.reservation.update({
-      where: { id: reservation.id },
-      data: {
-        status: 'paye_confirme',
-        stripePaymentId: session.payment_intent as string,
-        paidAt: new Date()
-      }
-    })
-
-    console.log('[WEBHOOK] ✅ Réservation mise à jour:', updatedReservation.id)
-    console.log('[WEBHOOK] 📊 Nouveau statut:', updatedReservation.status)
-
-    // 4. GÉRER LA NEWSLETTER
-    await handleNewsletterSubscription(session)
-
-    // 5. ENVOYER LES EMAILS "PAYÉS" (Bundle Reçu + Confirmation)
-    await sendPaymentConfirmationEmails(session, updatedReservation)
-
-  } catch (error) {
-    console.error('[WEBHOOK] ❌ Erreur handleCheckoutCompleted:', error)
-    // On ne throw pas pour éviter les retries Stripe infinis
+  if (!reservation) {
+    console.error('[WEBHOOK] Réservation non trouvée')
+    // Créer une réservation de secours (cas où le checkout n'a pas créé la réservation)
+    await createFallbackReservation(session)
+    return
   }
+
+  // 🔒 VÉRIFICATION DU MONTANT (défense en profondeur)
+  const expectedCents = Math.round((reservation.totalAmount || 0) * 100);
+  const paidCents = session.amount_total || 0;
+  if (expectedCents > 0 && paidCents > 0 && Math.abs(expectedCents - paidCents) > 1) {
+    console.error(
+      `[WEBHOOK] ⚠️ MONTANT INCOHÉRENT réservation=${reservation.id} : DB=${expectedCents}c Stripe=${paidCents}c`
+    );
+    // Le paiement est réel : on confirme quand même, mais l'anomalie est journalisée pour enquête
+  }
+
+  // 🔒 IDEMPOTENCE ATOMIQUE : un seul passage à paye_confirme possible
+  // (protège contre les doubles livraisons du webhook → double envoi d'emails)
+  const updated = await prisma.reservation.updateMany({
+    where: {
+      id: reservation.id,
+      status: { not: 'paye_confirme' }
+    },
+    data: {
+      status: 'paye_confirme',
+      stripePaymentId: session.payment_intent as string,
+      paidAt: new Date()
+    }
+  })
+
+  if (updated.count === 0) {
+    console.log('[WEBHOOK] ℹ️ Réservation déjà marquée comme payée (idempotence)')
+    return
+  }
+
+  const updatedReservation = await prisma.reservation.findUnique({
+    where: { id: reservation.id }
+  })
+
+  if (!updatedReservation) {
+    throw new Error(`Réservation ${reservation.id} introuvable après mise à jour`)
+  }
+
+  console.log('[WEBHOOK] ✅ Réservation mise à jour:', updatedReservation.id)
+  console.log('[WEBHOOK] 📊 Nouveau statut:', updatedReservation.status)
+
+  // 2. GÉRER LA NEWSLETTER
+  await handleNewsletterSubscription(session)
+
+  // 3. ENVOYER LES EMAILS "PAYÉS" (Bundle Reçu + Confirmation)
+  await sendPaymentConfirmationEmails(session, updatedReservation)
 }
 
 /**
@@ -244,6 +275,11 @@ async function sendPaymentConfirmationEmails(
       quantity: reservation.quantity
     }]
 
+    // Créneau réservé (si la réservation a un créneau)
+    const slot = reservation.startAt && reservation.endAt
+      ? { start: new Date(reservation.startAt), end: new Date(reservation.endAt) }
+      : null;
+
     // 1. EMAIL AU CLIENT (Bundle Reçu + Confirmation)
     try {
       await sendConfirmationToCustomerPaye({
@@ -254,6 +290,7 @@ async function sendPaymentConfirmationEmails(
         total: reservation.totalAmount,
         stripeReceiptUrl: receiptUrl,
         paidAt: reservation.paidAt!,
+        slot,
       })
       console.log('[WEBHOOK] ✅ Email CLIENT [PAYÉ] envoyé')
     } catch (emailError) {
@@ -272,6 +309,7 @@ async function sendPaymentConfirmationEmails(
         message: reservation.message,
         stripePaymentId: reservation.stripePaymentId!,
         paidAt: reservation.paidAt!,
+        slot,
       })
       console.log('[WEBHOOK] ✅ Email SABRINA [PAYÉ] envoyé')
     } catch (emailError) {
@@ -320,39 +358,92 @@ async function createFallbackReservation(session: Stripe.Checkout.Session) {
 }
 
 /**
- * Paiement asynchrone réussi (ex: virement SEPA)
- * Même traitement que checkout.session.completed
- */
-async function handleAsyncPaymentSucceeded(session: Stripe.Checkout.Session) {
-  console.log('[WEBHOOK] 💳 Paiement asynchrone réussi')
-  await handleCheckoutCompleted(session)
-}
-
-/**
- * Paiement asynchrone échoué
+ * Paiement asynchrone échoué → annulation + libération du créneau + email client
  */
 async function handleAsyncPaymentFailed(session: Stripe.Checkout.Session) {
   console.log('[WEBHOOK] ❌ Paiement asynchrone échoué')
 
   try {
-    // Mettre à jour la réservation si elle existe
     const reservation = await prisma.reservation.findUnique({
       where: { stripeSessionId: session.id }
     })
 
-    if (reservation) {
-      await prisma.reservation.update({
-        where: { id: reservation.id },
-        data: { status: 'annule' }
-      })
-      console.log('[WEBHOOK] ✅ Réservation marquée comme annulée')
+    if (!reservation) {
+      console.log('[WEBHOOK] ℹ️ Aucune réservation liée à cette session')
+      return
     }
 
-    // TODO: Envoyer un email au client pour l'informer de l'échec
-    console.log('[WEBHOOK] 📧 Email d\'échec à envoyer')
+    const updated = await prisma.reservation.updateMany({
+      where: { id: reservation.id, status: { not: 'paye_confirme' } },
+      data: { status: 'annule' }
+    })
 
+    if (updated.count === 0) {
+      console.log('[WEBHOOK] ℹ️ Réservation déjà payée — rien à annuler')
+      return
+    }
+
+    console.log('[WEBHOOK] ✅ Réservation annulée, créneau libéré')
+
+    // Email client : paiement non abouti
+    try {
+      await sendPaymentFailedToCustomer({
+        customerName: reservation.customerName,
+        customerEmail: reservation.customerEmail,
+        reservationId: reservation.id,
+        slot: reservation.startAt && reservation.endAt
+          ? { start: reservation.startAt, end: reservation.endAt }
+          : null,
+      })
+      console.log('[WEBHOOK] ✅ Email échec envoyé au client')
+    } catch (emailError) {
+      console.error('[WEBHOOK] ❌ Erreur email échec client:', emailError)
+    }
   } catch (error) {
-    console.error('[WEBHOOK] ❌ Erreur handleAsyncPaymentFailed')
+    console.error('[WEBHOOK] ❌ Erreur handleAsyncPaymentFailed', error)
+    throw error
+  }
+}
+
+/**
+ * Session Stripe expirée sans paiement (le client a abandonné)
+ * → annulation + libération du créneau + email d'échec
+ */
+async function handleSessionExpired(session: Stripe.Checkout.Session) {
+  console.log('[WEBHOOK] ⏳ Session expirée sans paiement')
+
+  try {
+    const reservation = await prisma.reservation.findUnique({
+      where: { stripeSessionId: session.id }
+    })
+
+    if (!reservation) return
+
+    // N'annuler que si jamais payée
+    const updated = await prisma.reservation.updateMany({
+      where: { id: reservation.id, status: { not: 'paye_confirme' } },
+      data: { status: 'annule' }
+    })
+
+    if (updated.count === 0) return
+
+    console.log('[WEBHOOK] ✅ Réservation annulée (session expirée), créneau libéré')
+
+    try {
+      await sendPaymentFailedToCustomer({
+        customerName: reservation.customerName,
+        customerEmail: reservation.customerEmail,
+        reservationId: reservation.id,
+        slot: reservation.startAt && reservation.endAt
+          ? { start: reservation.startAt, end: reservation.endAt }
+          : null,
+      })
+    } catch (emailError) {
+      console.error('[WEBHOOK] ❌ Erreur email échec client:', emailError)
+    }
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Erreur handleSessionExpired', error)
+    throw error
   }
 }
 
@@ -367,5 +458,83 @@ async function handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     errorMessage: paymentIntent.last_payment_error?.message
   })
 
-  // TODO: Logger l'échec et éventuellement notifier le client
+  // Si une réservation est déjà liée à ce payment intent, l'annuler et libérer le créneau
+  try {
+    const reservation = await prisma.reservation.findFirst({
+      where: { stripePaymentId: paymentIntent.id }
+    })
+
+    if (reservation && reservation.status !== 'paye_confirme') {
+      await prisma.reservation.updateMany({
+        where: { id: reservation.id, status: { not: 'paye_confirme' } },
+        data: { status: 'annule' }
+      })
+
+      try {
+        await sendPaymentFailedToCustomer({
+          customerName: reservation.customerName,
+          customerEmail: reservation.customerEmail,
+          reservationId: reservation.id,
+          slot: reservation.startAt && reservation.endAt
+            ? { start: reservation.startAt, end: reservation.endAt }
+            : null,
+        })
+      } catch (emailError) {
+        console.error('[WEBHOOK] ❌ Erreur email échec client:', emailError)
+      }
+    }
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Erreur handlePaymentFailed', error)
+    throw error
+  }
+}
+
+/**
+ * Remboursement Stripe → annulation + libération du créneau + email client
+ */
+async function handleRefund(charge: Stripe.Charge) {
+  console.log('[WEBHOOK] 💸 Remboursement détecté')
+
+  const paymentIntentId = charge.payment_intent as string | undefined
+  if (!paymentIntentId) {
+    console.log('[WEBHOOK] ℹ️ Charge sans payment_intent — ignorée')
+    return
+  }
+
+  try {
+    const reservation = await prisma.reservation.findFirst({
+      where: { stripePaymentId: paymentIntentId }
+    })
+
+    if (!reservation) {
+      console.log('[WEBHOOK] ℹ️ Aucune réservation liée à ce remboursement')
+      return
+    }
+
+    const updated = await prisma.reservation.updateMany({
+      where: { id: reservation.id, status: { not: 'annule' } },
+      data: { status: 'annule' }
+    })
+
+    if (updated.count === 0) {
+      console.log('[WEBHOOK] ℹ️ Réservation déjà annulée')
+      return
+    }
+
+    console.log('[WEBHOOK] ✅ Réservation annulée (remboursement), créneau libéré')
+
+    try {
+      await sendRefundNotificationToCustomer({
+        customerName: reservation.customerName,
+        customerEmail: reservation.customerEmail,
+        reservationId: reservation.id,
+      })
+      console.log('[WEBHOOK] ✅ Email remboursement envoyé au client')
+    } catch (emailError) {
+      console.error('[WEBHOOK] ❌ Erreur email remboursement:', emailError)
+    }
+  } catch (error) {
+    console.error('[WEBHOOK] ❌ Erreur handleRefund', error)
+    throw error
+  }
 }

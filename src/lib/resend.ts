@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { buildIcsAttachment } from './ics';
 
 // Initialiser Resend avec la clé API
 export const resend = new Resend(process.env.RESEND_API_KEY);
@@ -30,6 +31,41 @@ function formatPrice(price: string | number): string {
   return num.toFixed(2);
 }
 
+export type EmailSlot = { start: Date; end: Date };
+
+/**
+ * Formate un créneau ou une date pour l'affichage dans les emails :
+ * "lundi 14 septembre 2026" ou "lundi 14 septembre 2026 à 10h00" (heure de Paris).
+ */
+function formatSlotInfo(value: string | Date | EmailSlot | null | undefined): string | null {
+  if (!value) return null;
+
+  const start =
+    value instanceof Date ? value : typeof value === 'string' ? new Date(value) : value.start;
+
+  if (isNaN(start.getTime())) return null;
+
+  const datePart = start.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'Europe/Paris',
+  });
+
+  // Heure affichée uniquement si ce n'est pas un simple jour (minuit UTC)
+  const hasTime = start.getUTCHours() !== 0 || start.getUTCMinutes() !== 0;
+  if (!hasTime) return datePart;
+
+  const timePart = start.toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Paris',
+  });
+
+  return `${datePart} à ${timePart}`;
+}
+
 // ============================================
 // FLUX 1: PAIEMENT SUR PLACE
 // ============================================
@@ -45,6 +81,7 @@ export async function sendConfirmationToCustomerSurPlace({
   services,
   total,
   requestedDate,
+  slot,
 }: {
   customerName: string;
   customerEmail: string;
@@ -52,19 +89,27 @@ export async function sendConfirmationToCustomerSurPlace({
   services: Array<{ title: string; price: string; quantity: number }>;
   total: string | number;
   requestedDate?: string | Date | null;
+  slot?: EmailSlot | null;
 }) {
   console.log("📧 [SUR PLACE] Email confirmation client:", customerEmail);
   
   const safeName = escapeHtml(customerName);
   const safeTotal = formatPrice(total);
-  const dateStr = requestedDate 
-    ? new Date(requestedDate).toLocaleDateString('fr-FR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
-    : null;
+  const slotInfo = formatSlotInfo(slot ?? requestedDate);
+
+  // Pièce jointe .ics si un créneau précis a été réservé
+  const attachments = slot
+    ? [
+        buildIcsAttachment({
+          start: slot.start,
+          end: slot.end,
+          title: `RDV Sab-Fit : ${services.map(s => s.title).join(' + ')}`,
+          description: `Rendez-vous Sab-Fit — Réf ${reservationId.slice(0, 8).toUpperCase()}`,
+          location: 'Var (83) — à domicile ou en cabinet',
+          uid: reservationId,
+        }),
+      ]
+    : undefined;
 
   const servicesHTML = services.map(s => `
     <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #f59e0b;">
@@ -124,10 +169,10 @@ export async function sendConfirmationToCustomerSurPlace({
               </p>
             </div>
 
-            ${dateStr ? `
+            ${slotInfo ? `
             <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin: 20px 0;">
-              <strong style="color: #0c4a6e;">📅 Date souhaitée :</strong>
-              <span style="color: #0c4a6e; margin-left: 10px;">${dateStr}</span>
+              <strong style="color: #0c4a6e;">📅 Votre rendez-vous :</strong>
+              <span style="color: #0c4a6e; margin-left: 10px;">${slotInfo}</span>
             </div>
             ` : ''}
 
@@ -160,6 +205,7 @@ export async function sendConfirmationToCustomerSurPlace({
       to: customerEmail,
       subject: `⏳ Réservation enregistrée - Réf: ${reservationId.slice(0, 8).toUpperCase()}`,
       html,
+      attachments,
     });
     console.log("✅ Email client [SUR PLACE] envoyé:", result);
     return result;
@@ -182,6 +228,7 @@ export async function sendNotificationToSabrinaSurPlace({
   total,
   message,
   requestedDate,
+  slot,
 }: {
   reservationId: string;
   customerName: string;
@@ -191,6 +238,7 @@ export async function sendNotificationToSabrinaSurPlace({
   total: string | number;
   message?: string | null;
   requestedDate?: string | Date | null;
+  slot?: EmailSlot | null;
 }) {
   console.log("📧 [SUR PLACE] Email notification Sabrina:", SABRINA_EMAIL);
   
@@ -199,14 +247,7 @@ export async function sendNotificationToSabrinaSurPlace({
   const safePhone = escapeHtml(customerPhone);
   const safeMessage = message ? escapeHtml(message) : '';
   const safeTotal = formatPrice(total);
-  const dateStr = requestedDate 
-    ? new Date(requestedDate).toLocaleDateString('fr-FR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
-    : null;
+  const slotInfo = formatSlotInfo(slot ?? requestedDate);
 
   const servicesHTML = services.map(s => `
     <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #f59e0b;">
@@ -283,10 +324,10 @@ export async function sendNotificationToSabrinaSurPlace({
               </div>
             </div>
 
-            ${dateStr ? `
+            ${slotInfo ? `
             <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin-bottom: 20px;">
-              <strong style="color: #0c4a6e;">📅 Date souhaitée par le client :</strong>
-              <span style="color: #0c4a6e; margin-left: 10px;">${dateStr}</span>
+              <strong style="color: #0c4a6e;">📅 Rendez-vous :</strong>
+              <span style="color: #0c4a6e; margin-left: 10px;">${slotInfo}</span>
             </div>
             ` : ''}
 
@@ -349,6 +390,7 @@ export async function sendConfirmationToCustomerPaye({
   total,
   stripeReceiptUrl,
   paidAt,
+  slot,
 }: {
   customerName: string;
   customerEmail: string;
@@ -357,11 +399,13 @@ export async function sendConfirmationToCustomerPaye({
   total: string | number;
   stripeReceiptUrl: string | null;
   paidAt: Date;
+  slot?: EmailSlot | null;
 }) {
   console.log("📧 [PAYÉ] Email confirmation client:", customerEmail);
   
   const safeName = escapeHtml(customerName);
   const safeTotal = formatPrice(total);
+  const slotInfo = formatSlotInfo(slot);
   const paidDateStr = new Date(paidAt).toLocaleDateString('fr-FR', {
     weekday: 'long',
     year: 'numeric',
@@ -370,6 +414,20 @@ export async function sendConfirmationToCustomerPaye({
     hour: '2-digit',
     minute: '2-digit'
   });
+
+  // Pièce jointe .ics si un créneau précis a été réservé
+  const attachments = slot
+    ? [
+        buildIcsAttachment({
+          start: slot.start,
+          end: slot.end,
+          title: `RDV Sab-Fit : ${services.map(s => s.title).join(' + ')}`,
+          description: `Rendez-vous Sab-Fit — Réf ${reservationId.slice(0, 8).toUpperCase()}`,
+          location: 'Var (83) — à domicile ou en cabinet',
+          uid: reservationId,
+        }),
+      ]
+    : undefined;
 
   const servicesHTML = services.map(s => `
     <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #10b981;">
@@ -407,6 +465,13 @@ export async function sendConfirmationToCustomerPaye({
             <p style="color: #475569; font-size: 16px; line-height: 1.6;">
               Votre paiement a été reçu et votre réservation est confirmée ! 🎉
             </p>
+
+            ${slotInfo ? `
+            <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0;">
+              <strong style="color: #065f46;">📅 Votre rendez-vous :</strong>
+              <span style="color: #065f46; margin-left: 10px;">${slotInfo}</span>
+            </div>
+            ` : ''}
 
             <!-- 🧾 REÇU STRIPE -->
             <div style="background: #ecfdf5; border: 2px solid #10b981; padding: 25px; border-radius: 12px; margin: 25px 0; text-align: center;">
@@ -463,6 +528,7 @@ export async function sendConfirmationToCustomerPaye({
       to: customerEmail,
       subject: `✅ Réservation confirmée & payée - Réf: ${reservationId.slice(0, 8).toUpperCase()}`,
       html,
+      attachments,
     });
     console.log("✅ Email client [PAYÉ] envoyé:", result);
     return result;
@@ -486,6 +552,7 @@ export async function sendNotificationToSabrinaPaye({
   message,
   stripePaymentId,
   paidAt,
+  slot,
 }: {
   reservationId: string;
   customerName: string;
@@ -496,6 +563,7 @@ export async function sendNotificationToSabrinaPaye({
   message?: string | null;
   stripePaymentId: string;
   paidAt: Date;
+  slot?: EmailSlot | null;
 }) {
   console.log("📧 [PAYÉ] Email notification Sabrina:", SABRINA_EMAIL);
   
@@ -504,6 +572,7 @@ export async function sendNotificationToSabrinaPaye({
   const safePhone = escapeHtml(customerPhone);
   const safeMessage = message ? escapeHtml(message) : '';
   const safeTotal = formatPrice(total);
+  const slotInfo = formatSlotInfo(slot);
   const paidDateStr = new Date(paidAt).toLocaleDateString('fr-FR', {
     weekday: 'long',
     year: 'numeric',
@@ -543,6 +612,13 @@ export async function sendNotificationToSabrinaPaye({
 
           <div style="padding: 30px;">
             
+            ${slotInfo ? `
+            <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 15px; margin-bottom: 20px;">
+              <strong style="color: #065f46;">📅 Rendez-vous client :</strong>
+              <span style="color: #065f46; margin-left: 10px;">${slotInfo}</span>
+            </div>
+            ` : ''}
+
             <!-- ✅ ALERTE PAIEMENT REÇU -->
             <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
               <h3 style="margin: 0 0 10px 0; color: #065f46; font-size: 18px;">✅ Paiement en ligne reçu (Stripe)</h3>
@@ -650,6 +726,7 @@ export async function sendConfirmationToCustomerStripePending({
   services,
   total,
   requestedDate,
+  slot,
 }: {
   customerName: string;
   customerEmail: string;
@@ -657,19 +734,27 @@ export async function sendConfirmationToCustomerStripePending({
   services: Array<{ title: string; price: string; quantity: number }>;
   total: string | number;
   requestedDate?: string | Date | null;
+  slot?: EmailSlot | null;
 }) {
   console.log("📧 [STRIPE PENDING] Email confirmation client:", customerEmail);
   
   const safeName = escapeHtml(customerName);
   const safeTotal = formatPrice(total);
-  const dateStr = requestedDate 
-    ? new Date(requestedDate).toLocaleDateString('fr-FR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
-    : null;
+  const slotInfo = formatSlotInfo(slot ?? requestedDate);
+
+  // Pièce jointe .ics si un créneau précis a été réservé
+  const attachments = slot
+    ? [
+        buildIcsAttachment({
+          start: slot.start,
+          end: slot.end,
+          title: `RDV Sab-Fit : ${services.map(s => s.title).join(' + ')}`,
+          description: `Rendez-vous Sab-Fit — Réf ${reservationId.slice(0, 8).toUpperCase()}`,
+          location: 'Var (83) — à domicile ou en cabinet',
+          uid: reservationId,
+        }),
+      ]
+    : undefined;
 
   const servicesHTML = services.map(s => `
     <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #3B82F6;">
@@ -729,10 +814,10 @@ export async function sendConfirmationToCustomerStripePending({
               </p>
             </div>
 
-            ${dateStr ? `
+            ${slotInfo ? `
             <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin: 20px 0;">
-              <strong style="color: #0c4a6e;">📅 Date souhaitée :</strong>
-              <span style="color: #0c4a6e; margin-left: 10px;">${dateStr}</span>
+              <strong style="color: #0c4a6e;">📅 Rendez-vous :</strong>
+              <span style="color: #0c4a6e; margin-left: 10px;">${slotInfo}</span>
             </div>
             ` : ''}
 
@@ -765,6 +850,7 @@ export async function sendConfirmationToCustomerStripePending({
       to: customerEmail,
       subject: `💳 Finalisez votre paiement - Réf: ${reservationId.slice(0, 8).toUpperCase()}`,
       html,
+      attachments,
     });
     console.log("✅ Email client [STRIPE PENDING] envoyé:", result);
     return result;
@@ -787,6 +873,7 @@ export async function sendNotificationToSabrinaStripePending({
   total,
   message,
   requestedDate,
+  slot,
 }: {
   reservationId: string;
   customerName: string;
@@ -796,6 +883,7 @@ export async function sendNotificationToSabrinaStripePending({
   total: string | number;
   message?: string | null;
   requestedDate?: string | Date | null;
+  slot?: EmailSlot | null;
 }) {
   console.log("📧 [STRIPE PENDING] Email notification Sabrina:", SABRINA_EMAIL);
   
@@ -804,14 +892,7 @@ export async function sendNotificationToSabrinaStripePending({
   const safePhone = escapeHtml(customerPhone);
   const safeMessage = message ? escapeHtml(message) : '';
   const safeTotal = formatPrice(total);
-  const dateStr = requestedDate 
-    ? new Date(requestedDate).toLocaleDateString('fr-FR', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
-    : null;
+  const slotInfo = formatSlotInfo(slot ?? requestedDate);
 
   const servicesHTML = services.map(s => `
     <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 3px solid #3B82F6;">
@@ -888,10 +969,10 @@ export async function sendNotificationToSabrinaStripePending({
               </div>
             </div>
 
-            ${dateStr ? `
+            ${slotInfo ? `
             <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 15px; margin-bottom: 20px;">
-              <strong style="color: #0c4a6e;">📅 Date souhaitée par le client :</strong>
-              <span style="color: #0c4a6e; margin-left: 10px;">${dateStr}</span>
+              <strong style="color: #0c4a6e;">📅 Rendez-vous :</strong>
+              <span style="color: #0c4a6e; margin-left: 10px;">${slotInfo}</span>
             </div>
             ` : ''}
 
@@ -934,6 +1015,131 @@ export async function sendNotificationToSabrinaStripePending({
     return result;
   } catch (error) {
     console.error("❌ Erreur email Sabrina [STRIPE PENDING]:", error);
+    throw error;
+  }
+}
+
+// ============================================
+// FLUX 4: ÉCHECS & REMBOURSEMENTS (Phase 3)
+// ============================================
+
+/**
+ * Email au CLIENT — Échec de paiement en ligne.
+ * Informe que le créneau est libéré et propose de réessayer.
+ */
+export async function sendPaymentFailedToCustomer({
+  customerName,
+  customerEmail,
+  reservationId,
+  slot,
+}: {
+  customerName: string;
+  customerEmail: string;
+  reservationId: string;
+  slot?: EmailSlot | null;
+}) {
+  console.log("📧 [ÉCHEC] Email échec paiement client:", customerEmail);
+
+  const safeName = escapeHtml(customerName);
+  const slotInfo = formatSlotInfo(slot);
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8"></head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f1f5f9;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 16px; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 30px; text-align: center;">
+            <h1 style="margin: 0; color: white; font-size: 24px; font-weight: bold;">Paiement non abouti</h1>
+            <p style="margin: 10px 0 0 0; color: #fee2e2; font-size: 14px;">Référence: ${reservationId.slice(0, 8).toUpperCase()}</p>
+          </div>
+          <div style="padding: 30px;">
+            <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+              Bonjour <strong>${safeName}</strong>,
+            </p>
+            <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+              Votre paiement n'a pas pu être finalisé${slotInfo ? ` pour le créneau du <strong>${slotInfo}</strong>` : ''}.
+              Le créneau a été libéré et reste disponible si vous souhaitez réessayer.
+            </p>
+            <div style="text-align: center; margin: 25px 0;">
+              <a href="https://www.sab-fit.com/#contact" style="display: inline-block; background: #3b82f6; color: white; padding: 14px 28px; border-radius: 10px; text-decoration: none; font-weight: bold;">
+                Réessayer la réservation
+              </a>
+            </div>
+            <p style="color: #64748b; font-size: 14px;">
+              Une question ? Contactez Sabrina au <strong>06 66 26 24 29</strong>.
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  try {
+    return await resend.emails.send({
+      from: FROM_EMAIL,
+      to: customerEmail,
+      subject: `Paiement non abouti - Réf: ${reservationId.slice(0, 8).toUpperCase()}`,
+      html,
+    });
+  } catch (error) {
+    console.error("❌ Erreur email échec paiement:", error);
+    throw error;
+  }
+}
+
+/**
+ * Email au CLIENT — Remboursement effectué, réservation annulée.
+ */
+export async function sendRefundNotificationToCustomer({
+  customerName,
+  customerEmail,
+  reservationId,
+}: {
+  customerName: string;
+  customerEmail: string;
+  reservationId: string;
+}) {
+  console.log("📧 [REMBOURSEMENT] Email remboursement client:", customerEmail);
+
+  const safeName = escapeHtml(customerName);
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8"></head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f1f5f9;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 16px; overflow: hidden;">
+          <div style="background: linear-gradient(135deg, #64748b 0%, #475569 100%); padding: 30px; text-align: center;">
+            <h1 style="margin: 0; color: white; font-size: 24px; font-weight: bold;">Remboursement effectué</h1>
+            <p style="margin: 10px 0 0 0; color: #e2e8f0; font-size: 14px;">Référence: ${reservationId.slice(0, 8).toUpperCase()}</p>
+          </div>
+          <div style="padding: 30px;">
+            <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+              Bonjour <strong>${safeName}</strong>,
+            </p>
+            <p style="color: #475569; font-size: 16px; line-height: 1.6;">
+              Votre remboursement a bien été effectué. Votre réservation a été annulée et le créneau libéré.
+              Le montant sera recrédité sur votre moyen de paiement sous quelques jours ouvrés selon votre banque.
+            </p>
+            <p style="color: #64748b; font-size: 14px;">
+              Une question ? Contactez Sabrina au <strong>06 66 26 24 29</strong>.
+            </p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  try {
+    return await resend.emails.send({
+      from: FROM_EMAIL,
+      to: customerEmail,
+      subject: `Remboursement effectué - Réf: ${reservationId.slice(0, 8).toUpperCase()}`,
+      html,
+    });
+  } catch (error) {
+    console.error("❌ Erreur email remboursement:", error);
     throw error;
   }
 }

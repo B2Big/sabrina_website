@@ -175,6 +175,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         services: cartItems,
         total: totalAmount,
         requestedDate: finalRequestedDate,
+        slot: slotStart && slotEnd ? { start: slotStart, end: slotEnd } : null,
       });
       console.log("✅ Email CLIENT [SUR PLACE] envoyé");
     } catch (emailError: any) {
@@ -195,6 +196,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         total: totalAmount,
         message: cleanMessage,
         requestedDate: finalRequestedDate,
+        slot: slotStart && slotEnd ? { start: slotStart, end: slotEnd } : null,
       });
       console.log("✅ Email SABRINA [SUR PLACE] envoyé");
     } catch (emailError: any) {
