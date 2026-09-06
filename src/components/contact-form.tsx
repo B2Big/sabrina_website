@@ -22,6 +22,7 @@ function ContactFormContent() {
   const [cguAccepted, setCguAccepted] = useState(false);
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
   const [paymentMode, setPaymentMode] = useState<'onsite' | 'online'>('onsite');
+  const [messageText, setMessageText] = useState('');
 
   const { items, total, removeFromCart, clearCart } = useCart();
 
@@ -218,6 +219,22 @@ function ContactFormContent() {
                 <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.serviceDate[0]}</p>
               )}
             </div>
+
+            <div className="space-y-2">
+              <label htmlFor="message" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
+                Informations santé / besoins{' '}
+                <span className="text-slate-400 normal-case font-medium">(optionnel)</span>
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows={3}
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-4 text-slate-900 text-base font-medium placeholder:text-slate-300 focus:outline-none focus:border-slate-300 focus:bg-white transition-all resize-none shadow-sm"
+                placeholder="Allergies, blessures, objectifs particuliers, contraintes de santé..."
+              />
+            </div>
           </div>
 
           {/* Global Payment Info */}
@@ -399,7 +416,7 @@ function ContactFormContent() {
                                     customerName: nameInput.value.trim(),
                                     customerEmail: emailInput.value.trim(),
                                     customerPhone: phoneInput.value.trim(),
-                                    message: 'Réservation via formulaire',
+                                    message: messageText.trim() || 'Réservation via formulaire',
                                     newsletter: newsletterOptIn,
                                     preferredMethod: 'all',
                                     serviceDate: dateInput?.value || undefined,
@@ -489,7 +506,7 @@ function ContactFormContent() {
                                         customerName: nameInput.value.trim(),
                                         customerEmail: emailInput.value.trim(),
                                         customerPhone: phoneInput.value.trim(),
-                                        message: 'Réservation via formulaire',
+                                        message: messageText.trim() || 'Réservation via formulaire',
                                         newsletter: newsletterOptIn,
                                         preferredMethod: 'klarna',
                                         serviceDate: dateInput?.value || undefined,

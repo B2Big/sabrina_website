@@ -18,6 +18,8 @@ model Service {
   price         String
   originalPrice String?  @map("originalprice")
   duration      String?
+  // Durée en minutes pour le découpage des créneaux (30, 60, 90...)
+  durationMinutes Int    @default(60) @map("durationminutes")
   objective     String?
   popular       Boolean  @default(false)
   bestValue     Boolean  @default(false) @map("bestvalue")
@@ -116,6 +118,7 @@ enum ReservationStatus {
   paye_confirme
   annule
   termine
+  en_attente // Verrou temporaire du créneau pendant la saisie de paiement (soft-lock ~15 min)
 }
 
 model Reservation {
@@ -145,6 +148,12 @@ model Reservation {
   requestedDate     DateTime?         @map("requested_date") // Date souhaitée (si fournie)
   confirmedDate     DateTime?         @map("confirmed_date") // Date confirmée par Sabrina
   
+  // Créneau réservé (booking) — stocké en UTC
+  startAt           DateTime?         @map("start_at")
+  endAt             DateTime?         @map("end_at")
+  // Expiration du verrou temporaire (statut en_attente) — libération paresseuse
+  holdExpiresAt     DateTime?         @map("hold_expires_at")
+  
   // Timestamps
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")
@@ -152,7 +161,41 @@ model Reservation {
   @@index([status])
   @@index([customerEmail])
   @@index([createdAt])
+  @@index([startAt])
   @@map("reservations")
+}
+
+// ============================================
+// SYSTÈME DE RÉSERVATION PAR CRÉNEAUX (BOOKING)
+// ============================================
+
+// Disponibilités récurrentes hebdomadaires de Sabrina
+model AvailabilityRule {
+  id            String   @id @default(cuid())
+  dayOfWeek     Int      @map("day_of_week") // 0 = dimanche ... 6 = samedi
+  startTime     String   @map("start_time") // "08:00" (heure locale Europe/Paris)
+  endTime       String   @map("end_time")   // "20:00"
+  bufferMinutes Int      @default(0) @map("buffer_minutes") // Pause entre deux réservations
+  isActive      Boolean  @default(true) @map("is_active")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([dayOfWeek])
+  @@map("availability_rules")
+}
+
+// Blocages ponctuels (congés, RDV perso, indisponibilités)
+model Unavailability {
+  id        String   @id @default(cuid())
+  startAt   DateTime @map("start_at")
+  endAt     DateTime @map("end_at")
+  reason    String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([startAt, endAt])
+  @@map("unavailabilities")
 }
 
 // ============================================

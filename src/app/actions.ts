@@ -68,6 +68,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
   }
 
   const { name, email, phone, message, cart, serviceDate } = result.data;
+  const cleanMessage = message?.trim() || null;
 
   try {
     // Parser le panier
@@ -110,7 +111,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         customerName: name,
         customerEmail: email,
         customerPhone: phone,
-        message: message,
+        message: cleanMessage,
         serviceTitle: cartItems.map(i => i.title).join(', '),
         servicePrice: parseFloat(cartItems[0].price) || 0, // Prix du premier service
         quantity: cartItems.reduce((acc, i) => acc + i.quantity, 0),
@@ -151,7 +152,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         customerPhone: phone,
         services: cartItems,
         total: totalAmount,
-        message: message,
+        message: cleanMessage,
         requestedDate: serviceDate,
       });
       console.log("✅ Email SABRINA [SUR PLACE] envoyé");
