@@ -175,6 +175,14 @@ export const checkoutSchema = z.object({
     .optional()
     .default(''),
   newsletter: z.boolean().optional().default(false),
+  // Créneau réservé (booking) — optionnel pour l'instant
+  slotStart: z.string()
+    .datetime('Créneau invalide')
+    .optional(),
+  slotEnd: z.string()
+    .datetime('Créneau invalide')
+    .optional(),
+  lockId: z.string().min(1).max(100).optional(),
 })
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>

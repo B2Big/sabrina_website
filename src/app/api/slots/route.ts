@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db-services';
+import { fetchBlockingRanges } from '@/lib/booking';
 import { getAvailableSlots, parseDayDate, dayOfWeekOf, DEFAULT_AVAILABILITY } from '@/lib/slots';
 
 /**
@@ -7,14 +8,11 @@ import { getAvailableSlots, parseDayDate, dayOfWeekOf, DEFAULT_AVAILABILITY } fr
  *
  * Retourne les créneaux libres du jour (Europe/Paris) pour une prestation.
  * - Les horaires viennent des règles admin (ou des horaires par défaut).
- * - Les réservations actives et les indisponibilités retirent les créneaux.
- * - Les verrous temporaires expirés (en_attente > 15 min) sont ignorés (libération paresseuse).
+ * - Réservations actives, indisponibilités et verrous actifs retirent les créneaux.
+ * - Les verrous expirés sont ignorés (libération paresseuse).
  */
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-// Statuts qui bloquent un créneau
-const BLOCKING_STATUSES = ['paye_confirme', 'attente_paiement_sur_place', 'en_attente'] as const;
 
 export async function GET(req: Request) {
   try {
@@ -58,41 +56,18 @@ export async function GET(req: Request) {
       select: { dayOfWeek: true, startTime: true, endTime: true, bufferMinutes: true },
     });
 
-    // 3. Indisponibilités du jour
-    const unavailabilities = await prisma.unavailability.findMany({
-      where: {
-        AND: [{ startAt: { lt: day.end } }, { endAt: { gt: day.start } }],
-      },
-      select: { startAt: true, endAt: true },
-    });
+    // 3. Tout ce qui occupe des créneaux ce jour-là (indispos + réservations + verrous)
+    const blocking = await fetchBlockingRanges(day.start, day.end);
+    const bookings = [...blocking.bookings, ...blocking.locks.map((l) => ({ startAt: l.startAt, endAt: l.endAt }))];
 
-    // 4. Réservations actives du jour
-    const bookingsRaw = await prisma.reservation.findMany({
-      where: {
-        AND: [
-          { startAt: { not: null } },
-          { startAt: { lt: day.end } },
-          { endAt: { gt: day.start } },
-          { status: { in: [...BLOCKING_STATUSES] } },
-        ],
-      },
-      select: { startAt: true, endAt: true, status: true, holdExpiresAt: true },
-    });
-
-    // Libération paresseuse : ignorer les verrous expirés
-    const now = new Date();
-    const bookings = bookingsRaw
-      .filter((b) => !(b.status === 'en_attente' && b.holdExpiresAt && b.holdExpiresAt < now))
-      .map((b) => ({ startAt: b.startAt as Date, endAt: b.endAt as Date }));
-
-    // 5. Calcul des créneaux libres
+    // 4. Calcul des créneaux libres
     const slots = getAvailableSlots({
       dateStr,
       durationMinutes: service.durationMinutes,
       rules: rules.length > 0 ? rules : DEFAULT_AVAILABILITY.map((r) => ({ ...r, bufferMinutes: 0 })),
-      unavailabilities,
+      unavailabilities: blocking.unavailabilities.map((u) => ({ startAt: u.startAt, endAt: u.endAt })),
       bookings,
-      now,
+      now: new Date(),
     });
 
     return NextResponse.json({

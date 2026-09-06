@@ -8,6 +8,7 @@ import {
   sendReservationToSabrina
 } from "@/lib/resend";
 import { prisma } from "@/lib/db-services";
+import { isSlotFree, releaseSlotLock } from "@/lib/booking";
 
 // ============================================
 // SCHÉMAS DE VALIDATION
@@ -40,6 +41,9 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
     message: formData.get("message"),
     cart: formData.get("cart"),
     serviceDate: formData.get("serviceDate"),
+    slotStart: formData.get("slotStart"),
+    slotEnd: formData.get("slotEnd"),
+    lockId: formData.get("lockId"),
     newsletter: formData.get("newsletter"),
   };
 
@@ -69,6 +73,35 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
 
   const { name, email, phone, message, cart, serviceDate } = result.data;
   const cleanMessage = message?.trim() || null;
+
+  // Créneau réservé (booking) : parsing + vérification de disponibilité
+  let slotStart: Date | null = null;
+  let slotEnd: Date | null = null;
+  const lockId = typeof rawData.lockId === 'string' && rawData.lockId.trim() ? rawData.lockId.trim() : null;
+
+  if (rawData.slotStart || rawData.slotEnd) {
+    const startStr = typeof rawData.slotStart === 'string' ? rawData.slotStart : '';
+    const endStr = typeof rawData.slotEnd === 'string' ? rawData.slotEnd : '';
+
+    slotStart = new Date(startStr);
+    slotEnd = new Date(endStr);
+
+    if (isNaN(slotStart.getTime()) || isNaN(slotEnd.getTime()) || slotEnd.getTime() <= slotStart.getTime()) {
+      return {
+        success: false,
+        message: "Le créneau sélectionné est invalide. Veuillez en choisir un autre."
+      };
+    }
+
+    // Le créneau est-il encore libre ? (en ignorant notre propre verrou)
+    const free = await isSlotFree(slotStart, slotEnd, lockId ?? undefined);
+    if (!free) {
+      return {
+        success: false,
+        message: "Ce créneau vient d'être réservé par quelqu'un d'autre. Veuillez en choisir un autre."
+      };
+    }
+  }
 
   try {
     // Parser le panier
@@ -104,6 +137,9 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
     console.log("📦 Services:", cartItems.map(i => `${i.quantity}x ${i.title}`).join(', '));
     console.log("💰 Total:", totalAmount, "€");
 
+    // Date utilisée pour les emails : le créneau choisi prime sur la date simple
+    const finalRequestedDate = slotStart ?? (serviceDate ? new Date(serviceDate) : null);
+
     // 1. CRÉER LA RÉSERVATION EN BASE DE DONNÉES
     const reservation = await prisma.reservation.create({
       data: {
@@ -117,9 +153,14 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         quantity: cartItems.reduce((acc, i) => acc + i.quantity, 0),
         totalAmount: totalAmount,
         paymentMethod: 'sur_place',
-        requestedDate: serviceDate ? new Date(serviceDate) : null,
+        requestedDate: finalRequestedDate,
+        startAt: slotStart,
+        endAt: slotEnd,
       }
     });
+
+    // Le créneau est désormais porté par la réservation : libérer le verrou temporaire
+    await releaseSlotLock(lockId);
 
     console.log("✅ Réservation créée");
     console.log("📊 Réservation enregistrée");
@@ -133,7 +174,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         reservationId: reservation.id,
         services: cartItems,
         total: totalAmount,
-        requestedDate: serviceDate,
+        requestedDate: finalRequestedDate,
       });
       console.log("✅ Email CLIENT [SUR PLACE] envoyé");
     } catch (emailError: any) {
@@ -153,7 +194,7 @@ export async function createReservationSurPlace(prevState: any, formData: FormDa
         services: cartItems,
         total: totalAmount,
         message: cleanMessage,
-        requestedDate: serviceDate,
+        requestedDate: finalRequestedDate,
       });
       console.log("✅ Email SABRINA [SUR PLACE] envoyé");
     } catch (emailError: any) {

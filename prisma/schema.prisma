@@ -198,6 +198,21 @@ model Unavailability {
   @@map("unavailabilities")
 }
 
+// Verrou temporaire d'un créneau pendant la saisie du paiement (soft-lock ~15 min)
+model SlotLock {
+  id        String   @id @default(cuid())
+  startAt   DateTime @map("start_at")
+  endAt     DateTime @map("end_at")
+  serviceId String?  @map("service_id")
+  expiresAt DateTime @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([startAt, endAt])
+  @@index([expiresAt])
+  @@map("slot_locks")
+}
+
 // ============================================
 // AUDIT TRAIL - LOGS DES ACTIONS ADMIN
 // ============================================

@@ -3,11 +3,12 @@
 import { useActionState, useEffect, useState, Suspense } from 'react';
 import { createReservationSurPlace } from '@/app/actions';
 import { Button } from '@/components/ui/button';
-import { Loader2, Send, ShoppingBag, X, CalendarCheck, CreditCard, Globe, Wallet, Calendar } from 'lucide-react';
+import { Loader2, Send, ShoppingBag, X, CalendarCheck, CreditCard, Globe, Wallet } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useCart } from '@/context/cart-context';
+import { SlotPicker, type SelectedSlot } from '@/components/slot-picker';
 
 const initialState = {
   success: false,
@@ -23,8 +24,15 @@ function ContactFormContent() {
   const [newsletterOptIn, setNewsletterOptIn] = useState(false);
   const [paymentMode, setPaymentMode] = useState<'onsite' | 'online'>('onsite');
   const [messageText, setMessageText] = useState('');
+  const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
 
   const { items, total, removeFromCart, clearCart } = useCart();
+
+  // Si le premier service du panier change, invalider le créneau sélectionné
+  const firstItemId = items[0]?.id ?? null;
+  useEffect(() => {
+    setSelectedSlot(null);
+  }, [firstItemId]);
 
   // Trigger Confetti on Success & Clear Cart
   useEffect(() => {
@@ -204,21 +212,26 @@ function ContactFormContent() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="serviceDate" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1 flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Date souhaitée
-              </label>
-              <input
-                id="serviceDate"
-                name="serviceDate"
-                type="date"
-                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-slate-900 text-lg font-bold focus:outline-none focus:border-slate-300 focus:bg-white transition-all shadow-sm"
-              />
-              {state.errors?.serviceDate?.[0] && (
-                <p className="text-red-500 text-xs mt-1 ml-1 font-medium">{state.errors.serviceDate[0]}</p>
-              )}
-            </div>
+            {/* Sélecteur de créneau (booking) — affiché quand le panier contient un service */}
+            {items.length > 0 && (
+              <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl p-4">
+                <SlotPicker
+                  serviceId={items[0].id}
+                  onSlotChange={setSelectedSlot}
+                />
+                {items.length > 1 && (
+                  <p className="text-[11px] text-slate-400 font-medium mt-3">
+                    💡 Créneau choisi pour la première séance ({items[0].title}) — les séances suivantes seront planifiées avec Sabrina.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Champs cachés : créneau sélectionné (lus par l'action serveur "sur place") */}
+            <input type="hidden" name="slotStart" value={selectedSlot?.start ?? ''} />
+            <input type="hidden" name="slotEnd" value={selectedSlot?.end ?? ''} />
+            <input type="hidden" name="lockId" value={selectedSlot?.lockId ?? ''} />
+            <input type="hidden" name="serviceDate" value={selectedSlot?.date ?? ''} />
 
             <div className="space-y-2">
               <label htmlFor="message" className="text-sm font-bold text-slate-900 uppercase tracking-wider ml-1">
@@ -419,7 +432,10 @@ function ContactFormContent() {
                                     message: messageText.trim() || 'Réservation via formulaire',
                                     newsletter: newsletterOptIn,
                                     preferredMethod: 'all',
-                                    serviceDate: dateInput?.value || undefined,
+                                    serviceDate: selectedSlot?.date || dateInput?.value || undefined,
+                                    slotStart: selectedSlot?.start || undefined,
+                                    slotEnd: selectedSlot?.end || undefined,
+                                    lockId: selectedSlot?.lockId || undefined,
                                 }),
                             });
 
@@ -509,7 +525,10 @@ function ContactFormContent() {
                                         message: messageText.trim() || 'Réservation via formulaire',
                                         newsletter: newsletterOptIn,
                                         preferredMethod: 'klarna',
-                                        serviceDate: dateInput?.value || undefined,
+                                        serviceDate: selectedSlot?.date || dateInput?.value || undefined,
+                                        slotStart: selectedSlot?.start || undefined,
+                                        slotEnd: selectedSlot?.end || undefined,
+                                        lockId: selectedSlot?.lockId || undefined,
                                     }),
                                 });
 

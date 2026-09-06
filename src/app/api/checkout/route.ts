@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { prisma, getActivePromotions } from '@/lib/db-services';
 import { parsePriceToNumber, applyPromotionDiscount } from '@/lib/pricing';
+import { isSlotFree, releaseSlotLock } from '@/lib/booking';
 import { checkoutSchema } from '@/lib/validations/schemas';
 import { rateLimit, RateLimitConfigs, getClientIp, rateLimitExceededResponse } from '@/lib/rate-limit';
 import { sendNotificationToSabrinaStripePending, sendConfirmationToCustomerStripePending } from '@/lib/resend';
@@ -30,8 +31,41 @@ export async function POST(req: Request) {
     console.log('📦 [CHECKOUT] Données reçues');
 
     // 🔒 Validation Zod
-    const { items, customerName, customerEmail, customerPhone, message, newsletter } = checkoutSchema.parse(body);
+    const { items, customerName, customerEmail, customerPhone, message, newsletter, slotStart, slotEnd, lockId } = checkoutSchema.parse(body);
     console.log('✅ [CHECKOUT] Validation OK -', items.length, 'service(s)');
+
+    // 🔒 Créneau réservé (booking) : validation et vérification de disponibilité
+    let validatedSlotStart: Date | null = null;
+    let validatedSlotEnd: Date | null = null;
+
+    if (slotStart || slotEnd) {
+      if (!slotStart || !slotEnd) {
+        return NextResponse.json(
+          { error: 'Créneau incomplet : slotStart et slotEnd requis ensemble' },
+          { status: 400 }
+        );
+      }
+
+      validatedSlotStart = new Date(slotStart);
+      validatedSlotEnd = new Date(slotEnd);
+
+      if (isNaN(validatedSlotStart.getTime()) || isNaN(validatedSlotEnd.getTime())) {
+        return NextResponse.json({ error: 'Créneau invalide' }, { status: 400 });
+      }
+
+      if (validatedSlotEnd.getTime() <= validatedSlotStart.getTime()) {
+        return NextResponse.json({ error: 'Créneau invalide' }, { status: 400 });
+      }
+
+      // Le créneau est-il encore libre ? (en ignorant notre propre verrou)
+      const free = await isSlotFree(validatedSlotStart, validatedSlotEnd, lockId);
+      if (!free) {
+        return NextResponse.json(
+          { error: 'Ce créneau vient d\'être réservé. Veuillez en choisir un autre.' },
+          { status: 409 }
+        );
+      }
+    }
 
     // 🔒 Validation de la date si fournie
     let validatedServiceDate: Date | null = null;
@@ -54,6 +88,9 @@ export async function POST(req: Request) {
       }
       validatedServiceDate = parsedDate;
     }
+
+    // Date utilisée pour les emails : le créneau choisi prime sur la date simple
+    const finalRequestedDate = validatedSlotStart ?? validatedServiceDate;
 
     // 🔒 SÉCURITÉ : Récupérer les prix RÉELS depuis la base de données
     const serviceIds = items.map(item => item.id);
@@ -149,15 +186,20 @@ export async function POST(req: Request) {
         customerName: customerName,
         customerEmail: customerEmail,
         customerPhone: customerPhone,
-        message: message || null,
+        message: message?.trim() || null,
         serviceTitle: servicesFromDb.map(s => s.title).join(', '),
         servicePrice: effectivePrices.get(servicesFromDb[0].id) ?? 0,
         quantity: items.reduce((acc, item) => acc + item.quantity, 0),
         totalAmount: totalAmount / 100, // Convertir centimes -> euros
         paymentMethod: 'stripe',
-        requestedDate: validatedServiceDate,
+        requestedDate: finalRequestedDate,
+        startAt: validatedSlotStart,
+        endAt: validatedSlotEnd,
       }
     });
+
+    // Le créneau est désormais porté par la réservation : libérer le verrou temporaire
+    await releaseSlotLock(lockId);
 
     console.log('✅ [CHECKOUT] Réservation créée:', reservation.id.substring(0,8)+'...');
 
@@ -177,7 +219,7 @@ export async function POST(req: Request) {
         })),
         total: (totalAmount / 100).toFixed(2),
         message: message || null,
-        requestedDate: validatedServiceDate,
+        requestedDate: finalRequestedDate,
       });
       console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé à Sabrina');
 
@@ -192,7 +234,7 @@ export async function POST(req: Request) {
           quantity: items.find(i => i.id === s.id)?.quantity || 1
         })),
         total: (totalAmount / 100).toFixed(2),
-        requestedDate: validatedServiceDate,
+        requestedDate: finalRequestedDate,
       });
       console.log('📧 [CHECKOUT] Email BLEU Stripe envoyé au client');
     } catch (emailError) {
@@ -258,6 +300,8 @@ export async function POST(req: Request) {
         customer_phone: customerPhone,
         customer_message: message?.substring(0, 500) || '',
         newsletter_optin: newsletter ? 'yes' : 'no',
+        slot_start: validatedSlotStart ? validatedSlotStart.toISOString() : '',
+        slot_end: validatedSlotEnd ? validatedSlotEnd.toISOString() : '',
       }
     });
 
