@@ -4,6 +4,31 @@
 
 ---
 
+## [2026-09-06] Booking par créneaux (sur branche `feature/booking` — non déployé)
+
+### 🎯 Nouveau système de réservation par créneaux (5 phases)
+- **Phase 1** : schéma (durationMinutes, availability_rules, unavailabilities, startAt/endAt sur reservations) + moteur `lib/slots.ts` (UTC/DST/buffers) + API `GET /api/slots`
+- **Phase 2** : sélecteur de créneau dans le formulaire + soft-lock 15 min (`SlotLock`, libération paresseuse) + validation serveur anti double-booking
+- **Phase 3** : webhook Stripe durci (idempotence atomique updateMany, vérification montant, `charge.refunded`, `checkout.session.expired`, retour 500 sur erreur réelle) + emails avec date/heure + pièce jointe `.ics`
+- **Phase 4** : admin mobile-first (onglet Réservations : agenda du jour, appel `tel:`, annulation, blocage 1 tap, horaires hebdo)
+- **Phase 5** : Google Calendar OAuth2 (tokens chiffrés AES-256-GCM, sync bidirectionnelle, routes admin protégées)
+
+### 📄 Documentation
+- `docs/GOOGLE_CALENDAR_SETUP.md` : guide pas-à-pas Google Cloud OAuth (9 étapes, ~20 min, gratuit)
+- `docs/sessions/2026-09/SESSION_2026-09-06.md` : état exact de reprise
+
+### ⚠️ Mise en production (en attente de feu vert)
+1. `npx prisma db push` (OBLIGATOIRE avant déploiement — sinon catalogue vide)
+2. Merge `feature/booking` → `main` + push
+3. Config Google Cloud OAuth (3 env vars)
+4. Test end-to-end
+
+### 📁 Fichiers concernés
+- Nouveaux : `lib/slots.ts`, `lib/booking.ts`, `lib/ics.ts`, `lib/google-calendar.ts`, `components/slot-picker.tsx`, `components/admin/booking-manager.tsx`, `api/slots/`, `api/slots/lock/`, `api/admin/google-calendar/`
+- Modifiés : `schema.prisma`, `contact-form.tsx`, `actions.ts`, `api/checkout/route.ts`, `api/webhooks/stripe/route.ts`, `lib/resend.ts`, `admin/actions.ts`, `admin-dashboard.tsx`, `validations/schemas.ts`
+
+---
+
 ## [2026-09-05] Chantier SEO/GEO + Performance
 
 ### 🤖 SEO & GEO (optimisation moteurs de réponse IA)

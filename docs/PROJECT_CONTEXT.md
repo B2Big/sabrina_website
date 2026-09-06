@@ -1,8 +1,8 @@
 # Contexte du Projet Sabrina Coaching
 
-**Dernière mise à jour** : 2026-09-05
-**Version** : Audit + SEO/GEO + Performance
-**Session** : 2026-09-05
+**Dernière mise à jour** : 2026-09-06
+**Version** : Booking par créneaux (sur branche feature/booking)
+**Session** : 2026-09-06
 
 ---
 
@@ -89,6 +89,18 @@ Le projet est désormais consolidé autour d'une **application web unique** (Nex
 - Pas de champ message libre — orienté vente directe
 - Pleine largeur sur mobile
 
+#### Booking par créneaux (NOUVEAU — branche `feature/booking`, en attente de mise en prod)
+
+- **Sélecteur de créneau** dans le formulaire (durée par service, pas de 30 min, heure de Paris)
+- **Soft-lock 15 min** (`SlotLock`) : anti double-booking pendant le paiement, libération paresseuse sans cron
+- **Disponibilités** : horaires hebdo (`AvailabilityRule`, buffer configurable) + blocages ponctuels (`Unavailability`)
+- **Webhook Stripe durci** : idempotence atomique (updateMany), vérification montant, `charge.refunded` et `checkout.session.expired` → annulation + libération du créneau
+- **Emails** : date/heure du créneau + pièce jointe **.ics** (agenda client en 1 tap)
+- **Admin mobile** (onglet Réservations) : agenda du jour, appel `tel:`, annulation, blocage 1 tap (matin/après-midi/journée), horaires hebdo
+- **Google Calendar OAuth2** (mono-compte Sabrina) : tokens chiffrés AES-256-GCM, sync bidirectionnelle (indispos → blocages, RDV payés → agenda)
+- Guide de configuration : `docs/GOOGLE_CALENDAR_SETUP.md`
+- ⚠️ Mise en prod : `prisma db push` OBLIGATOIRE avant déploiement (sinon catalogue vide)
+
 **Emails automatiques** (via Resend) :
 - Client : Confirmation de réservation
 - Sabrina : Notification nouvelle réservation
@@ -165,6 +177,15 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 | `src/app/actions.ts` | Server action réservation sur place |
 | `src/lib/pricing.ts` | **Logique de prix partagée affichage/checkout (NOUVEAU)** |
 | `src/lib/slug.ts` | **Slugification SEO des services (NOUVEAU)** |
+| `src/lib/slots.ts` | **Moteur de calcul des créneaux libres — booking (NOUVEAU)** |
+| `src/lib/booking.ts` | **Soft-lock et vérification de disponibilité — booking (NOUVEAU)** |
+| `src/lib/ics.ts` | **Génération .ics pour les emails — booking (NOUVEAU)** |
+| `src/lib/google-calendar.ts` | **OAuth2 Google Calendar + sync — booking (NOUVEAU)** |
+| `src/components/slot-picker.tsx` | **Sélecteur de créneau du formulaire — booking (NOUVEAU)** |
+| `src/components/admin/booking-manager.tsx` | **Admin mobile réservations — booking (NOUVEAU)** |
+| `src/app/api/slots/` | **API créneaux disponibles + verrou — booking (NOUVEAU)** |
+| `src/app/api/admin/google-calendar/` | **Routes OAuth Google — booking (NOUVEAU)** |
+| `docs/GOOGLE_CALENDAR_SETUP.md` | **Guide pas-à-pas activation Google Cloud OAuth (NOUVEAU)** |
 | `src/data/faqs.ts` | **FAQ source unique (NOUVEAU)** |
 | `src/data/cities.ts` | **Pages locales par ville (NOUVEAU)** |
 | `src/data/blog-posts.ts` | **Articles de blog (NOUVEAU)** |
@@ -214,13 +235,15 @@ Formulaire → Création DB → Session Stripe → Redirection paiement
 - [x] Classes Tailwind fantômes + media query mobile
 - [x] **Chantier SEO/GEO** — llms.txt, pages services/villes/blog/tarifs/faq/a-propos
 - [x] **Performance** — animations CSS, panier mémoïsé, fontes nettoyées, image OG compressée
+- [x] **Booking par créneaux** — développé sur `feature/booking` (5 phases), À DÉPLOYER
+- [ ] **MISE EN PROD BOOKING** — `prisma db push` → merge feature/booking → push → config Google Cloud → test e2e
 - [ ] **Supprimer les paquets inutilisés** — next-auth (CVE critical), bcryptjs, react-hook-form, @stripe/stripe-js, ts-node
 - [ ] **Restaurer le lint** — rétrograder eslint en ^9 + CI GitHub (build+lint)
 - [ ] **`npm audit fix`** — next → 16.3.4 (CVE high), resend → 6.26
 - [ ] **Nettoyer le code mort** — Testimonials/Faq/ValuesSection, ClientOnly, optimized-image, modèle Order
 - [ ] **Factoriser** — resend.ts (999 lignes), logique newsletter ×3, checkout dupliqué ×2
-- [ ] **Accessibilité** — contrastes WCAG, aria-expanded, userScalable (fait) 
-- [ ] **Durcir le webhook Stripe** — vérif amount_total, idempotence atomique
+- [ ] **Accessibilité** — contrastes WCAG, aria-expanded
+- [ ] **Durcir le webhook Stripe** — vérif amount_total (fait), idempotence atomique (fait)
 - [ ] **Rate limiting Redis** — remplacer l'in-memory
 - [ ] **Tests** — ciblés checkout/emails, suppression des console.log sensibles
 - [ ] **Avis Google** — activer `googleReviewsUrl` (action manuelle Sabrina)
