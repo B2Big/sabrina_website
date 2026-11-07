@@ -4,6 +4,24 @@
 
 ---
 
+## [2026-11-07] Booking déployé en production + lint réparé
+
+### 🚀 Booking par créneaux — EN PRODUCTION
+- Migration Supabase appliquée (`prisma db push`), 22 services intacts
+- `feature/booking` fusionnée sur `main` (8 commits, +2865 lignes) et poussée
+- Vérifié en prod : `/api/slots` renvoie de vrais créneaux (heure de Paris, pas de 30 min), catalogue OK
+- Google Calendar : prêt mais inactif tant que les env vars ne sont pas posées (guide `docs/GOOGLE_CALENDAR_SETUP.md`)
+
+### 🧹 Lint réparé
+- eslint 10 → 9 (compatibilité), `.eslintignore` → `globalIgnores`, fichiers PWA générés ignorés
+- Résultat : 0 erreur, 69 warnings (dette `any`/require documentée), exit 0
+
+### 📊 Diagnostic activité
+- Le paiement/réservation fonctionnait déjà : dernière vente payée le 2026-08-30
+- Absence d'activité = trafic, pas panne technique
+
+---
+
 ## [2026-09-06] Booking par créneaux (sur branche `feature/booking` — non déployé)
 
 ### 🎯 Nouveau système de réservation par créneaux (5 phases)
