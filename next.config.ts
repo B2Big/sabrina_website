@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000, // 1 an de cache
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Tailles optimisées mobile-first
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Tailles d'icônes et thumbnails
+    qualities: [70, 75, 80], // Couvre les quality= utilisés (carrousel hero à 80)
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
